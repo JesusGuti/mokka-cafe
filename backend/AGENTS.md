@@ -86,6 +86,16 @@ modules/<nombre>/
 - Nombres de archivo en kebab-case (`create-product.use-case.ts`), clases en PascalCase.
 - Tablas Prisma en snake_case vía `@@map` (`@@map("products")`); campos del modelo en camelCase.
 - No pongas lógica de negocio en controllers ni en repositorios — vive en entidades de dominio y use-cases.
+- Imports **dentro de un mismo módulo** (`domain`/`application`/`infrastructure` de `products`, por ejemplo) van con rutas relativas — mantiene visible el acoplamiento dentro del módulo.
+- Imports que cruzan hacia `shared/` o hacia el cliente generado de Prisma usan alias (`@shared/*`, `@generated/*`, definidos en `tsconfig.json`) en vez de `../../../../...`. No agregues un alias genérico `@/*` ni uno para `modules/*` — cruzar entre módulos de negocio debería doler un poco (fuerza a pensar si de verdad hace falta).
+
+### Si tocas los alias (`@shared/*`, `@generated/*`)
+
+Nest CLI (basado en `tsc`, no webpack) **no reescribe los alias al compilar** — `nest build` deja `require("@shared/...")` tal cual en el JS emitido, y eso rompe en runtime. Por eso:
+- `pnpm build` encadena `tsc-alias` después de `nest build` para reescribir los alias a rutas relativas en `dist/`.
+- `tsconfig.build.json` fija `rootDir: "./src"` (por eso `dist/main.js` queda plano, no `dist/src/main.js` — si algo importa por `dist/main`, revisa esto primero).
+- Los tests e2e corren con Jest, que no lee `paths` de `tsconfig.json` por su cuenta: el mismo mapeo está duplicado como `moduleNameMapper` en `test/jest-e2e.json`. Si agregas un alias nuevo, actualízalo en los tres lugares (`tsconfig.json`, y si el alias se usa en `test/`, también en `jest-e2e.json`).
+- Si cambias `rootDir`/`paths` y el watch mode (`pnpm start:dev`) empieza a fallar con `Cannot find module '.../dist/main'`, borra `tsconfig.build.tsbuildinfo` (caché incremental de `tsc`, gitignored) — queda desalineado con la config nueva y produce un build a medias.
 
 ## Qué evitar como agente
 

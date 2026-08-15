@@ -1,0 +1,15 @@
+{
+  "moduleFileExtensions": ["js", "json", "ts"],
+  "rootDir": ".",
+  "testEnvironment": "node",
+  "testRegex": ".e2e-spec.ts$",
+  "transform": {
+    "^.+\\.(t|j)s$": "ts-jest"
+  },
+  "moduleNameMapper": {
+    "^@shared/(.*)$": "<rootDir>/../src/shared/$1",
+    "^@generated/(.*)$": "<rootDir>/../src/generated/$1"
+  },
+  "globalSetup": "<rootDir>/jest-e2e.global-setup.ts",
+  "setupFilesAfterEnv": ["<rootDir>/jest-e2e.setup.ts"]
+}
