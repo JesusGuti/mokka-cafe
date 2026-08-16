@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+
+<html class="light" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Mokka Café - POS</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,100..900;1,9..144,100..900&amp;family=Work+Sans:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "secondary": "#B5562E",
+                    "on-tertiary": "#FFFDF8",
+                    "tertiary-fixed-dim": "#A9BB86",
+                    "outline-variant": "#DCD3C4",
+                    "on-error-container": "#6E1F16",
+                    "surface-container-high": "#ECE0CB",
+                    "on-secondary-fixed-variant": "#7A3A1C",
+                    "inverse-primary": "#D8C4AE",
+                    "surface-bright": "#FBF6EC",
+                    "on-tertiary-fixed": "#243014",
+                    "error-container": "#F3D2CB",
+                    "on-error": "#FFFDF8",
+                    "on-surface": "#2A1B10",
+                    "secondary-fixed-dim": "#E8A87D",
+                    "on-tertiary-fixed-variant": "#4E5C38",
+                    "on-background": "#2A1B10",
+                    "primary-fixed-dim": "#D8C4AE",
+                    "background": "#F7F0E3",
+                    "paper-receipt": "#FBF7EE",
+                    "inverse-surface": "#372A1E",
+                    "secondary-container": "#F0C7AE",
+                    "surface-container-lowest": "#ffffff",
+                    "cup-white": "#FFFDF8",
+                    "primary-container": "#3A2A1E",
+                    "on-primary-fixed-variant": "#5C4433",
+                    "primary": "#2A1B10",
+                    "on-surface-variant": "#5B4C3D",
+                    "surface": "#F7F0E3",
+                    "surface-container-highest": "#E4D7C0",
+                    "surface-dim": "#E0D5C2",
+                    "on-primary-container": "#C9B9A6",
+                    "surface-tint": "#7A4A28",
+                    "surface-container-low": "#FBF4E7",
+                    "error": "#A23327",
+                    "tertiary-container": "#D8E0C4",
+                    "on-secondary-container": "#7A3A1C",
+                    "on-secondary": "#FFFDF8",
+                    "on-primary-fixed": "#2A1B10",
+                    "on-tertiary-container": "#3D4A2A",
+                    "inverse-on-surface": "#F6EEE1",
+                    "on-secondary-fixed": "#3A1D0C",
+                    "tertiary": "#3D4A2A",
+                    "tertiary-fixed": "#E4EBD3",
+                    "surface-container": "#F2E8D6",
+                    "secondary-fixed": "#F6DCC7",
+                    "surface-variant": "#E4D7C2",
+                    "on-primary": "#FFFDF8",
+                    "outline": "#8A7561",
+                    "milk-beige": "#DCD3C4",
+                    "primary-fixed": "#F1E4D3"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "xl": "40px",
+                    "lg": "24px",
+                    "gutter": "16px",
+                    "margin-tablet": "32px",
+                    "unit": "4px",
+                    "md": "16px",
+                    "sm": "8px",
+                    "xs": "4px",
+                    "margin-mobile": "16px"
+            },
+            "fontFamily": {
+                    "body-md": ["Work Sans"],
+                    "headline-lg": ["Fraunces"],
+                    "headline-xl": ["Fraunces"],
+                    "price-display": ["Work Sans"],
+                    "body-lg": ["Work Sans"],
+                    "label-md": ["Work Sans"],
+                    "headline-md": ["Fraunces"]
+            },
+            "fontSize": {
+                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "headline-lg": ["32px", {"lineHeight": "40px", "fontWeight": "600"}],
+                    "headline-xl": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                    "price-display": ["20px", {"lineHeight": "24px", "fontWeight": "600"}],
+                    "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                    "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.05em", "fontWeight": "500"}],
+                    "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "500"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .perforated-edge {
+            background-image: radial-gradient(circle, transparent 70%, #FBF7EE 75%);
+            background-size: 16px 16px;
+            background-position: 0 -8px;
+            height: 8px;
+            width: 100%;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #DCD3C4;
+            border-radius: 2px;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-md min-h-screen flex">
+<!-- Sidebar Navigation (Derived from Shared Components JSON) -->
+<aside class="hidden md:flex flex-col h-screen p-md gap-sm bg-surface-container-low border-r border-milk-beige w-64 shrink-0">
+<div class="mb-lg px-sm">
+<h1 class="font-headline-md text-headline-md text-primary">Mokka Admin</h1>
+<p class="text-on-surface-variant font-body-md opacity-70">Barista Panel</p>
+</div>
+<nav class="flex-1 flex flex-col gap-xs">
+<a class="flex items-center gap-md px-md py-sm bg-secondary-container text-on-secondary-container rounded-lg transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined">point_of_sale</span>
+<span class="font-body-md">POS</span>
+</a>
+<a class="flex items-center gap-md px-md py-sm text-on-surface-variant hover:bg-milk-beige/20 rounded-lg transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined">restaurant</span>
+<span class="font-body-md">Cocina</span>
+</a>
+<a class="flex items-center gap-md px-md py-sm text-on-surface-variant hover:bg-milk-beige/20 rounded-lg transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined">inventory_2</span>
+<span class="font-body-md">Inventario</span>
+</a>
+<a class="flex items-center gap-md px-md py-sm text-on-surface-variant hover:bg-milk-beige/20 rounded-lg transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined">bar_chart</span>
+<span class="font-body-md">Reportes</span>
+</a>
+</nav>
+<div class="mt-auto flex flex-col gap-xs border-t border-milk-beige pt-md">
+<a class="flex items-center gap-md px-md py-sm text-on-surface-variant hover:bg-milk-beige/20 rounded-lg" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-body-md text-body-md">Settings</span>
+</a>
+<a class="flex items-center gap-md px-md py-sm text-on-surface-variant hover:bg-milk-beige/20 rounded-lg" href="#">
+<span class="material-symbols-outlined">logout</span>
+<span class="font-body-md text-body-md">Logout</span>
+</a>
+</div>
+</aside>
+<main class="flex-1 flex flex-col min-w-0">
+<!-- Top Navigation Bar -->
+<header class="flex justify-between items-center px-lg w-full h-16 bg-surface-container-low shrink-0">
+<div class="flex items-center gap-lg">
+<span class="font-headline-lg text-headline-lg text-primary">Mokka Café</span>
+<div class="relative group">
+<span class="absolute left-3 top-1/2 -translate-y-1/2 material-symbols-outlined text-outline">search</span>
+<input class="pl-10 pr-4 py-2 bg-cup-white border-none focus:ring-2 focus:ring-secondary/20 rounded-full w-64 text-body-md" placeholder="Buscar producto..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-md">
+<button class="w-10 h-10 rounded-full flex items-center justify-center text-primary hover:bg-milk-beige/20 transition-colors">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="flex items-center gap-sm px-sm py-1 rounded-full text-primary hover:bg-milk-beige/20 transition-colors">
+<span class="material-symbols-outlined">account_circle</span>
+<span class="font-label-md">Barista Alex</span>
+</button>
+</div>
+</header>
+<!-- Main Content Area: Products & Categories -->
+<div class="flex-1 flex overflow-hidden">
+<!-- Left Side: Product Grid -->
+<div class="flex-1 overflow-y-auto p-lg custom-scrollbar">
+<!-- Categories Bar -->
+<div class="flex gap-md mb-lg sticky top-0 bg-background/80 backdrop-blur-md py-xs z-10">
+<button class="px-md py-2 bg-secondary text-on-secondary rounded-full font-label-md transition-transform scale-95 active:opacity-80">Todos</button>
+<button class="px-md py-2 bg-cup-white border border-milk-beige text-on-surface-variant rounded-full font-label-md hover:bg-milk-beige/10">Calientes</button>
+<button class="px-md py-2 bg-cup-white border border-milk-beige text-on-surface-variant rounded-full font-label-md hover:bg-milk-beige/10">Fríos</button>
+<button class="px-md py-2 bg-cup-white border border-milk-beige text-on-surface-variant rounded-full font-label-md hover:bg-milk-beige/10">Panadería</button>
+<button class="px-md py-2 bg-cup-white border border-milk-beige text-on-surface-variant rounded-full font-label-md hover:bg-milk-beige/10">Frappés</button>
+</div>
+<!-- Product Grid -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-gutter">
+<!-- Product Card 1 -->
+<div class="group bg-cup-white rounded-xl overflow-hidden border border-milk-beige/50 hover:shadow-lg transition-all duration-300 cursor-pointer">
+<div class="relative h-40 overflow-hidden">
+<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBX30wN2TD-8nM1IXrnYKnIcGGzm-K5N3_v5J6WzkZcrcymIaBeWWAhXJxNH2idIK9smiSohnVV_eZoKx-1C1Dhzg-70B6Pz-wcBF05ZTHdNkG6MDi4ejW7PRkYR9LZVO3Nt5-toTjlvQyhAeYpLHQFJ5avmwUAgN5b8h1FGM2W_b2OAFMWG572GYQuor13GGl9hOtz7MW2U-Vu6-hyJ9d2iFAQiYyHnCIj8qMRuh8MjKdqveAN0Lop0ovfexRGdBAZv58"/>
+<span class="absolute top-2 right-2 bg-milk-beige/90 px-2 py-1 rounded font-price-display text-primary text-sm">$4.50</span>
+</div>
+<div class="p-md text-center">
+<h3 class="font-headline-md text-headline-md text-primary mb-1">Espresso Doble</h3>
+<p class="text-on-surface-variant text-sm font-body-md italic">Cuerpo intenso y crema dorada</p>
+</div>
+</div>
+<!-- Product Card 2 -->
+<div class="group bg-cup-white rounded-xl overflow-hidden border border-milk-beige/50 hover:shadow-lg transition-all duration-300 cursor-pointer">
+<div class="relative h-40 overflow-hidden">
+<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD8FFTy9TuIDW5s3j8aigAtvQIcVpApPQlsRyEVM4yAP2Sdy3bJGJVJtrw55XdSViVo_sF23oV9LyUs_o9-TBhAwFfFoNNa0EMFSabGmkNHnpIikbUoybgGaCu2f2KHY2b19Z1t2SwWBwiaOnrsV39uuNxIKETDB1K765l8FBtzRwoqmcZKo8I3RlsHlOeJZnyK_pCviRppDym2zPtwo3dXkygBi1wZVoNr3X5tnusVpFiaX0w4wd9oaUFi9k1oN3VejZc"/>
+<span class="absolute top-2 right-2 bg-milk-beige/90 px-2 py-1 rounded font-price-display text-primary text-sm">$5.25</span>
+</div>
+<div class="p-md text-center">
+<h3 class="font-headline-md text-headline-md text-primary mb-1">Latte Vainilla</h3>
+<p class="text-on-surface-variant text-sm font-body-md italic">Suave con notas dulces</p>
+</div>
+</div>
+<!-- Product Card 3 (Simulated) -->
+<div class="group bg-cup-white rounded-xl overflow-hidden border border-milk-beige/50 hover:shadow-lg transition-all duration-300 cursor-pointer">
+<div class="h-40 bg-surface-container flex items-center justify-center text-outline">
+<span class="material-symbols-outlined text-4xl">coffee</span>
+</div>
+<div class="p-md text-center">
+<span class="absolute top-2 right-2 bg-milk-beige/90 px-2 py-1 rounded font-price-display text-primary text-sm">$4.80</span>
+<h3 class="font-headline-md text-headline-md text-primary mb-1">Capuchino</h3>
+<p class="text-on-surface-variant text-sm font-body-md italic">Espuma densa de leche</p>
+</div>
+</div>
+<!-- Product Card 4 (Cold) -->
+<div class="group bg-cup-white rounded-xl overflow-hidden border border-milk-beige/50 hover:shadow-lg transition-all duration-300 cursor-pointer">
+<div class="h-40 bg-surface-container flex items-center justify-center text-outline">
+<span class="material-symbols-outlined text-4xl">ac_unit</span>
+</div>
+<div class="p-md text-center">
+<span class="absolute top-2 right-2 bg-milk-beige/90 px-2 py-1 rounded font-price-display text-primary text-sm">$5.50</span>
+<h3 class="font-headline-md text-headline-md text-primary mb-1">Cold Brew</h3>
+<p class="text-on-surface-variant text-sm font-body-md italic">Extracción en frío 12h</p>
+</div>
+</div>
+<!-- Product Card 5 (Food) -->
+<div class="group bg-cup-white rounded-xl overflow-hidden border border-milk-beige/50 hover:shadow-lg transition-all duration-300 cursor-pointer">
+<div class="h-40 bg-surface-container flex items-center justify-center text-outline">
+<span class="material-symbols-outlined text-4xl">bakery_dining</span>
+</div>
+<div class="p-md text-center">
+<span class="absolute top-2 right-2 bg-milk-beige/90 px-2 py-1 rounded font-price-display text-primary text-sm">$3.75</span>
+<h3 class="font-headline-md text-headline-md text-primary mb-1">Croissant Mantequilla</h3>
+<p class="text-on-surface-variant text-sm font-body-md italic">Crujiente y artesanal</p>
+</div>
+</div>
+<!-- Product Card 6 (Food) -->
+<div class="group bg-cup-white rounded-xl overflow-hidden border border-milk-beige/50 hover:shadow-lg transition-all duration-300 cursor-pointer">
+<div class="h-40 bg-surface-container flex items-center justify-center text-outline">
+<span class="material-symbols-outlined text-4xl">lunch_dining</span>
+</div>
+<div class="p-md text-center">
+<span class="absolute top-2 right-2 bg-milk-beige/90 px-2 py-1 rounded font-price-display text-primary text-sm">$6.90</span>
+<h3 class="font-headline-md text-headline-md text-primary mb-1">Panini Caprese</h3>
+<p class="text-on-surface-variant text-sm font-body-md italic">Mozzarella y albahaca</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Right Side: Live Ticket Panel -->
+<aside class="w-[400px] bg-surface-container border-l border-milk-beige flex flex-col p-lg">
+<div class="flex-1 flex flex-col bg-paper-receipt shadow-sm relative overflow-hidden rounded-t-xl">
+<!-- Receipt Header -->
+<div class="p-md text-center border-b border-dashed border-outline-variant/50">
+<h2 class="font-headline-md text-headline-md text-primary">Pedido Actual</h2>
+<p class="text-xs text-on-surface-variant font-label-md">Orden #4402 • 15:42</p>
+</div>
+<!-- Items List -->
+<div class="flex-1 overflow-y-auto p-md custom-scrollbar flex flex-col gap-sm">
+<!-- Item 1 -->
+<div class="flex justify-between items-start">
+<div class="flex-1">
+<span class="font-body-md text-primary font-bold">1x Latte Vainilla</span>
+<p class="text-xs text-on-surface-variant">+ Leche de Almendra</p>
+<p class="text-xs text-on-surface-variant">+ Extra Shot</p>
+</div>
+<span class="font-price-display text-primary text-sm">$6.50</span>
+</div>
+<!-- Item 2 -->
+<div class="flex justify-between items-center">
+<div class="flex-1">
+<span class="font-body-md text-primary font-bold">2x Croissant</span>
+</div>
+<span class="font-price-display text-primary text-sm">$7.50</span>
+</div>
+<!-- Item 3 -->
+<div class="flex justify-between items-center">
+<div class="flex-1">
+<span class="font-body-md text-primary font-bold">1x Cold Brew</span>
+</div>
+<span class="font-price-display text-primary text-sm">$5.50</span>
+</div>
+</div>
+<!-- Receipt Footer & Totals -->
+<div class="mt-auto border-t border-dashed border-outline-variant/50 p-md">
+<div class="flex justify-between mb-1">
+<span class="text-on-surface-variant text-sm">Subtotal</span>
+<span class="text-on-surface-variant text-sm">$19.50</span>
+</div>
+<div class="flex justify-between mb-md">
+<span class="text-on-surface-variant text-sm">Impuesto (10%)</span>
+<span class="text-on-surface-variant text-sm">$1.95</span>
+</div>
+<div class="flex justify-between items-end border-t border-outline-variant pt-md">
+<span class="font-headline-md text-headline-md text-primary">Total</span>
+<span class="font-headline-md text-headline-md text-secondary">$21.45</span>
+</div>
+</div>
+<!-- Perforated Bottom Edge -->
+<div class="perforated-edge bg-surface-container"></div>
+</div>
+<!-- Payment Methods -->
+<div class="mt-lg grid grid-cols-3 gap-sm">
+<button class="flex flex-col items-center justify-center gap-xs py-md bg-cup-white border border-milk-beige rounded-xl text-primary hover:bg-secondary-container transition-all active:scale-95">
+<span class="material-symbols-outlined">payments</span>
+<span class="text-[10px] font-label-md uppercase tracking-wider">Efectivo</span>
+</button>
+<button class="flex flex-col items-center justify-center gap-xs py-md bg-cup-white border border-milk-beige rounded-xl text-primary hover:bg-secondary-container transition-all active:scale-95">
+<span class="material-symbols-outlined">credit_card</span>
+<span class="text-[10px] font-label-md uppercase tracking-wider">Tarjeta</span>
+</button>
+<button class="flex flex-col items-center justify-center gap-xs py-md bg-cup-white border border-milk-beige rounded-xl text-primary hover:bg-secondary-container transition-all active:scale-95">
+<span class="material-symbols-outlined">qr_code_2</span>
+<span class="text-[10px] font-label-md uppercase tracking-wider">Pago QR</span>
+</button>
+</div>
+<!-- Action Button -->
+<button class="mt-md w-full py-4 bg-secondary text-on-secondary rounded-xl font-headline-md text-headline-md hover:bg-primary-container transition-all shadow-md active:scale-[0.98]">
+                    Procesar Pedido
+                </button>
+</aside></div>
+</main>
+<!-- Success Feedback Overlay (Hidden by Default) -->
+<div class="fixed inset-0 bg-primary/20 backdrop-blur-sm z-50 flex items-center justify-center hidden opacity-0 transition-opacity duration-300" id="success-overlay">
+<div class="bg-cup-white p-xl rounded-2xl shadow-2xl flex flex-col items-center text-center max-w-sm">
+<div class="w-20 h-20 bg-tertiary-fixed rounded-full flex items-center justify-center text-on-tertiary-fixed-variant mb-md">
+<span class="material-symbols-outlined text-5xl" style="font-variation-settings: 'FILL' 1;">favorite</span>
+</div>
+<h2 class="font-headline-lg text-headline-lg text-primary mb-sm">¡Listo!</h2>
+<p class="text-on-surface-variant font-body-md mb-lg">El pedido ha sido enviado a cocina correctamente.</p>
+<button class="px-xl py-3 bg-secondary text-on-secondary rounded-full font-label-md" onclick="closeSuccess()">Siguiente pedido</button>
+</div>
+</div>
+<script>
+        // Micro-interactions
+        const processBtn = document.querySelector('button.bg-secondary:not(.px-md)');
+        const overlay = document.getElementById('success-overlay');
+
+        if (processBtn) {
+            processBtn.addEventListener('click', () => {
+                overlay.classList.remove('hidden');
+                setTimeout(() => {
+                    overlay.classList.add('opacity-100');
+                }, 10);
+            });
+        }
+
+        function closeSuccess() {
+            overlay.classList.remove('opacity-100');
+            setTimeout(() => {
+                overlay.classList.add('hidden');
+            }, 300);
+        }
+
+        // Add item interaction (Visual only)
+        document.querySelectorAll('.group.bg-cup-white').forEach(card => {
+            card.addEventListener('mousedown', () => {
+                card.style.transform = 'scale(0.96)';
+            });
+            card.addEventListener('mouseup', () => {
+                card.style.transform = 'scale(1)';
+            });
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = 'scale(1)';
+            });
+        });
+    </script>
+</body></html>
