@@ -77,8 +77,9 @@ modules/<nombre>/
 
 ## Variables de entorno
 
-- `.env` (desarrollo) y `.env.test` (e2e) — nunca se commitean (`.gitignore`).
+- `.env` (desarrollo) y `.env.test` (e2e) — nunca se commitean (`.gitignore`). Ojo con no dejar una variable duplicada en el mismo archivo: `dotenv` usa la **primera** ocurrencia y la segunda queda muerta en silencio.
 - Todo env var nuevo debe agregarse también a `envValidationSchema` en `src/config/env.validation.ts`; si no está ahí, Nest falla al arrancar. Esto es intencional: preferimos un crash temprano a un `undefined` silencioso en producción.
+- Config agrupada por dominio con `registerAs` en `src/config/*.config.ts` (ver `database.config.ts`, `cors.config.ts`), registrada en `ConfigModule.forRoot({ load: [...] })` en `app.module.ts`, y leída con `configService.get('<namespace>.<campo>')`. No leas `process.env.X` directo fuera de estos archivos de config (excepción ya existente: `PORT` en `main.ts`).
 
 ## Convenciones de código
 
@@ -95,7 +96,7 @@ Nest CLI (basado en `tsc`, no webpack) **no reescribe los alias al compilar** �
 - `pnpm build` encadena `tsc-alias` después de `nest build` para reescribir los alias a rutas relativas en `dist/`.
 - `tsconfig.build.json` fija `rootDir: "./src"` (por eso `dist/main.js` queda plano, no `dist/src/main.js` — si algo importa por `dist/main`, revisa esto primero).
 - Los tests e2e corren con Jest, que no lee `paths` de `tsconfig.json` por su cuenta: el mismo mapeo está duplicado como `moduleNameMapper` en `test/jest-e2e.json`. Si agregas un alias nuevo, actualízalo en los tres lugares (`tsconfig.json`, y si el alias se usa en `test/`, también en `jest-e2e.json`).
-- Si cambias `rootDir`/`paths` y el watch mode (`pnpm start:dev`) empieza a fallar con `Cannot find module '.../dist/main'`, borra `tsconfig.build.tsbuildinfo` (caché incremental de `tsc`, gitignored) — queda desalineado con la config nueva y produce un build a medias.
+- `tsconfig.json` **no** tiene `"incremental": true` a propósito: `nest-cli.json` ya tiene `deleteOutDir: true` (borra `dist/` en cada build/start), y esa combinación con `incremental` es la que rompía builds — `tsc` veía en su caché (`.tsbuildinfo`) que un archivo sin cambios "ya estaba compilado" y no lo volvía a emitir, aunque `dist/` acababa de quedar vacío. Resultado: builds a medias, sin patrón obvio. No lo reactives sin quitar `deleteOutDir` o sin borrar el `.tsbuildinfo` en cada build.
 
 ## Qué evitar como agente
 
