@@ -68,8 +68,9 @@ recibido → en preparación → listo → entregado
 
 ### Repositorios
 
-- **Repositorios separados**: `mokka-cafe-frontend` y `mokka-cafe-backend` (no monorepo)
-- Justificación: es un solo proyecto/una sola app por ahora; un monorepo agregaría complejidad innecesaria (Turborepo, workspaces) sin beneficio real todavía
+- **Un solo repositorio** (`github.com/JesusGuti/mokka-cafe`) con `frontend/` y `backend/` como carpetas normales — no dos repos separados, y no un monorepo con tooling propio (sin Turborepo/workspaces; cada carpeta se instala y corre de forma independiente, ver sus respectivos `README.md`)
+- Nota: la decisión original (documentada antes acá) era usar dos repositorios separados; en la práctica el proyecto se armó como uno solo. Si en algún momento se separan de verdad, esta sección y los templates de `.github/` deben actualizarse.
+- Implicación práctica: `.github/` (templates de PR/issues, CI si se agrega) vive en la raíz del repo — GitHub no reconoce `.github/` dentro de subcarpetas.
 
 ### Frontend
 
@@ -133,4 +134,4 @@ Guía detallada de convenciones y buenas prácticas: [`../backend/AGENTS.md`](..
 
 ---
 
-_Última actualización: 15 de agosto de 2026 (stack de backend confirmado y documentado en `backend/AGENTS.md`; estructura de frontend alineada con `frontend/AGENTS.md`)_
+_Última actualización: 16 de agosto de 2026 (corregido §4: es un solo repositorio, no dos separados como se había documentado; agregados templates de PR/issues en `.github/`)_

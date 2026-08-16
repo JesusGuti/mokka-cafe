@@ -1,0 +1,38 @@
+name: Feature / mejora
+description: Proponer algo nuevo o un cambio a algo existente
+labels: ["enhancement"]
+body:
+  - type: dropdown
+    id: area
+    attributes:
+      label: Área
+      options:
+        - Frontend
+        - Backend
+        - Ambos / no estoy seguro
+    validations:
+      required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Qué problema resuelve
+      description: Qué falta hoy o qué no funciona bien
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Propuesta
+      description: Cómo te imaginas que funcione (si ya tienes una idea)
+    validations:
+      required: false
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Contexto adicional
+      description: Referencias, capturas, relación con otras decisiones en docs/project-context.md
+    validations:
+      required: false
