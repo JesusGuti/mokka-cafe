@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+
+<html class="light" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Mokka Admin - Reportes de Venta</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600&amp;family=Work+Sans:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "secondary": "#B5562E",
+                    "on-tertiary": "#FFFDF8",
+                    "tertiary-fixed-dim": "#A9BB86",
+                    "outline-variant": "#DCD3C4",
+                    "on-error-container": "#6E1F16",
+                    "surface-container-high": "#ECE0CB",
+                    "on-secondary-fixed-variant": "#7A3A1C",
+                    "inverse-primary": "#D8C4AE",
+                    "surface-bright": "#FBF6EC",
+                    "on-tertiary-fixed": "#243014",
+                    "error-container": "#F3D2CB",
+                    "on-error": "#FFFDF8",
+                    "on-surface": "#2A1B10",
+                    "secondary-fixed-dim": "#E8A87D",
+                    "on-tertiary-fixed-variant": "#4E5C38",
+                    "on-background": "#2A1B10",
+                    "primary-fixed-dim": "#D8C4AE",
+                    "background": "#F7F0E3",
+                    "paper-receipt": "#FBF7EE",
+                    "inverse-surface": "#372A1E",
+                    "secondary-container": "#F0C7AE",
+                    "surface-container-lowest": "#ffffff",
+                    "cup-white": "#FFFDF8",
+                    "primary-container": "#3A2A1E",
+                    "on-primary-fixed-variant": "#5C4433",
+                    "primary": "#2A1B10",
+                    "on-surface-variant": "#5B4C3D",
+                    "surface": "#F7F0E3",
+                    "surface-container-highest": "#E4D7C0",
+                    "surface-dim": "#E0D5C2",
+                    "on-primary-container": "#C9B9A6",
+                    "surface-tint": "#7A4A28",
+                    "surface-container-low": "#FBF4E7",
+                    "error": "#A23327",
+                    "tertiary-container": "#D8E0C4",
+                    "on-secondary-container": "#7A3A1C",
+                    "on-secondary": "#FFFDF8",
+                    "on-primary-fixed": "#2A1B10",
+                    "on-tertiary-container": "#3D4A2A",
+                    "inverse-on-surface": "#F6EEE1",
+                    "on-secondary-fixed": "#3A1D0C",
+                    "tertiary": "#3D4A2A",
+                    "tertiary-fixed": "#E4EBD3",
+                    "surface-container": "#F2E8D6",
+                    "secondary-fixed": "#F6DCC7",
+                    "surface-variant": "#E4D7C2",
+                    "on-primary": "#FFFDF8",
+                    "outline": "#8A7561",
+                    "milk-beige": "#DCD3C4",
+                    "primary-fixed": "#F1E4D3"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "xl": "40px",
+                    "lg": "24px",
+                    "gutter": "16px",
+                    "margin-tablet": "32px",
+                    "unit": "4px",
+                    "md": "16px",
+                    "sm": "8px",
+                    "xs": "4px",
+                    "margin-mobile": "16px"
+            },
+            "fontFamily": {
+                    "body-md": ["Work Sans"],
+                    "headline-lg": ["Fraunces"],
+                    "headline-xl": ["Fraunces"],
+                    "price-display": ["Work Sans"],
+                    "body-lg": ["Work Sans"],
+                    "label-md": ["Work Sans"],
+                    "headline-md": ["Fraunces"]
+            },
+            "fontSize": {
+                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "headline-lg": ["32px", {"lineHeight": "40px", "fontWeight": "600"}],
+                    "headline-xl": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                    "price-display": ["20px", {"lineHeight": "24px", "fontWeight": "600"}],
+                    "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                    "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.05em", "fontWeight": "500"}],
+                    "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "500"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+      .material-symbols-outlined {
+        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        display: inline-block;
+        vertical-align: middle;
+      }
+
+      .perforated-edge {
+        background-image: radial-gradient(circle, transparent 70%, #FBF7EE 75%);
+        background-size: 12px 12px;
+        background-position: 0 100%;
+        background-repeat: repeat-x;
+        height: 6px;
+        width: 100%;
+        position: absolute;
+        bottom: -3px;
+        left: 0;
+      }
+
+      .chart-bar-glow {
+        filter: drop-shadow(0 0 4px rgba(181, 86, 46, 0.25));
+      }
+
+      body {
+        background-color: #F7F0E3; /* Crema Mokka */
+      }
+    </style>
+</head>
+<body class="font-body-md text-on-surface min-h-screen flex overflow-hidden">
+<!-- SideNavBar (Shared Component) -->
+<aside class="hidden md:flex flex-col h-screen p-md gap-sm bg-surface-container-low dark:bg-surface-container-lowest border-r border-milk-beige dark:border-outline-variant w-64 shrink-0">
+<div class="mb-lg px-sm">
+<h1 class="font-headline-md text-headline-md text-primary dark:text-primary-fixed mb-xs">Mokka Admin</h1>
+<p class="font-body-md text-on-surface-variant opacity-70">Barista Panel</p>
+</div>
+<nav class="flex-1 flex flex-col gap-xs">
+<!-- POS -->
+<a class="flex items-center gap-md px-md py-sm transition-all duration-200 ease-in-out text-on-surface-variant dark:text-outline hover:bg-milk-beige/10" href="#">
+<span class="material-symbols-outlined">point_of_sale</span>
+<span class="font-body-md text-body-md">POS</span>
+</a>
+<!-- Cocina -->
+<a class="flex items-center gap-md px-md py-sm transition-all duration-200 ease-in-out text-on-surface-variant dark:text-outline hover:bg-milk-beige/10" href="#">
+<span class="material-symbols-outlined">restaurant</span>
+<span class="font-body-md text-body-md">Cocina</span>
+</a>
+<!-- Inventario -->
+<a class="flex items-center gap-md px-md py-sm transition-all duration-200 ease-in-out text-on-surface-variant dark:text-outline hover:bg-milk-beige/10" href="#">
+<span class="material-symbols-outlined">inventory_2</span>
+<span class="font-body-md text-body-md">Inventario</span>
+</a>
+<!-- Reportes (Active) -->
+<a class="flex items-center gap-md px-md py-sm transition-all duration-200 ease-in-out bg-secondary-container dark:bg-secondary text-on-secondary-container dark:text-on-secondary rounded-lg" href="#">
+<span class="material-symbols-outlined">bar_chart</span>
+<span class="font-body-md text-body-md">Reportes</span>
+</a>
+</nav>
+<div class="mt-auto flex flex-col gap-xs border-t border-milk-beige pt-md">
+<a class="flex items-center gap-md px-md py-sm transition-all duration-200 ease-in-out text-on-surface-variant dark:text-outline hover:bg-milk-beige/10" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-body-md text-body-md">Settings</span>
+</a>
+<a class="flex items-center gap-md px-md py-sm transition-all duration-200 ease-in-out text-on-surface-variant dark:text-outline hover:bg-milk-beige/10" href="#">
+<span class="material-symbols-outlined">logout</span>
+<span class="font-body-md text-body-md">Logout</span>
+</a>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="flex-1 flex flex-col overflow-y-auto bg-surface-container-low/30 relative">
+<!-- TopNavBar (Shared Component) -->
+<header class="flex justify-between items-center px-lg w-full h-16 bg-background dark:bg-surface sticky top-0 z-10">
+<div class="flex items-center gap-md">
+<h2 class="font-headline-lg text-headline-lg text-primary dark:text-primary-fixed">Reportes</h2>
+</div>
+<div class="flex items-center gap-lg">
+<div class="hidden md:flex items-center bg-surface-container-high rounded-full px-md py-xs gap-sm">
+<span class="material-symbols-outlined text-outline">search</span>
+<input class="bg-transparent border-none focus:ring-0 text-body-md w-48" placeholder="Buscar reportes..." type="text"/>
+</div>
+<div class="flex items-center gap-md">
+<button class="material-symbols-outlined text-primary dark:text-primary-fixed scale-95 active:opacity-80 transition-transform">notifications</button>
+<button class="material-symbols-outlined text-primary dark:text-primary-fixed scale-95 active:opacity-80 transition-transform">account_circle</button>
+</div>
+</div>
+</header>
+<!-- Page Canvas -->
+<div class="p-lg md:p-xl flex flex-col gap-lg">
+<!-- Summary Bento Grid -->
+<section class="grid grid-cols-1 md:grid-cols-3 gap-lg">
+<!-- Total Sales -->
+<div class="bg-cup-white p-lg rounded-xl shadow-[0_4px_20px_-4px_rgba(42,27,16,0.05)] border border-milk-beige relative overflow-hidden group">
+<div class="absolute top-0 right-0 p-md opacity-10 group-hover:opacity-20 transition-opacity">
+<span class="material-symbols-outlined text-6xl" style="font-size: 80px;">payments</span>
+</div>
+<p class="text-label-md font-label-md text-on-surface-variant uppercase tracking-wider mb-sm">Total Ventas (Hoy)</p>
+<h3 class="font-headline-xl text-headline-xl text-secondary">Bs. 4.250,50</h3>
+<div class="mt-md flex items-center gap-xs text-tertiary font-medium">
+<span class="material-symbols-outlined text-sm">trending_up</span>
+<span class="text-body-md">+12% vs ayer</span>
+</div>
+</div>
+<!-- Best Seller -->
+<div class="bg-cup-white p-lg rounded-xl shadow-[0_4px_20px_-4px_rgba(42,27,16,0.05)] border border-milk-beige relative overflow-hidden group">
+<div class="absolute top-0 right-0 p-md opacity-10 group-hover:opacity-20 transition-opacity">
+<span class="material-symbols-outlined text-6xl" style="font-size: 80px;">coffee</span>
+</div>
+<p class="text-label-md font-label-md text-on-surface-variant uppercase tracking-wider mb-sm">Producto Estrella</p>
+<h3 class="font-headline-md text-headline-md text-primary">Flat White</h3>
+<p class="text-body-md text-on-surface-variant mt-xs">48 unidades vendidas</p>
+<div class="mt-md flex items-center gap-xs text-secondary font-medium">
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">favorite</span>
+<span class="text-body-md">Favorito local</span>
+</div>
+</div>
+<!-- Peak Hour -->
+<div class="bg-cup-white p-lg rounded-xl shadow-[0_4px_20px_-4px_rgba(42,27,16,0.05)] border border-milk-beige relative overflow-hidden group">
+<div class="absolute top-0 right-0 p-md opacity-10 group-hover:opacity-20 transition-opacity">
+<span class="material-symbols-outlined text-6xl" style="font-size: 80px;">schedule</span>
+</div>
+<p class="text-label-md font-label-md text-on-surface-variant uppercase tracking-wider mb-sm">Hora Pico</p>
+<h3 class="font-headline-md text-headline-md text-primary">08:30 - 09:45</h3>
+<p class="text-body-md text-on-surface-variant mt-xs">Promedio 2.4 min / pedido</p>
+<div class="mt-md flex items-center gap-xs text-on-surface-variant font-medium">
+<span class="material-symbols-outlined text-sm">groups</span>
+<span class="text-body-md">Alta afluencia</span>
+</div>
+</div>
+</section>
+<!-- Chart Section & Actions -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-lg">
+<!-- Revenue vs Cost Chart -->
+<section class="lg:col-span-8 bg-cup-white p-lg rounded-xl shadow-[0_4px_20px_-4px_rgba(42,27,16,0.05)] border border-milk-beige">
+<div class="flex justify-between items-center mb-xl">
+<div>
+<h4 class="font-headline-md text-headline-md text-primary">Ingresos vs Costos</h4>
+<p class="text-body-md text-on-surface-variant">Análisis de margen semanal</p>
+</div>
+<div class="flex gap-md">
+<div class="flex items-center gap-xs">
+<div class="w-3 h-3 rounded-full bg-secondary"></div>
+<span class="text-label-md font-label-md text-on-surface-variant">Ingresos</span>
+</div>
+<div class="flex items-center gap-xs">
+<div class="w-3 h-3 rounded-full bg-outline"></div>
+<span class="text-label-md font-label-md text-on-surface-variant">Costos</span>
+</div>
+</div>
+</div>
+<!-- Simplified Visual Chart Area -->
+<div class="h-64 flex items-end justify-between gap-md px-md border-b border-milk-beige/50 pb-xs relative">
+<!-- Chart Lines (Y-Axis Simulation) -->
+<div class="absolute left-0 w-full h-full pointer-events-none flex flex-col justify-between opacity-10">
+<div class="border-t border-primary w-full"></div>
+<div class="border-t border-primary w-full"></div>
+<div class="border-t border-primary w-full"></div>
+</div>
+<!-- Bar Groups -->
+<div class="flex-1 flex flex-col items-center gap-xs group">
+<div class="w-full flex gap-1 items-end h-full">
+<div class="w-1/2 bg-secondary rounded-t h-[60%] chart-bar-glow"></div>
+<div class="w-1/2 bg-outline/40 rounded-t h-[25%]"></div>
+</div>
+<span class="text-label-md font-label-md text-on-surface-variant">Lun</span>
+</div>
+<div class="flex-1 flex flex-col items-center gap-xs group">
+<div class="w-full flex gap-1 items-end h-full">
+<div class="w-1/2 bg-secondary rounded-t h-[75%] chart-bar-glow"></div>
+<div class="w-1/2 bg-outline/40 rounded-t h-[30%]"></div>
+</div>
+<span class="text-label-md font-label-md text-on-surface-variant">Mar</span>
+</div>
+<div class="flex-1 flex flex-col items-center gap-xs group">
+<div class="w-full flex gap-1 items-end h-full">
+<div class="w-1/2 bg-secondary rounded-t h-[90%] chart-bar-glow"></div>
+<div class="w-1/2 bg-outline/40 rounded-t h-[40%]"></div>
+</div>
+<span class="text-label-md font-label-md text-on-surface-variant">Mie</span>
+</div>
+<div class="flex-1 flex flex-col items-center gap-xs group">
+<div class="w-full flex gap-1 items-end h-full">
+<div class="w-1/2 bg-secondary rounded-t h-[80%] chart-bar-glow"></div>
+<div class="w-1/2 bg-outline/40 rounded-t h-[35%]"></div>
+</div>
+<span class="text-label-md font-label-md text-on-surface-variant">Jue</span>
+</div>
+<div class="flex-1 flex flex-col items-center gap-xs group">
+<div class="w-full flex gap-1 items-end h-full">
+<div class="w-1/2 bg-secondary rounded-t h-[95%] chart-bar-glow"></div>
+<div class="w-1/2 bg-outline/40 rounded-t h-[45%]"></div>
+</div>
+<span class="text-label-md font-label-md text-on-surface-variant">Vie</span>
+</div>
+<div class="flex-1 flex flex-col items-center gap-xs group">
+<div class="w-full flex gap-1 items-end h-full">
+<div class="w-1/2 bg-secondary rounded-t h-[85%] chart-bar-glow"></div>
+<div class="w-1/2 bg-outline/40 rounded-t h-[30%]"></div>
+</div>
+<span class="text-label-md font-label-md text-on-surface-variant">Sab</span>
+</div>
+<div class="flex-1 flex flex-col items-center gap-xs group">
+<div class="w-full flex gap-1 items-end h-full">
+<div class="w-1/2 bg-secondary rounded-t h-[40%] chart-bar-glow"></div>
+<div class="w-1/2 bg-outline/40 rounded-t h-[15%]"></div>
+</div>
+<span class="text-label-md font-label-md text-on-surface-variant">Dom</span>
+</div>
+</div>
+</section>
+<!-- Transactions & Export Area -->
+<section class="lg:col-span-4 flex flex-col gap-lg">
+<!-- Export Box -->
+<div class="bg-primary-container p-lg rounded-xl text-on-tertiary shadow-lg flex flex-col justify-center items-center text-center group">
+<div class="w-16 h-16 bg-white/10 rounded-full flex items-center justify-center mb-md group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-3xl">download</span>
+</div>
+<h5 class="font-headline-md text-headline-md mb-xs">Consolidado de Ventas</h5>
+<p class="text-body-md opacity-80 mb-lg">Exporta todos los datos del período seleccionado para contabilidad.</p>
+<button class="w-full py-md bg-secondary hover:bg-secondary/90 text-white rounded-lg font-semibold flex items-center justify-center gap-md transition-colors active:scale-95">
+<span class="material-symbols-outlined">table_chart</span>
+                            Exportar a Excel
+                        </button>
+</div>
+<!-- Small Inventory Alert -->
+<div class="bg-error-container p-md rounded-lg border border-error/20 flex items-start gap-md">
+<span class="material-symbols-outlined text-error">warning</span>
+<div>
+<p class="text-label-md font-bold text-on-error-container">Alerta de Insumos</p>
+<p class="text-body-md text-on-error-container">Leche de Almendras (Bajo stock)</p>
+</div>
+</div>
+</section>
+</div>
+<!-- Recent Transactions Table -->
+<section class="bg-cup-white rounded-xl shadow-[0_4px_20px_-4px_rgba(42,27,16,0.05)] border border-milk-beige overflow-hidden">
+<div class="p-lg border-b border-milk-beige flex justify-between items-center">
+<h4 class="font-headline-md text-headline-md text-primary">Transacciones Recientes</h4>
+<button class="text-secondary font-semibold hover:underline flex items-center gap-xs">
+                        Ver historial completo
+                        <span class="material-symbols-outlined">chevron_right</span>
+</button>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead class="bg-surface-container-low">
+<tr>
+<th class="p-md text-label-md font-label-md text-on-surface-variant uppercase tracking-wider">Orden ID</th>
+<th class="p-md text-label-md font-label-md text-on-surface-variant uppercase tracking-wider">Producto</th>
+<th class="p-md text-label-md font-label-md text-on-surface-variant uppercase tracking-wider">Hora</th>
+<th class="p-md text-label-md font-label-md text-on-surface-variant uppercase tracking-wider">Método</th>
+<th class="p-md text-label-md font-label-md text-on-surface-variant uppercase tracking-wider">Estado</th>
+<th class="p-md text-label-md font-label-md text-on-surface-variant uppercase tracking-wider text-right">Total</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-milk-beige/30">
+<tr class="hover:bg-milk-beige/5 transition-colors">
+<td class="p-md font-medium">#MK-8492</td>
+<td class="p-md">
+<div class="flex items-center gap-sm">
+<div class="w-8 h-8 rounded-full bg-surface-container-high flex items-center justify-center">
+<span class="material-symbols-outlined text-sm">coffee</span>
+</div>
+<span>2x Capuccino, 1x Pan au Chocolat</span>
+</div>
+</td>
+<td class="p-md text-on-surface-variant">14:22</td>
+<td class="p-md text-on-surface-variant">Tarjeta</td>
+<td class="p-md">
+<span class="px-sm py-1 bg-tertiary-fixed text-on-tertiary-fixed rounded-full text-xs font-bold flex items-center w-fit gap-1">
+<span class="material-symbols-outlined text-[12px]" style="font-variation-settings: 'FILL' 1;">favorite</span> Completada
+                                    </span>
+</td>
+<td class="p-md text-right font-bold text-secondary">Bs. 85,00</td>
+</tr>
+<tr class="hover:bg-milk-beige/5 transition-colors">
+<td class="p-md font-medium">#MK-8491</td>
+<td class="p-md">
+<div class="flex items-center gap-sm">
+<div class="w-8 h-8 rounded-full bg-surface-container-high flex items-center justify-center">
+<span class="material-symbols-outlined text-sm">coffee</span>
+</div>
+<span>1x V60 Specialty Blend</span>
+</div>
+</td>
+<td class="p-md text-on-surface-variant">14:15</td>
+<td class="p-md text-on-surface-variant">QR Pago</td>
+<td class="p-md">
+<span class="px-sm py-1 bg-tertiary-fixed text-on-tertiary-fixed rounded-full text-xs font-bold flex items-center w-fit gap-1">
+<span class="material-symbols-outlined text-[12px]" style="font-variation-settings: 'FILL' 1;">favorite</span> Completada
+                                    </span>
+</td>
+<td class="p-md text-right font-bold text-secondary">Bs. 35,00</td>
+</tr>
+<tr class="hover:bg-milk-beige/5 transition-colors">
+<td class="p-md font-medium">#MK-8490</td>
+<td class="p-md">
+<div class="flex items-center gap-sm">
+<div class="w-8 h-8 rounded-full bg-surface-container-high flex items-center justify-center">
+<span class="material-symbols-outlined text-sm">bakery_dining</span>
+</div>
+<span>3x Avocado Toast Special</span>
+</div>
+</td>
+<td class="p-md text-on-surface-variant">13:58</td>
+<td class="p-md text-on-surface-variant">Efectivo</td>
+<td class="p-md">
+<span class="px-sm py-1 bg-tertiary-fixed text-on-tertiary-fixed rounded-full text-xs font-bold flex items-center w-fit gap-1">
+<span class="material-symbols-outlined text-[12px]" style="font-variation-settings: 'FILL' 1;">favorite</span> Completada
+                                    </span>
+</td>
+<td class="p-md text-right font-bold text-secondary">Bs. 120,00</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+</div>
+<!-- Footer Separation Visual (Tactile Modernism) -->
+<div class="mt-xl pb-xl flex justify-center opacity-40">
+<div class="w-32 h-1 bg-milk-beige rounded-full"></div>
+</div>
+</main>
+<!-- Floating Action Button (Contextual for Home/Admin) -->
+<button class="fixed bottom-lg right-lg w-14 h-14 bg-secondary text-white rounded-full shadow-2xl flex items-center justify-center hover:scale-110 active:scale-95 transition-transform z-20">
+<span class="material-symbols-outlined text-3xl">add</span>
+</button>
+<script>
+        // Simple micro-interaction for active state simulation
+        document.querySelectorAll('nav a').forEach(link => {
+            link.addEventListener('click', (e) => {
+                document.querySelectorAll('nav a').forEach(l => {
+                    l.classList.remove('bg-secondary-container', 'dark:bg-secondary', 'text-on-secondary-container', 'dark:text-on-secondary', 'rounded-lg');
+                    l.classList.add('text-on-surface-variant', 'dark:text-outline', 'hover:bg-milk-beige/10');
+                });
+                link.classList.add('bg-secondary-container', 'dark:bg-secondary', 'text-on-secondary-container', 'dark:text-on-secondary', 'rounded-lg');
+                link.classList.remove('text-on-surface-variant', 'dark:text-outline', 'hover:bg-milk-beige/10');
+            });
+        });
+    </script>
+</body></html>

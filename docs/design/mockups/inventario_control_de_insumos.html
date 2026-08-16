@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+
+<html class="light" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Mokka Café - Inventario</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@400;500;600;700&amp;family=Work+Sans:wght@300;400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "secondary": "#B5562E",
+                        "on-tertiary": "#FFFDF8",
+                        "tertiary-fixed-dim": "#A9BB86",
+                        "outline-variant": "#DCD3C4",
+                        "on-error-container": "#6E1F16",
+                        "surface-container-high": "#ECE0CB",
+                        "on-secondary-fixed-variant": "#7A3A1C",
+                        "inverse-primary": "#D8C4AE",
+                        "surface-bright": "#FBF6EC",
+                        "on-tertiary-fixed": "#243014",
+                        "error-container": "#F3D2CB",
+                        "on-error": "#FFFDF8",
+                        "on-surface": "#2A1B10",
+                        "secondary-fixed-dim": "#E8A87D",
+                        "on-tertiary-fixed-variant": "#4E5C38",
+                        "on-background": "#2A1B10",
+                        "primary-fixed-dim": "#D8C4AE",
+                        "background": "#F7F0E3",
+                        "paper-receipt": "#FBF7EE",
+                        "inverse-surface": "#372A1E",
+                        "secondary-container": "#F0C7AE",
+                        "surface-container-lowest": "#ffffff",
+                        "cup-white": "#FFFDF8",
+                        "primary-container": "#3A2A1E",
+                        "on-primary-fixed-variant": "#5C4433",
+                        "primary": "#2A1B10",
+                        "on-surface-variant": "#5B4C3D",
+                        "surface": "#F7F0E3",
+                        "surface-container-highest": "#E4D7C0",
+                        "surface-dim": "#E0D5C2",
+                        "on-primary-container": "#C9B9A6",
+                        "surface-tint": "#7A4A28",
+                        "surface-container": "#F2E8D6",
+                        "surface-container-low": "#FBF4E7",
+                        "error": "#A23327",
+                        "tertiary-container": "#D8E0C4",
+                        "on-secondary-container": "#7A3A1C",
+                        "on-secondary": "#FFFDF8",
+                        "on-primary-fixed": "#2A1B10",
+                        "on-tertiary-container": "#3D4A2A",
+                        "inverse-on-surface": "#F6EEE1",
+                        "on-secondary-fixed": "#3A1D0C",
+                        "tertiary": "#3D4A2A",
+                        "tertiary-fixed": "#E4EBD3",
+                        "secondary-fixed": "#F6DCC7",
+                        "surface-variant": "#E4D7C2",
+                        "on-primary": "#FFFDF8",
+                        "outline": "#8A7561",
+                        "milk-beige": "#DCD3C4",
+                        "primary-fixed": "#F1E4D3",
+                        "sage-green": "#5B6B3F"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "xl": "40px",
+                        "lg": "24px",
+                        "gutter": "16px",
+                        "margin-tablet": "32px",
+                        "unit": "4px",
+                        "md": "16px",
+                        "sm": "8px",
+                        "xs": "4px",
+                        "margin-mobile": "16px"
+                    },
+                    "fontFamily": {
+                        "body-md": ["Work Sans"],
+                        "headline-lg": ["Fraunces"],
+                        "headline-xl": ["Fraunces"],
+                        "price-display": ["Work Sans"],
+                        "body-lg": ["Work Sans"],
+                        "label-md": ["Work Sans"],
+                        "headline-md": ["Fraunces"]
+                    },
+                    "fontSize": {
+                        "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "headline-lg": ["32px", {"lineHeight": "40px", "fontWeight": "600"}],
+                        "headline-xl": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                        "price-display": ["20px", {"lineHeight": "24px", "fontWeight": "600"}],
+                        "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                        "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.05em", "fontWeight": "500"}],
+                        "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "500"}]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body { background-color: #F7F0E3; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .stock-low {
+            background-color: #5B6B3F1F; /* Moss at low opacity */
+            border-left: 4px solid #5B6B3F;
+        }
+        .plaster-texture {
+            background-image: url("https://www.transparenttextures.com/patterns/concrete-wall.png");
+            background-blend-mode: overlay;
+        }
+        .dashed-divider {
+            background-image: linear-gradient(to right, #8A7561 50%, rgba(255,255,255,0) 0%);
+            background-position: bottom;
+            background-size: 10px 1px;
+            background-repeat: repeat-x;
+        }
+    </style>
+</head>
+<body class="flex min-h-screen font-body-md text-on-surface">
+<!-- SideNavBar Anchor -->
+<aside class="hidden md:flex flex-col h-screen p-md gap-sm bg-surface-container-low dark:bg-surface-container-lowest border-r border-milk-beige dark:border-outline-variant w-64 fixed left-0">
+<div class="mb-lg px-sm">
+<h1 class="font-headline-md text-headline-md text-primary dark:text-primary-fixed">Mokka Admin</h1>
+<p class="text-on-surface-variant opacity-70">Barista Panel</p>
+</div>
+<nav class="flex-1 flex flex-col gap-xs">
+<a class="flex items-center gap-md p-md text-on-surface-variant dark:text-outline hover:bg-milk-beige/10 transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined">point_of_sale</span>
+<span>POS</span>
+</a>
+<a class="flex items-center gap-md p-md text-on-surface-variant dark:text-outline hover:bg-milk-beige/10 transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined">restaurant</span>
+<span>Cocina</span>
+</a>
+<a class="flex items-center gap-md p-md bg-secondary-container dark:bg-secondary text-on-secondary-container dark:text-on-secondary rounded-lg transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined">inventory_2</span>
+<span>Inventario</span>
+</a>
+<a class="flex items-center gap-md p-md text-on-surface-variant dark:text-outline hover:bg-milk-beige/10 transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined">bar_chart</span>
+<span>Reportes</span>
+</a>
+</nav>
+<div class="mt-auto flex flex-col gap-xs">
+<a class="flex items-center gap-md p-md text-on-surface-variant hover:bg-milk-beige/20 transition-all" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span>Settings</span>
+</a>
+<a class="flex items-center gap-md p-md text-on-surface-variant hover:bg-milk-beige/20 transition-all" href="#">
+<span class="material-symbols-outlined">logout</span>
+<span>Logout</span>
+</a>
+</div>
+</aside>
+<!-- Main Content Canvas -->
+<main class="flex-1 md:ml-64 p-lg min-h-screen">
+<!-- Top Navigation (Shell Implementation) -->
+<header class="flex justify-between items-center w-full h-16 mb-lg">
+<div class="flex flex-col">
+<h2 class="font-headline-lg text-headline-lg text-primary">Gestión de Inventario</h2>
+<p class="font-label-md text-label-md text-on-surface-variant uppercase">Actualizado hace 5 minutos</p>
+</div>
+<div class="flex items-center gap-md">
+<button class="bg-secondary-container text-on-secondary-container px-lg py-sm rounded-full font-label-md flex items-center gap-sm hover:scale-95 active:opacity-80 transition-transform">
+<span class="material-symbols-outlined">add_circle</span>
+                    Entrada de Mercancía
+                </button>
+<button class="border border-secondary text-secondary px-lg py-sm rounded-full font-label-md flex items-center gap-sm hover:scale-95 transition-transform">
+<span class="material-symbols-outlined">remove_circle</span>
+                    Registrar Merma
+                </button>
+</div>
+</header>
+<!-- Bento Grid Layout -->
+<div class="grid grid-cols-12 gap-lg">
+<!-- Consumo Semanal Chart (Hero Section of the Grid) -->
+<section class="col-span-12 lg:col-span-8 bg-cup-white p-lg rounded-xl shadow-sm border border-milk-beige/30 relative overflow-hidden">
+<div class="flex justify-between items-start mb-lg">
+<div>
+<h3 class="font-headline-md text-headline-md text-primary">Consumo Semanal</h3>
+<p class="text-on-surface-variant text-body-md">Tendencia de los últimos 7 días</p>
+</div>
+<div class="text-right">
+<span class="text-headline-lg font-headline-lg text-secondary">842</span>
+<p class="text-label-md uppercase text-on-surface-variant">Unidades vendidas</p>
+</div>
+</div>
+<!-- Simple Visual Chart Component -->
+<div class="h-48 w-full flex items-end gap-sm mt-md">
+<div class="flex-1 bg-milk-beige h-2/3 rounded-t-lg transition-all hover:bg-secondary cursor-pointer group relative">
+<span class="absolute -top-8 left-1/2 -translate-x-1/2 text-xs font-bold opacity-0 group-hover:opacity-100 transition-opacity">Lun</span>
+</div>
+<div class="flex-1 bg-milk-beige h-1/2 rounded-t-lg transition-all hover:bg-secondary cursor-pointer group relative">
+<span class="absolute -top-8 left-1/2 -translate-x-1/2 text-xs font-bold opacity-0 group-hover:opacity-100 transition-opacity">Mar</span>
+</div>
+<div class="flex-1 bg-milk-beige h-3/4 rounded-t-lg transition-all hover:bg-secondary cursor-pointer group relative">
+<span class="absolute -top-8 left-1/2 -translate-x-1/2 text-xs font-bold opacity-0 group-hover:opacity-100 transition-opacity">Mie</span>
+</div>
+<div class="flex-1 bg-secondary h-5/6 rounded-t-lg transition-all cursor-pointer group relative">
+<span class="absolute -top-8 left-1/2 -translate-x-1/2 text-xs font-bold opacity-100">Jue</span>
+</div>
+<div class="flex-1 bg-milk-beige h-2/3 rounded-t-lg transition-all hover:bg-secondary cursor-pointer group relative">
+<span class="absolute -top-8 left-1/2 -translate-x-1/2 text-xs font-bold opacity-0 group-hover:opacity-100 transition-opacity">Vie</span>
+</div>
+<div class="flex-1 bg-milk-beige h-1/3 rounded-t-lg transition-all hover:bg-secondary cursor-pointer group relative">
+<span class="absolute -top-8 left-1/2 -translate-x-1/2 text-xs font-bold opacity-0 group-hover:opacity-100 transition-opacity">Sab</span>
+</div>
+<div class="flex-1 bg-milk-beige h-1/4 rounded-t-lg transition-all hover:bg-secondary cursor-pointer group relative">
+<span class="absolute -top-8 left-1/2 -translate-x-1/2 text-xs font-bold opacity-0 group-hover:opacity-100 transition-opacity">Dom</span>
+</div>
+</div>
+</section>
+<!-- Resumen de Alertas (Sidebar component) -->
+<section class="col-span-12 lg:col-span-4 flex flex-col gap-gutter">
+<div class="bg-paper-receipt p-lg rounded-xl border border-milk-beige/50 plaster-texture h-full">
+<div class="flex items-center gap-sm mb-md text-sage-green">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">warning</span>
+<h3 class="font-headline-md text-headline-md">Alertas de Stock</h3>
+</div>
+<div class="space-y-sm">
+<div class="p-md rounded-lg stock-low flex justify-between items-center">
+<div>
+<p class="font-body-lg font-bold text-on-surface">Leche de Avena</p>
+<p class="text-label-md text-on-surface-variant">Quedan 3 litros</p>
+</div>
+<span class="material-symbols-outlined text-sage-green">priority_high</span>
+</div>
+<div class="p-md rounded-lg stock-low flex justify-between items-center">
+<div>
+<p class="font-body-lg font-bold text-on-surface">Granos Etiopía</p>
+<p class="text-label-md text-on-surface-variant">Quedan 1.5kg</p>
+</div>
+<span class="material-symbols-outlined text-sage-green">priority_high</span>
+</div>
+</div>
+<button class="w-full mt-lg text-secondary underline font-label-md uppercase tracking-widest text-center">Ver todas las alertas</button>
+</div>
+</section>
+<!-- Lista de Insumos (Main Inventory Table/Grid) -->
+<section class="col-span-12 bg-cup-white rounded-xl shadow-sm border border-milk-beige/30 overflow-hidden">
+<div class="p-lg border-b border-milk-beige/20 flex justify-between items-center">
+<h3 class="font-headline-md text-headline-md">Insumos Actuales</h3>
+<div class="flex gap-sm">
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
+<input class="pl-10 pr-4 py-2 rounded-full border-none bg-surface-container text-body-md focus:ring-2 focus:ring-secondary/20" placeholder="Buscar insumo..." type="text"/>
+</div>
+</div>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left">
+<thead>
+<tr class="bg-surface-container-low text-on-surface-variant uppercase font-label-md text-xs tracking-widest">
+<th class="px-lg py-md">Insumo</th>
+<th class="px-lg py-md">Categoría</th>
+<th class="px-lg py-md text-center">Cantidad</th>
+<th class="px-lg py-md">Unidad</th>
+<th class="px-lg py-md">Estado</th>
+<th class="px-lg py-md text-right">Acciones</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-milk-beige/10">
+<!-- Etiopia -->
+<tr class="hover:bg-milk-beige/5 transition-colors">
+<td class="px-lg py-md">
+<div class="flex items-center gap-md">
+<div class="w-12 h-12 rounded-lg bg-cover bg-center" data-alt="Close-up of roasted Ethiopian coffee beans in a wooden scoop, showcasing their rich texture and light oily sheen against a warm light wood background." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDufp67OOYY0_w1W0_nyhoJ-t-lVq4A0mb6eO_gIzBxuyAsNvIvlrA7dA-nhnDgDYCH5K33YfiBFp8lQpdRMuecJO-MDV5il1Qwe03QQpUq6sdvlXEACkwttZF1K454BwWAvEsNUe5jZf0cRVvKxikdyAxdeyr864fzTBkZ3oV0XqzneHZYIzxH0l9AuNn7Qs5AYIN-YiK5aYS0xKOG_lp_5nDxC02-1YrQTWMSw2Uo89-h_v6ZPEaC2w')"></div>
+<div>
+<p class="font-body-lg font-bold">Granos de café (Etiopía)</p>
+<p class="text-xs text-on-surface-variant">Variedad: Arabica Single Origin</p>
+</div>
+</div>
+</td>
+<td class="px-lg py-md text-on-surface-variant">Café</td>
+<td class="px-lg py-md text-center font-price-display">1.5</td>
+<td class="px-lg py-md">kg</td>
+<td class="px-lg py-md">
+<span class="px-sm py-1 bg-sage-green/10 text-sage-green rounded-full text-xs font-bold uppercase tracking-tighter">Stock Bajo</span>
+</td>
+<td class="px-lg py-md text-right">
+<button class="material-symbols-outlined text-on-surface-variant hover:text-secondary">more_vert</button>
+</td>
+</tr>
+<!-- Leche Entera -->
+<tr class="hover:bg-milk-beige/5 transition-colors">
+<td class="px-lg py-md">
+<div class="flex items-center gap-md">
+<div class="w-12 h-12 rounded-lg bg-cover bg-center" data-alt="A minimalist overhead shot of a fresh milk carton and a half-filled glass on a textured plaster surface with soft morning sunlight casting long shadows." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuA1Oc8IBfdz3S2YircGLzX81sydwtlTzGD2BrMVW-c_P0gOvx4cuaJ5w-yjLVVXUy6NDrnJM_i2Pl0kncui7fJe18QPqTICOwzI6BjugdwUs50_fxkgRhHsbXf0p44kwMZGt1-tGuwNYMK5EERsZ7fiUpAPwVO7O0_v_r4wRxEXo7rTfWh6ALdkPa6ZpQkbbfgaVztPupHqWzqzeIeew1Y0KgJCe-zD7-Iq5baw0-z81j_0Bz4MGlUUdA')"></div>
+<div>
+<p class="font-body-lg font-bold">Leche (Entera)</p>
+<p class="text-xs text-on-surface-variant">Proveedor: Granja Local</p>
+</div>
+</div>
+</td>
+<td class="px-lg py-md text-on-surface-variant">Lácteos</td>
+<td class="px-lg py-md text-center font-price-display">24</td>
+<td class="px-lg py-md">litros</td>
+<td class="px-lg py-md">
+<span class="px-sm py-1 bg-secondary/10 text-secondary rounded-full text-xs font-bold uppercase tracking-tighter">Normal</span>
+</td>
+<td class="px-lg py-md text-right">
+<button class="material-symbols-outlined text-on-surface-variant hover:text-secondary">more_vert</button>
+</td>
+</tr>
+<!-- Croissants -->
+<tr class="hover:bg-milk-beige/5 transition-colors">
+<td class="px-lg py-md">
+<div class="flex items-center gap-md">
+<div class="w-12 h-12 rounded-lg bg-cover bg-center" data-alt="A macro shot of a flaky, golden-brown croissant on a white ceramic plate, revealing delicate buttery layers and crumbs on a minimalist cafe table." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAO3lEyZCVdf39v9pT3J3QbxiYysZcMvsQdERJrGCZ0aI03q2IZXHp-x-cpJ2b3Bexz3GOTQwnYEOxxmqB1YrEHrTenwY4DGaG9RPHYMQEwI5hFmGavIvh01AtwAAH_Tviz4yQl4oDVP3_uNJBhqLtMJdmTkSnZyZO1p4vMRnJZKLz17tNh8Ut2un1Q0fTQjUSCuPUBLy_mS1eTLl-gk5Uubs5HIPib4SDJpMADGCk71yXN2YcrLdY9Sw')"></div>
+<div>
+<p class="font-body-lg font-bold">Croissants</p>
+<p class="text-xs text-on-surface-variant">Horneado hoy: 06:00 AM</p>
+</div>
+</div>
+</td>
+<td class="px-lg py-md text-on-surface-variant">Bollería</td>
+<td class="px-lg py-md text-center font-price-display">12</td>
+<td class="px-lg py-md">unidades</td>
+<td class="px-lg py-md">
+<span class="px-sm py-1 bg-secondary/10 text-secondary rounded-full text-xs font-bold uppercase tracking-tighter">Normal</span>
+</td>
+<td class="px-lg py-md text-right">
+<button class="material-symbols-outlined text-on-surface-variant hover:text-secondary">more_vert</button>
+</td>
+</tr>
+<!-- Vasos -->
+<tr class="hover:bg-milk-beige/5 transition-colors">
+<td class="px-lg py-md">
+<div class="flex items-center gap-md">
+<div class="w-12 h-12 rounded-lg bg-cover bg-center" data-alt="Stacks of cream-colored paper coffee cups with sustainable material labels, arranged neatly in a bright, modern, minimalist coffee shop setting." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuB_sMIyA_6gQNmh1d8LP_cPGPmCIUVK989wYwjk5jElLf_OW0O4DaOd_my828MV3tYTfJrAXt-1oYeNyG5NbqSh0bAPikak3xwALLphRwK-HjOD-10GENm4xvPzByNp-jdj7NcropqQussslhj3FaTfriQJ_y6tWvxyquMigYFQD9PzwgJRweQ57PiEqsz1eNjq3FuEZNuIEK2iU43qXP8nq7kjXksaEm6NmwYf9_zeMnaftBSPx9SIqg')"></div>
+<div>
+<p class="font-body-lg font-bold">Vasos (12oz)</p>
+<p class="text-xs text-on-surface-variant">Material: Compostable</p>
+</div>
+</div>
+</td>
+<td class="px-lg py-md text-on-surface-variant">Descartables</td>
+<td class="px-lg py-md text-center font-price-display">500</td>
+<td class="px-lg py-md">unidades</td>
+<td class="px-lg py-md">
+<span class="px-sm py-1 bg-secondary/10 text-secondary rounded-full text-xs font-bold uppercase tracking-tighter">Abundante</span>
+</td>
+<td class="px-lg py-md text-right">
+<button class="material-symbols-outlined text-on-surface-variant hover:text-secondary">more_vert</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="p-lg flex items-center justify-between bg-surface-container-lowest">
+<p class="text-body-md text-on-surface-variant">Mostrando 4 de 42 insumos</p>
+<div class="flex gap-xs">
+<button class="w-10 h-10 flex items-center justify-center rounded-lg border border-milk-beige hover:bg-milk-beige/20"><span class="material-symbols-outlined">chevron_left</span></button>
+<button class="w-10 h-10 flex items-center justify-center rounded-lg bg-secondary text-white">1</button>
+<button class="w-10 h-10 flex items-center justify-center rounded-lg border border-milk-beige hover:bg-milk-beige/20">2</button>
+<button class="w-10 h-10 flex items-center justify-center rounded-lg border border-milk-beige hover:bg-milk-beige/20">3</button>
+<button class="w-10 h-10 flex items-center justify-center rounded-lg border border-milk-beige hover:bg-milk-beige/20"><span class="material-symbols-outlined">chevron_right</span></button>
+</div>
+</div>
+</section>
+</div>
+</main>
+<!-- Floating Action Button (Shell Logic Override for Mobile) -->
+<button class="md:hidden fixed bottom-6 right-6 w-14 h-14 bg-secondary text-white rounded-full shadow-lg flex items-center justify-center scale-95 active:scale-90 transition-transform">
+<span class="material-symbols-outlined">add</span>
+</button>
+<script>
+        // Micro-interaction for table rows
+        document.querySelectorAll('tbody tr').forEach(row => {
+            row.addEventListener('click', () => {
+                // Potential for opening a detail drawer
+                console.log('Row clicked for quick edit');
+            });
+        });
+
+        // Search bar interaction
+        const searchInput = document.querySelector('input[type="text"]');
+        searchInput.addEventListener('focus', () => {
+            searchInput.parentElement.classList.add('ring-2', 'ring-secondary/20');
+        });
+        searchInput.addEventListener('blur', () => {
+            searchInput.parentElement.classList.remove('ring-2', 'ring-secondary/20');
+        });
+    </script>
+</body></html>

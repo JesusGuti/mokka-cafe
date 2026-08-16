@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+
+<html class="light" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Mokka Café - KDS Dashboard</title>
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600&amp;family=Work+Sans:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "secondary": "#B5562E",
+                    "on-tertiary": "#FFFDF8",
+                    "tertiary-fixed-dim": "#A9BB86",
+                    "outline-variant": "#DCD3C4",
+                    "on-error-container": "#6E1F16",
+                    "surface-container-high": "#ECE0CB",
+                    "on-secondary-fixed-variant": "#7A3A1C",
+                    "inverse-primary": "#D8C4AE",
+                    "surface-bright": "#FBF6EC",
+                    "on-tertiary-fixed": "#243014",
+                    "error-container": "#F3D2CB",
+                    "on-error": "#FFFDF8",
+                    "on-surface": "#2A1B10",
+                    "secondary-fixed-dim": "#E8A87D",
+                    "on-tertiary-fixed-variant": "#4E5C38",
+                    "on-background": "#2A1B10",
+                    "primary-fixed-dim": "#D8C4AE",
+                    "background": "#F7F0E3",
+                    "paper-receipt": "#FBF7EE",
+                    "inverse-surface": "#372A1E",
+                    "secondary-container": "#F0C7AE",
+                    "surface-container-lowest": "#ffffff",
+                    "cup-white": "#FFFDF8",
+                    "primary-container": "#3A2A1E",
+                    "on-primary-fixed-variant": "#5C4433",
+                    "primary": "#2A1B10",
+                    "on-surface-variant": "#5B4C3D",
+                    "surface": "#F7F0E3",
+                    "surface-container-highest": "#E4D7C0",
+                    "surface-dim": "#E0D5C2",
+                    "on-primary-container": "#C9B9A6",
+                    "surface-tint": "#7A4A28",
+                    "surface-container-low": "#FBF4E7",
+                    "error": "#A23327",
+                    "tertiary-container": "#D8E0C4",
+                    "on-secondary-container": "#7A3A1C",
+                    "on-secondary": "#FFFDF8",
+                    "on-primary-fixed": "#2A1B10",
+                    "on-tertiary-container": "#3D4A2A",
+                    "inverse-on-surface": "#F6EEE1",
+                    "on-secondary-fixed": "#3A1D0C",
+                    "tertiary": "#3D4A2A",
+                    "tertiary-fixed": "#E4EBD3",
+                    "surface-container": "#F2E8D6",
+                    "secondary-fixed": "#F6DCC7",
+                    "surface-variant": "#E4D7C2",
+                    "on-primary": "#FFFDF8",
+                    "outline": "#8A7561",
+                    "milk-beige": "#DCD3C4",
+                    "primary-fixed": "#F1E4D3",
+                    "sage-green": "#5B6B3F",
+                    "caramel": "#A9793A"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "xl": "40px",
+                    "lg": "24px",
+                    "gutter": "16px",
+                    "margin-tablet": "32px",
+                    "unit": "4px",
+                    "md": "16px",
+                    "sm": "8px",
+                    "xs": "4px",
+                    "margin-mobile": "16px"
+            },
+            "fontFamily": {
+                    "body-md": ["Work Sans"],
+                    "headline-lg": ["Fraunces"],
+                    "headline-xl": ["Fraunces"],
+                    "price-display": ["Work Sans"],
+                    "body-lg": ["Work Sans"],
+                    "label-md": ["Work Sans"],
+                    "headline-md": ["Fraunces"]
+            },
+            "fontSize": {
+                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "headline-lg": ["32px", {"lineHeight": "40px", "fontWeight": "600"}],
+                    "headline-xl": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                    "price-display": ["20px", {"lineHeight": "24px", "fontWeight": "600"}],
+                    "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                    "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.05em", "fontWeight": "500"}],
+                    "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "500"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body {
+            background-color: #F7F0E3; /* Crema Mokka */
+            color: #2A1B10;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .order-card {
+            box-shadow: 0 4px 12px rgba(42, 27, 16, 0.05);
+            border: 1px solid #DCD3C4;
+            transition: transform 0.2s ease;
+        }
+        .order-card:hover {
+            transform: translateY(-2px);
+        }
+        .perforated-edge {
+            background-image: radial-gradient(circle, transparent 70%, #F7F0E3 70%);
+            background-size: 12px 12px;
+            background-position: 0 100%;
+            background-repeat: repeat-x;
+            height: 6px;
+            width: 100%;
+        }
+        .status-badge {
+            font-family: 'Work Sans', sans-serif;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            font-size: 10px;
+        }
+        @keyframes pulse-soft {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        .active-timer {
+            animation: pulse-soft 2s infinite ease-in-out;
+        }
+    </style>
+</head>
+<body class="font-body-md text-body-md h-screen flex overflow-hidden">
+<!-- Sidebar - Mapped from JSON -->
+<aside class="hidden md:flex flex-col h-screen p-md gap-sm bg-surface-container-low border-r border-milk-beige w-64">
+<div class="mb-xl px-sm">
+<h1 class="font-headline-md text-headline-md text-primary">Mokka Admin</h1>
+<p class="font-body-md text-on-surface-variant opacity-70">Barista Panel</p>
+</div>
+<nav class="flex-1 space-y-2">
+<button class="flex items-center gap-md px-md py-sm w-full text-left text-on-surface-variant hover:bg-milk-beige/20 transition-all rounded-lg">
+<span class="material-symbols-outlined" data-icon="point_of_sale">point_of_sale</span>
+<span class="font-body-md">POS</span>
+</button>
+<button class="flex items-center gap-md px-md py-sm w-full text-left bg-secondary-container text-on-secondary-container rounded-lg transition-all">
+<span class="material-symbols-outlined" data-icon="restaurant">restaurant</span>
+<span class="font-body-md">Cocina</span>
+</button>
+<button class="flex items-center gap-md px-md py-sm w-full text-left text-on-surface-variant hover:bg-milk-beige/20 transition-all rounded-lg">
+<span class="material-symbols-outlined" data-icon="inventory_2">inventory_2</span>
+<span class="font-body-md">Inventario</span>
+</button>
+<button class="flex items-center gap-md px-md py-sm w-full text-left text-on-surface-variant hover:bg-milk-beige/20 transition-all rounded-lg">
+<span class="material-symbols-outlined" data-icon="bar_chart">bar_chart</span>
+<span class="font-body-md">Reportes</span>
+</button>
+</nav>
+<div class="border-t border-milk-beige/30 pt-md space-y-2">
+<button class="flex items-center gap-md px-md py-sm w-full text-left text-on-surface-variant hover:bg-milk-beige/20 transition-all rounded-lg">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="font-body-md">Settings</span>
+</button>
+<button class="flex items-center gap-md px-md py-sm w-full text-left text-on-surface-variant hover:bg-milk-beige/20 transition-all rounded-lg">
+<span class="material-symbols-outlined" data-icon="logout">logout</span>
+<span class="font-body-md">Logout</span>
+</button>
+</div>
+</aside>
+<!-- Main Content Canvas -->
+<main class="flex-1 flex flex-col overflow-hidden">
+<!-- Top Bar -->
+<header class="flex justify-between items-center px-lg w-full h-16 bg-surface-container-low">
+<div class="flex items-center gap-md">
+<h2 class="font-headline-md text-headline-md text-primary">Pantalla de Cocina</h2>
+<div class="h-4 w-[1px] bg-milk-beige"></div>
+<span class="text-on-surface-variant font-label-md">8 Pedidos activos</span>
+</div>
+<div class="flex items-center gap-lg">
+<div class="flex items-center gap-sm bg-cup-white border border-milk-beige px-md py-xs rounded-full">
+<span class="w-2 h-2 rounded-full bg-sage-green"></span>
+<span class="text-label-md text-on-surface-variant">Conectado</span>
+</div>
+<div class="flex items-center gap-sm">
+<span class="material-symbols-outlined text-primary cursor-pointer" data-icon="notifications">notifications</span>
+<span class="material-symbols-outlined text-primary cursor-pointer" data-icon="account_circle">account_circle</span>
+</div>
+</div>
+</header>
+<!-- KDS Board -->
+<section class="flex-1 overflow-x-auto p-lg flex gap-lg items-start">
+<!-- NEW ORDERS (Sage Green) -->
+<div class="flex flex-col gap-md min-w-[340px]">
+<div class="flex items-center justify-between border-b border-sage-green/30 pb-sm mb-sm">
+<h3 class="font-headline-md text-sage-green flex items-center gap-sm">
+                        Nuevos
+                        <span class="bg-sage-green text-white text-[12px] px-2 py-0.5 rounded-full">3</span>
+</h3>
+</div>
+<!-- Order Card 1 -->
+<div class="order-card bg-cup-white rounded-xl overflow-hidden flex flex-col">
+<div class="h-2 w-full bg-sage-green"></div>
+<div class="p-md">
+<div class="flex justify-between items-start mb-md">
+<div>
+<h4 class="font-headline-md text-primary">Mateo R.</h4>
+<p class="text-label-md text-on-surface-variant opacity-60">#4209 • Local</p>
+</div>
+<div class="flex flex-col items-end">
+<span class="active-timer text-sage-green font-bold text-headline-md">2'</span>
+<span class="text-[10px] text-on-surface-variant font-bold uppercase">En espera</span>
+</div>
+</div>
+<div class="space-y-sm mb-lg">
+<div class="flex items-center justify-between">
+<span class="font-body-lg text-primary">1x Latte de Avena</span>
+<span class="text-label-md px-2 py-0.5 border border-milk-beige rounded text-secondary italic">Caliente</span>
+</div>
+<div class="flex items-center justify-between">
+<span class="font-body-lg text-primary">1x Croissant Jamón</span>
+<span class="text-label-md px-2 py-0.5 border border-milk-beige rounded text-secondary italic">Tostado</span>
+</div>
+</div>
+<button class="w-full py-md bg-sage-green text-white rounded-lg font-bold flex items-center justify-center gap-sm active:scale-95 transition-transform">
+<span class="material-symbols-outlined" data-icon="play_arrow">play_arrow</span>
+                            EMPEZAR PREPARACIÓN
+                        </button>
+</div>
+<div class="perforated-edge"></div>
+</div>
+<!-- Order Card 2 -->
+<div class="order-card bg-cup-white rounded-xl overflow-hidden flex flex-col">
+<div class="h-2 w-full bg-sage-green"></div>
+<div class="p-md">
+<div class="flex justify-between items-start mb-md">
+<div>
+<h4 class="font-headline-md text-primary">Sofía V.</h4>
+<p class="text-label-md text-on-surface-variant opacity-60">#4210 • Delivery</p>
+</div>
+<div class="flex flex-col items-end">
+<span class="text-sage-green font-bold text-headline-md">1'</span>
+<span class="text-[10px] text-on-surface-variant font-bold uppercase">Recibido</span>
+</div>
+</div>
+<div class="space-y-sm mb-lg">
+<div class="flex items-center justify-between">
+<span class="font-body-lg text-primary">2x Espresso Macchiato</span>
+</div>
+</div>
+<button class="w-full py-md bg-sage-green text-white rounded-lg font-bold flex items-center justify-center gap-sm active:scale-95 transition-transform">
+<span class="material-symbols-outlined" data-icon="play_arrow">play_arrow</span>
+                            EMPEZAR PREPARACIÓN
+                        </button>
+</div>
+<div class="perforated-edge"></div>
+</div>
+</div>
+<!-- IN PREPARATION (Caramel) -->
+<div class="flex flex-col gap-md min-w-[340px]">
+<div class="flex items-center justify-between border-b border-caramel/30 pb-sm mb-sm">
+<h3 class="font-headline-md text-caramel flex items-center gap-sm">
+                        En Preparación
+                        <span class="bg-caramel text-white text-[12px] px-2 py-0.5 rounded-full">2</span>
+</h3>
+</div>
+<!-- In Progress Card -->
+<div class="order-card bg-cup-white rounded-xl overflow-hidden flex flex-col border-2 border-caramel">
+<div class="h-2 w-full bg-caramel"></div>
+<div class="p-md">
+<div class="flex justify-between items-start mb-md">
+<div>
+<h4 class="font-headline-md text-primary">Lucía G.</h4>
+<p class="text-label-md text-on-surface-variant opacity-60">#4205 • Local</p>
+</div>
+<div class="flex flex-col items-end">
+<span class="active-timer text-caramel font-bold text-headline-md">8'</span>
+<span class="text-[10px] text-on-surface-variant font-bold uppercase">Preparando</span>
+</div>
+</div>
+<div class="space-y-sm mb-lg">
+<div class="flex items-center justify-between p-sm bg-milk-beige/10 rounded border border-dashed border-milk-beige">
+<span class="font-body-lg text-primary flex items-center gap-sm">
+<span class="material-symbols-outlined text-sage-green" data-icon="check_circle">check_circle</span>
+                                    1x Flat White
+                                </span>
+</div>
+<div class="flex items-center justify-between">
+<span class="font-body-lg text-primary">1x Avocado Toast</span>
+<span class="text-label-md px-2 py-0.5 bg-caramel/10 text-caramel rounded font-bold">EN HORNO</span>
+</div>
+</div>
+<button class="w-full py-md bg-caramel text-white rounded-lg font-bold flex items-center justify-center gap-sm active:scale-95 transition-transform shadow-lg shadow-caramel/20">
+<span class="material-symbols-outlined" data-icon="favorite" style="font-variation-settings: 'FILL' 1;">favorite</span>
+                            MARCAR COMO LISTO
+                        </button>
+</div>
+<div class="perforated-edge"></div>
+</div>
+<!-- In Progress Card 2 -->
+<div class="order-card bg-cup-white rounded-xl overflow-hidden flex flex-col">
+<div class="h-2 w-full bg-caramel"></div>
+<div class="p-md">
+<div class="flex justify-between items-start mb-md">
+<div>
+<h4 class="font-headline-md text-primary">Carlos D.</h4>
+<p class="text-label-md text-on-surface-variant opacity-60">#4207 • Local</p>
+</div>
+<div class="flex flex-col items-end">
+<span class="text-caramel font-bold text-headline-md">5'</span>
+<span class="text-[10px] text-on-surface-variant font-bold uppercase">Preparando</span>
+</div>
+</div>
+<div class="space-y-sm mb-lg">
+<div class="flex items-center justify-between">
+<span class="font-body-lg text-primary">1x Cold Brew c/ Crema</span>
+</div>
+<div class="flex items-center justify-between">
+<span class="font-body-lg text-primary">1x Muffin de Arándanos</span>
+</div>
+</div>
+<button class="w-full py-md bg-caramel text-white rounded-lg font-bold flex items-center justify-center gap-sm active:scale-95 transition-transform">
+<span class="material-symbols-outlined" data-icon="favorite" style="font-variation-settings: 'FILL' 1;">favorite</span>
+                            MARCAR COMO LISTO
+                        </button>
+</div>
+<div class="perforated-edge"></div>
+</div>
+</div>
+<!-- READY / COMPLETED (Latte Art Heart) -->
+<div class="flex flex-col gap-md min-w-[340px]">
+<div class="flex items-center justify-between border-b border-secondary/30 pb-sm mb-sm">
+<h3 class="font-headline-md text-secondary flex items-center gap-sm">
+                        Listos
+                        <span class="material-symbols-outlined" data-icon="favorite" style="font-variation-settings: 'FILL' 1;">favorite</span>
+</h3>
+</div>
+<!-- Ready Card -->
+<div class="order-card bg-surface-container-highest rounded-xl overflow-hidden flex flex-col opacity-80 grayscale-[0.2]">
+<div class="h-2 w-full bg-secondary"></div>
+<div class="p-md">
+<div class="flex justify-between items-start mb-md">
+<div>
+<h4 class="font-headline-md text-primary line-through opacity-50">Elena P.</h4>
+<p class="text-label-md text-on-surface-variant opacity-60">#4201 • Para Llevar</p>
+</div>
+<div class="flex flex-col items-end text-secondary">
+<span class="material-symbols-outlined text-4xl" data-icon="favorite" style="font-variation-settings: 'FILL' 1;">favorite</span>
+<span class="text-[10px] font-bold uppercase">Listo</span>
+</div>
+</div>
+<div class="space-y-sm mb-lg opacity-50">
+<div class="flex items-center gap-sm">
+<span class="material-symbols-outlined text-secondary" data-icon="check_circle">check_circle</span>
+<span class="font-body-lg text-primary">1x Capuccino Doble</span>
+</div>
+<div class="flex items-center gap-sm">
+<span class="material-symbols-outlined text-secondary" data-icon="check_circle">check_circle</span>
+<span class="font-body-lg text-primary">2x Cookies de Avena</span>
+</div>
+</div>
+<button class="w-full py-md border-2 border-secondary text-secondary rounded-lg font-bold flex items-center justify-center gap-sm hover:bg-secondary hover:text-white transition-colors">
+                            ENTREGAR PEDIDO
+                        </button>
+</div>
+<div class="perforated-edge"></div>
+</div>
+<!-- Ready Card 2 -->
+<div class="order-card bg-surface-container-highest rounded-xl overflow-hidden flex flex-col opacity-80">
+<div class="h-2 w-full bg-secondary"></div>
+<div class="p-md">
+<div class="flex justify-between items-start mb-md">
+<div>
+<h4 class="font-headline-md text-primary line-through opacity-50">Javier S.</h4>
+<p class="text-label-md text-on-surface-variant opacity-60">#4198 • Local</p>
+</div>
+<div class="flex flex-col items-end text-secondary">
+<span class="material-symbols-outlined text-4xl" data-icon="favorite" style="font-variation-settings: 'FILL' 1;">favorite</span>
+<span class="text-[10px] font-bold uppercase">Listo</span>
+</div>
+</div>
+<div class="space-y-sm mb-lg opacity-50">
+<div class="flex items-center gap-sm">
+<span class="material-symbols-outlined text-secondary" data-icon="check_circle">check_circle</span>
+<span class="font-body-lg text-primary">1x Iced Latte</span>
+</div>
+</div>
+<button class="w-full py-md border-2 border-secondary text-secondary rounded-lg font-bold flex items-center justify-center gap-sm hover:bg-secondary hover:text-white transition-colors">
+                            ENTREGAR PEDIDO
+                        </button>
+</div>
+<div class="perforated-edge"></div>
+</div>
+</div>
+</section>
+<!-- Contextual Barista Alerts Footer -->
+<footer class="h-12 bg-primary-container text-on-primary-container px-lg flex items-center justify-between">
+<div class="flex gap-lg items-center overflow-hidden">
+<span class="text-label-md flex items-center gap-sm whitespace-nowrap">
+<span class="material-symbols-outlined text-[18px] text-caramel" data-icon="warning">warning</span>
+                    Stock Bajo: Leche de Almendras
+                </span>
+<span class="text-label-md flex items-center gap-sm whitespace-nowrap opacity-60">
+<span class="material-symbols-outlined text-[18px]" data-icon="timer">timer</span>
+                    Tiempo promedio entrega: 12 min
+                </span>
+</div>
+<div class="flex items-center gap-md">
+<span class="text-label-md font-bold">14:32</span>
+<span class="material-symbols-outlined text-[20px]" data-icon="sync">sync</span>
+</div>
+</footer>
+</main>
+<!-- Micro-interactions Script -->
+<script>
+        // Simple visual feedback for order transitions
+        document.querySelectorAll('button').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const card = this.closest('.order-card');
+                if (this.innerText.includes('EMPEZAR')) {
+                    this.innerText = 'PROCESANDO...';
+                    this.classList.add('opacity-50');
+                    setTimeout(() => {
+                        card.style.opacity = '0';
+                        card.style.transform = 'translateX(20px)';
+                        setTimeout(() => card.remove(), 300);
+                    }, 500);
+                } else if (this.innerText.includes('LISTO')) {
+                    this.innerHTML = '<span class="material-symbols-outlined" style="font-variation-settings: \'FILL\' 1;">favorite</span> ¡PEDIDO LISTO!';
+                    this.classList.replace('bg-caramel', 'bg-secondary');
+                    setTimeout(() => {
+                        card.style.opacity = '0';
+                        card.style.transform = 'translateY(-20px)';
+                        setTimeout(() => card.remove(), 300);
+                    }, 800);
+                }
+            });
+        });
+
+        // Dynamic Timer logic could be added here to increment times in real-time
+    </script>
+</body></html>
