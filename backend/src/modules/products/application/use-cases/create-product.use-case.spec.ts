@@ -29,7 +29,7 @@ describe('CreateProductUseCase', () => {
     const product = await useCase.execute({
       name: 'Espresso',
       priceCents: 2500,
-      category: 'bebidas',
+      categoryId: 'cat-bebidas',
     });
 
     expect(product.name).toBe('Espresso');

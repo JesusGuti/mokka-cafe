@@ -32,7 +32,7 @@ export function ProductCard({ product, onSelect }: Readonly<ProductCardProps>) {
           aria-hidden
         />
         <span className="absolute top-2 right-2 rounded bg-secondary px-2 py-1 text-xs font-semibold tabular-nums text-secondary-foreground">
-          {formatCurrency(product.price)}
+          {formatCurrency(product.priceCents)}
         </span>
       </div>
       <div className="p-3 text-center">

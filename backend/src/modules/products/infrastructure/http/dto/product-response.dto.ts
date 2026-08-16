@@ -5,7 +5,7 @@ export class ProductResponseDto {
   name!: string;
   description!: string | null;
   priceCents!: number;
-  category!: string;
+  categoryId!: string;
   isAvailable!: boolean;
   createdAt!: Date;
   updatedAt!: Date;

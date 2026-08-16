@@ -5,7 +5,7 @@ export interface ProductProps {
   name: string;
   description: string | null;
   priceCents: number;
-  category: string;
+  categoryId: string;
   isAvailable: boolean;
   createdAt: Date;
   updatedAt: Date;
@@ -23,7 +23,7 @@ export class Product {
     name: string;
     description?: string | null;
     priceCents: number;
-    category: string;
+    categoryId: string;
     isAvailable?: boolean;
   }): Product {
     const name = props.name?.trim();
@@ -35,7 +35,7 @@ export class Product {
         'El precio debe ser un entero positivo expresado en centavos',
       );
     }
-    if (!props.category?.trim()) {
+    if (!props.categoryId?.trim()) {
       throw new InvalidProductError('La categoría del producto es obligatoria');
     }
 
@@ -45,7 +45,7 @@ export class Product {
       name,
       description: props.description ?? null,
       priceCents: props.priceCents,
-      category: props.category.trim(),
+      categoryId: props.categoryId.trim(),
       isAvailable: props.isAvailable ?? true,
       createdAt: now,
       updatedAt: now,
@@ -74,8 +74,8 @@ export class Product {
   get priceCents(): number {
     return this.props.priceCents;
   }
-  get category(): string {
-    return this.props.category;
+  get categoryId(): string {
+    return this.props.categoryId;
   }
   get isAvailable(): boolean {
     return this.props.isAvailable;

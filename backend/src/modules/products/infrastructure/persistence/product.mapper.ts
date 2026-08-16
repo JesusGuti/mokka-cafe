@@ -8,7 +8,7 @@ export class ProductMapper {
       name: raw.name,
       description: raw.description,
       priceCents: raw.priceCents,
-      category: raw.category,
+      categoryId: raw.categoryId,
       isAvailable: raw.isAvailable,
       createdAt: raw.createdAt,
       updatedAt: raw.updatedAt,
