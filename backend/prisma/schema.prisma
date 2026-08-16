@@ -11,15 +11,310 @@ datasource db {
   provider = "postgresql"
 }
 
+// ============================================================
+// Menú
+// ============================================================
+
+model ProductCategory {
+  id        String   @id @default(uuid())
+  name      String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  products Product[]
+
+  @@map("product_categories")
+}
+
 model Product {
   id          String   @id @default(uuid())
   name        String
   description String?
   priceCents  Int
-  category    String
+  categoryId  String
   isAvailable Boolean  @default(true)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
+  category   ProductCategory   @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+  modifiers  ProductModifier[]
+  orderItems OrderItem[]
+  recipes    Recipe[]
+
   @@map("products")
+}
+
+model Modifier {
+  id         String   @id @default(uuid())
+  name       String
+  priceCents Int
+  isActive   Boolean  @default(true)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  products   ProductModifier[]
+  orderItems OrderItemModifier[]
+  recipes    ModifierRecipe[]
+
+  @@map("modifiers")
+}
+
+model ProductModifier {
+  id         String   @id @default(uuid())
+  productId  String
+  modifierId String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  product  Product  @relation(fields: [productId], references: [id], onDelete: Restrict)
+  modifier Modifier @relation(fields: [modifierId], references: [id], onDelete: Restrict)
+
+  @@unique([productId, modifierId])
+  @@map("product_modifiers")
+}
+
+// ============================================================
+// Pedidos y pagos
+// ============================================================
+
+enum OrderType {
+  DINE_IN
+  TAKEAWAY
+  DELIVERY
+}
+
+enum OrderItemStatus {
+  RECEIVED
+  IN_PREPARATION
+  READY
+  DELIVERED
+  CANCELLED
+}
+
+enum PaymentMethod {
+  CASH
+  CARD
+  QR
+}
+
+model Order {
+  id        String    @id @default(uuid())
+  tableId   String?
+  orderType OrderType @default(DINE_IN)
+  waiterId  String
+  openedAt  DateTime  @default(now())
+  closedAt  DateTime?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  table    Table?      @relation(fields: [tableId], references: [id], onDelete: Restrict)
+  waiter   User        @relation("OrderWaiter", fields: [waiterId], references: [id], onDelete: Restrict)
+  items    OrderItem[]
+  payments Payment[]
+
+  @@map("orders")
+}
+
+model OrderItem {
+  id             String          @id @default(uuid())
+  orderId        String
+  productId      String
+  quantity       Int
+  unitPriceCents Int
+  discountCents  Int             @default(0)
+  status         OrderItemStatus @default(RECEIVED)
+  notes          String?
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+
+  order     Order               @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product   Product             @relation(fields: [productId], references: [id], onDelete: Restrict)
+  modifiers OrderItemModifier[]
+  movements InventoryMovement[]
+
+  @@map("order_items")
+}
+
+model OrderItemModifier {
+  id                String   @id @default(uuid())
+  orderItemId       String
+  modifierId        String
+  priceCentsAtOrder Int
+  quantity          Int      @default(1)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  orderItem OrderItem @relation(fields: [orderItemId], references: [id], onDelete: Cascade)
+  modifier  Modifier  @relation(fields: [modifierId], references: [id], onDelete: Restrict)
+
+  @@map("order_item_modifiers")
+}
+
+model Payment {
+  id          String        @id @default(uuid())
+  orderId     String
+  amountCents Int
+  method      PaymentMethod
+  tipCents    Int?
+  cashierId   String
+  paidAt      DateTime      @default(now())
+  voidedAt    DateTime?
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  order   Order @relation(fields: [orderId], references: [id], onDelete: Restrict)
+  cashier User  @relation("PaymentCashier", fields: [cashierId], references: [id], onDelete: Restrict)
+
+  @@map("payments")
+}
+
+// ============================================================
+// Mesas y personal
+// ============================================================
+
+enum UserRole {
+  MESERO
+  CAJERO
+  ADMIN
+}
+
+model Table {
+  id        String   @id @default(uuid())
+  number    Int      @unique
+  label     String?
+  capacity  Int?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  orders Order[]
+
+  @@map("tables")
+}
+
+model User {
+  id           String   @id @default(uuid())
+  name         String
+  email        String   @unique
+  passwordHash String
+  role         UserRole
+  isActive     Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  ordersAsWaiter     Order[]             @relation("OrderWaiter")
+  paymentsAsCashier  Payment[]           @relation("PaymentCashier")
+  inventoryMovements InventoryMovement[]
+
+  @@map("users")
+}
+
+// ============================================================
+// Inventario
+// ============================================================
+
+enum InventoryMovementType {
+  ENTRY
+  SALE
+  WASTE
+  ADJUSTMENT
+}
+
+model IngredientCategory {
+  id        String   @id @default(uuid())
+  name      String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  ingredients Ingredient[]
+
+  @@map("ingredient_categories")
+}
+
+model Ingredient {
+  id                String   @id @default(uuid())
+  name              String
+  unit              String
+  categoryId        String
+  currentStockQty   Decimal  @default(0) @db.Decimal(10, 3)
+  minStockThreshold Decimal? @db.Decimal(10, 3)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  category        IngredientCategory  @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+  lots            InventoryLot[]
+  recipes         Recipe[]
+  modifierRecipes ModifierRecipe[]
+  movements       InventoryMovement[]
+
+  @@map("ingredients")
+}
+
+model InventoryLot {
+  id                String    @id @default(uuid())
+  ingredientId      String
+  quantityReceived  Decimal   @db.Decimal(10, 3)
+  quantityRemaining Decimal   @db.Decimal(10, 3)
+  unitCostCents     Int
+  supplier          String?
+  receivedAt        DateTime  @default(now())
+  expiresAt         DateTime?
+  discountPercent   Int?
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  ingredient Ingredient          @relation(fields: [ingredientId], references: [id], onDelete: Restrict)
+  movements  InventoryMovement[]
+
+  @@map("inventory_lots")
+}
+
+model Recipe {
+  id              String   @id @default(uuid())
+  productId       String
+  ingredientId    String
+  quantityPerUnit Decimal  @db.Decimal(10, 3)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  product    Product    @relation(fields: [productId], references: [id], onDelete: Restrict)
+  ingredient Ingredient @relation(fields: [ingredientId], references: [id], onDelete: Restrict)
+
+  @@unique([productId, ingredientId])
+  @@map("recipes")
+}
+
+model ModifierRecipe {
+  id              String   @id @default(uuid())
+  modifierId      String
+  ingredientId    String
+  quantityPerUnit Decimal  @db.Decimal(10, 3)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  modifier   Modifier   @relation(fields: [modifierId], references: [id], onDelete: Restrict)
+  ingredient Ingredient @relation(fields: [ingredientId], references: [id], onDelete: Restrict)
+
+  @@unique([modifierId, ingredientId])
+  @@map("modifier_recipes")
+}
+
+model InventoryMovement {
+  id                 String                @id @default(uuid())
+  ingredientId       String
+  lotId              String?
+  type               InventoryMovementType
+  quantity           Decimal               @db.Decimal(10, 3)
+  relatedOrderItemId String?
+  performedById      String
+  occurredAt         DateTime              @default(now())
+  notes              String?
+  createdAt          DateTime              @default(now())
+  updatedAt          DateTime              @updatedAt
+
+  ingredient       Ingredient    @relation(fields: [ingredientId], references: [id], onDelete: Restrict)
+  lot              InventoryLot? @relation(fields: [lotId], references: [id], onDelete: Restrict)
+  relatedOrderItem OrderItem?    @relation(fields: [relatedOrderItemId], references: [id], onDelete: Restrict)
+  performedBy      User          @relation(fields: [performedById], references: [id], onDelete: Restrict)
+
+  @@map("inventory_movements")
 }

@@ -1,0 +1,206 @@
+// Use DBML to define your database structure
+// Docs: https://dbml.dbdiagram.io/docs
+//
+// Generado a partir de backend/prisma/schema.prisma (fuente de verdad técnica).
+// Ver docs/database-design.md para el porqué de cada decisión de modelado.
+
+TablePartial baseEntity {
+  Id uuid [primary key, not null]
+  CreatedAt timestamp [default: `now()`]
+  UpdatedAt timestamp [default: `now()`]
+}
+
+// ============================================================
+// Menú
+// ============================================================
+
+Table ProductCategory {
+  ~baseEntity
+  name varchar [unique]
+}
+
+Table Product {
+  ~baseEntity
+  name varchar
+  description varchar [null]
+  priceCents integer
+  categoryId uuid [ref: > ProductCategory.Id]
+  isAvailable boolean [default: true]
+}
+
+Table Modifier {
+  ~baseEntity
+  name varchar
+  priceCents integer
+  isActive boolean [default: true]
+}
+
+Table ProductModifier {
+  ~baseEntity
+  productId uuid [ref: > Product.Id]
+  modifierId uuid [ref: > Modifier.Id]
+
+  indexes {
+    (productId, modifierId) [unique]
+  }
+}
+
+// ============================================================
+// Pedidos y pagos
+// ============================================================
+
+enum OrderType {
+  DINE_IN
+  TAKEAWAY
+  DELIVERY
+}
+
+enum OrderItemStatus {
+  RECEIVED
+  IN_PREPARATION
+  READY
+  DELIVERED
+  CANCELLED
+}
+
+enum PaymentMethod {
+  CASH
+  CARD
+  QR
+}
+
+Table Order {
+  ~baseEntity
+  tableId uuid [null, ref: > "Table".Id]
+  orderType OrderType [default: 'DINE_IN']
+  waiterId uuid [ref: > User.Id]
+  openedAt datetime [default: `now()`]
+  closedAt datetime [null]
+}
+
+Table OrderItem {
+  ~baseEntity
+  orderId uuid [ref: > Order.Id]
+  productId uuid [ref: > Product.Id]
+  quantity integer
+  unitPriceCents integer
+  discountCents integer [default: 0]
+  status OrderItemStatus [default: 'RECEIVED']
+  notes varchar [null]
+}
+
+Table OrderItemModifier {
+  ~baseEntity
+  orderItemId uuid [ref: > OrderItem.Id]
+  modifierId uuid [ref: > Modifier.Id]
+  priceCentsAtOrder integer
+  quantity integer [default: 1]
+}
+
+Table Payment {
+  ~baseEntity
+  orderId uuid [ref: > Order.Id]
+  amountCents integer
+  method PaymentMethod
+  tipCents integer [null]
+  cashierId uuid [ref: > User.Id]
+  paidAt datetime [default: `now()`]
+  voidedAt datetime [null]
+}
+
+// ============================================================
+// Mesas y personal
+// ============================================================
+
+enum UserRole {
+  WAITER
+  CASHIER
+  ADMIN
+}
+
+Table "Table" {
+  ~baseEntity
+  number integer [unique]
+  label varchar [null]
+  capacity integer [null]
+}
+
+Table User {
+  ~baseEntity
+  name varchar
+  email varchar [unique]
+  passwordHash varchar
+  role UserRole
+  isActive boolean [default: true]
+}
+
+// ============================================================
+// Inventario
+// ============================================================
+
+enum InventoryMovementType {
+  ENTRY
+  SALE
+  WASTE
+  ADJUSTMENT
+}
+
+Table IngredientCategory {
+  ~baseEntity
+  name varchar [unique]
+}
+
+Table Ingredient {
+  ~baseEntity
+  name varchar
+  unit varchar
+  categoryId uuid [ref: > IngredientCategory.Id]
+  currentStockQty decimal [default: 0] // decimal(10,3)
+  minStockThreshold decimal [null] // decimal(10,3)
+}
+
+Table InventoryLot {
+  ~baseEntity
+  ingredientId uuid [ref: > Ingredient.Id]
+  quantityReceived decimal // decimal(10,3)
+  quantityRemaining decimal // decimal(10,3)
+  unitCostCents integer
+  supplier varchar [null]
+  receivedAt datetime [default: `now()`]
+  expiresAt datetime [null]
+  discountPercent integer [null]
+}
+
+Table Recipe {
+  ~baseEntity
+  productId uuid [ref: > Product.Id]
+  ingredientId uuid [ref: > Ingredient.Id]
+  quantityPerUnit decimal // decimal(10,3)
+
+  indexes {
+    (productId, ingredientId) [unique]
+  }
+}
+
+Table ModifierRecipe {
+  ~baseEntity
+  modifierId uuid [ref: > Modifier.Id]
+  ingredientId uuid [ref: > Ingredient.Id]
+  quantityPerUnit decimal // decimal(10,3)
+
+  indexes {
+    (modifierId, ingredientId) [unique]
+  }
+}
+
+Table InventoryMovement {
+  ~baseEntity
+  ingredientId uuid [ref: > Ingredient.Id]
+  lotId uuid [null, ref: > InventoryLot.Id]
+  type InventoryMovementType
+  quantity decimal // decimal(10,3)
+  relatedOrderItemId uuid [null, ref: > OrderItem.Id]
+  performedById uuid [ref: > User.Id]
+  occurredAt datetime [default: `now()`]
+  notes varchar [null]
+}

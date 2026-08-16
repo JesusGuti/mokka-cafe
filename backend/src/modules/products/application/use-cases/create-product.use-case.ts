@@ -7,7 +7,7 @@ export interface CreateProductCommand {
   name: string;
   description?: string;
   priceCents: number;
-  category: string;
+  categoryId: string;
 }
 
 @Injectable()

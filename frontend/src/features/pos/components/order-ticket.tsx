@@ -28,12 +28,12 @@ export function OrderTicket({
   onDecrement,
   onCheckout,
 }: Readonly<OrderTicketProps>) {
-  const subtotal = items.reduce(
-    (sum, item) => sum + item.product.price * item.quantity,
+  const subtotalCents = items.reduce(
+    (sum, item) => sum + item.product.priceCents * item.quantity,
     0,
   );
-  const tax = subtotal * TAX_RATE;
-  const total = subtotal + tax;
+  const taxCents = Math.round(subtotalCents * TAX_RATE);
+  const totalCents = subtotalCents + taxCents;
 
   return (
     <div className="flex h-full flex-col">
@@ -85,7 +85,7 @@ export function OrderTicket({
                     </div>
                   </div>
                   <span className="text-sm tabular-nums text-foreground">
-                    {formatCurrency(item.product.price * item.quantity)}
+                    {formatCurrency(item.product.priceCents * item.quantity)}
                   </span>
                 </li>
               ))}
@@ -96,18 +96,18 @@ export function OrderTicket({
         <div className="border-t border-dashed border-border p-4">
           <div className="mb-1 flex justify-between text-sm text-muted-foreground">
             <span>Subtotal</span>
-            <span className="tabular-nums">{formatCurrency(subtotal)}</span>
+            <span className="tabular-nums">{formatCurrency(subtotalCents)}</span>
           </div>
           <div className="mb-3 flex justify-between text-sm text-muted-foreground">
             <span>Impuesto (10%)</span>
-            <span className="tabular-nums">{formatCurrency(tax)}</span>
+            <span className="tabular-nums">{formatCurrency(taxCents)}</span>
           </div>
           <div className="flex items-end justify-between border-t border-border pt-3">
             <span className="font-heading text-lg font-medium text-foreground">
               Total
             </span>
             <span className="font-heading text-lg font-medium tabular-nums text-primary">
-              {formatCurrency(total)}
+              {formatCurrency(totalCents)}
             </span>
           </div>
         </div>

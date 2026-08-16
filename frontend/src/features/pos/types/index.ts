@@ -4,7 +4,7 @@ export interface Product {
   id: string
   name: string
   description: string
-  price: number
+  priceCents: number
   category: ProductCategory
 }
 

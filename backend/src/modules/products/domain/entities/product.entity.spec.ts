@@ -7,7 +7,7 @@ describe('Product entity', () => {
       id: '1',
       name: '  Latte  ',
       priceCents: 3500,
-      category: 'bebidas',
+      categoryId: 'cat-bebidas',
     });
 
     expect(product.name).toBe('Latte');
@@ -20,7 +20,7 @@ describe('Product entity', () => {
         id: '1',
         name: '   ',
         priceCents: 100,
-        category: 'bebidas',
+        categoryId: 'cat-bebidas',
       }),
     ).toThrow(InvalidProductError);
   });
@@ -31,7 +31,7 @@ describe('Product entity', () => {
         id: '1',
         name: 'Latte',
         priceCents: -1,
-        category: 'bebidas',
+        categoryId: 'cat-bebidas',
       }),
     ).toThrow(InvalidProductError);
   });
