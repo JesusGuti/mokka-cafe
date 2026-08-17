@@ -6,7 +6,9 @@ import corsConfig from './config/cors.config';
 import databaseConfig from './config/database.config';
 import { envValidationSchema } from './config/env.validation';
 import { ProductsModule } from './modules/products/products.module';
+import { UsersModule } from './modules/users/users.module';
 import { PrismaModule } from './shared/infrastructure/prisma/prisma.module';
+import { SecurityModule } from './shared/infrastructure/security/security.module';
 
 @Module({
   imports: [
@@ -18,7 +20,9 @@ import { PrismaModule } from './shared/infrastructure/prisma/prisma.module';
       load: [corsConfig, databaseConfig],
     }),
     PrismaModule,
+    SecurityModule,
     ProductsModule,
+    UsersModule,
   ],
   controllers: [AppController],
   providers: [AppService],
