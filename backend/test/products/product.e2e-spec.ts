@@ -29,8 +29,14 @@ describe('Products (e2e)', () => {
     prisma = moduleFixture.get(PrismaService);
   });
 
+  let categoryId: string;
+
   beforeEach(async () => {
     await resetDatabase(prisma);
+    const category = await prisma.productCategory.create({
+      data: { name: 'bebidas' },
+    });
+    categoryId = category.id;
   });
 
   afterAll(async () => {
@@ -40,7 +46,7 @@ describe('Products (e2e)', () => {
   it('crea un producto y lo puede recuperar por id', async () => {
     const createRes = await request(app.getHttpServer())
       .post('/products')
-      .send({ name: 'Cappuccino', priceCents: 3200, category: 'bebidas' })
+      .send({ name: 'Cappuccino', priceCents: 3200, categoryId })
       .expect(201);
     const created = createRes.body as ProductResponseBody;
 
@@ -57,7 +63,7 @@ describe('Products (e2e)', () => {
   it('lista productos creados', async () => {
     await request(app.getHttpServer())
       .post('/products')
-      .send({ name: 'Latte', priceCents: 3000, category: 'bebidas' })
+      .send({ name: 'Latte', priceCents: 3000, categoryId })
       .expect(201);
 
     const res = await request(app.getHttpServer()).get('/products').expect(200);
