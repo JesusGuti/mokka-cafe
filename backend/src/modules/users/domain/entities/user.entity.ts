@@ -9,6 +9,7 @@ export interface UserProps extends BaseEntityProps {
   passwordHash: string;
   role: UserRole;
   isActive: boolean;
+  lastLoginAt?: Date;
 }
 
 export class User {
@@ -60,6 +61,10 @@ export class User {
     this.props.updatedAt = new Date();
   }
 
+  updateLastLogin(): void {
+    this.props.lastLoginAt = new Date();
+  }
+
   get id(): string {
     return this.props.id;
   }
@@ -77,6 +82,9 @@ export class User {
   }
   get isActive(): boolean {
     return this.props.isActive;
+  }
+  get lastLoginAt(): Date | undefined {
+    return this.props.lastLoginAt;
   }
   get createdAt(): Date {
     return this.props.createdAt;

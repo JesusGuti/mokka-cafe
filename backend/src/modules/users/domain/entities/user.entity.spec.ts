@@ -69,4 +69,17 @@ describe('User entity', () => {
     user.activate();
     expect(user.isActive).toBe(true);
   });
+
+  it('updateLastLogin() actualiza la fecha de último login', () => {
+    const user = User.create({
+      id: '1',
+      name: 'Ana',
+      email: 'ana@mokka.com',
+      passwordHash: 'hash-1',
+      role: UserRole.MESERO,
+    });
+
+    user.updateLastLogin();
+    expect(user.lastLoginAt).toBeInstanceOf(Date);
+  });
 });

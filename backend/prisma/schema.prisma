@@ -18,8 +18,8 @@ datasource db {
 model ProductCategory {
   id        String   @id @default(uuid())
   name      String   @unique
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+  updatedAt DateTime @updatedAt @db.Timestamptz(3)
 
   products Product[]
 
@@ -33,8 +33,8 @@ model Product {
   priceCents  Int
   categoryId  String
   isAvailable Boolean  @default(true)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  createdAt   DateTime @default(now()) @db.Timestamptz(3)
+  updatedAt   DateTime @updatedAt @db.Timestamptz(3)
 
   category   ProductCategory   @relation(fields: [categoryId], references: [id], onDelete: Restrict)
   modifiers  ProductModifier[]
@@ -49,8 +49,8 @@ model Modifier {
   name       String
   priceCents Int
   isActive   Boolean  @default(true)
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  createdAt  DateTime @default(now()) @db.Timestamptz(3)
+  updatedAt  DateTime @updatedAt @db.Timestamptz(3)
 
   products   ProductModifier[]
   orderItems OrderItemModifier[]
@@ -63,8 +63,8 @@ model ProductModifier {
   id         String   @id @default(uuid())
   productId  String
   modifierId String
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  createdAt  DateTime @default(now()) @db.Timestamptz(3)
+  updatedAt  DateTime @updatedAt @db.Timestamptz(3)
 
   product  Product  @relation(fields: [productId], references: [id], onDelete: Restrict)
   modifier Modifier @relation(fields: [modifierId], references: [id], onDelete: Restrict)
@@ -102,10 +102,10 @@ model Order {
   tableId   String?
   orderType OrderType @default(DINE_IN)
   waiterId  String
-  openedAt  DateTime  @default(now())
-  closedAt  DateTime?
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+  openedAt  DateTime  @default(now()) @db.Timestamptz(3)
+  closedAt  DateTime? @db.Timestamptz(3)
+  createdAt DateTime  @default(now()) @db.Timestamptz(3)
+  updatedAt DateTime  @updatedAt @db.Timestamptz(3)
 
   table    Table?      @relation(fields: [tableId], references: [id], onDelete: Restrict)
   waiter   User        @relation("OrderWaiter", fields: [waiterId], references: [id], onDelete: Restrict)
@@ -124,8 +124,8 @@ model OrderItem {
   discountCents  Int             @default(0)
   status         OrderItemStatus @default(RECEIVED)
   notes          String?
-  createdAt      DateTime        @default(now())
-  updatedAt      DateTime        @updatedAt
+  createdAt      DateTime        @default(now()) @db.Timestamptz(3)
+  updatedAt      DateTime        @updatedAt @db.Timestamptz(3)
 
   order     Order               @relation(fields: [orderId], references: [id], onDelete: Cascade)
   product   Product             @relation(fields: [productId], references: [id], onDelete: Restrict)
@@ -141,8 +141,8 @@ model OrderItemModifier {
   modifierId        String
   priceCentsAtOrder Int
   quantity          Int      @default(1)
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
+  createdAt         DateTime @default(now()) @db.Timestamptz(3)
+  updatedAt         DateTime @updatedAt @db.Timestamptz(3)
 
   orderItem OrderItem @relation(fields: [orderItemId], references: [id], onDelete: Cascade)
   modifier  Modifier  @relation(fields: [modifierId], references: [id], onDelete: Restrict)
@@ -157,10 +157,10 @@ model Payment {
   method      PaymentMethod
   tipCents    Int?
   cashierId   String
-  paidAt      DateTime      @default(now())
-  voidedAt    DateTime?
-  createdAt   DateTime      @default(now())
-  updatedAt   DateTime      @updatedAt
+  paidAt      DateTime      @default(now()) @db.Timestamptz(3)
+  voidedAt    DateTime?     @db.Timestamptz(3)
+  createdAt   DateTime      @default(now()) @db.Timestamptz(3)
+  updatedAt   DateTime      @updatedAt @db.Timestamptz(3)
 
   order   Order @relation(fields: [orderId], references: [id], onDelete: Restrict)
   cashier User  @relation("PaymentCashier", fields: [cashierId], references: [id], onDelete: Restrict)
@@ -183,8 +183,8 @@ model Table {
   number    Int      @unique
   label     String?
   capacity  Int?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+  updatedAt DateTime @updatedAt @db.Timestamptz(3)
 
   orders Order[]
 
@@ -192,14 +192,15 @@ model Table {
 }
 
 model User {
-  id           String   @id @default(uuid())
+  id           String    @id @default(uuid())
   name         String
-  email        String   @unique
+  email        String    @unique
   passwordHash String
   role         UserRole
-  isActive     Boolean  @default(true)
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  isActive     Boolean   @default(true)
+  lastLoginAt  DateTime? @db.Timestamptz(3)
+  createdAt    DateTime  @default(now()) @db.Timestamptz(3)
+  updatedAt    DateTime  @updatedAt @db.Timestamptz(3)
 
   ordersAsWaiter     Order[]             @relation("OrderWaiter")
   paymentsAsCashier  Payment[]           @relation("PaymentCashier")
@@ -222,8 +223,8 @@ enum InventoryMovementType {
 model IngredientCategory {
   id        String   @id @default(uuid())
   name      String   @unique
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+  updatedAt DateTime @updatedAt @db.Timestamptz(3)
 
   ingredients Ingredient[]
 
@@ -237,8 +238,8 @@ model Ingredient {
   categoryId        String
   currentStockQty   Decimal  @default(0) @db.Decimal(10, 3)
   minStockThreshold Decimal? @db.Decimal(10, 3)
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
+  createdAt         DateTime @default(now()) @db.Timestamptz(3)
+  updatedAt         DateTime @updatedAt @db.Timestamptz(3)
 
   category        IngredientCategory  @relation(fields: [categoryId], references: [id], onDelete: Restrict)
   lots            InventoryLot[]
@@ -256,11 +257,11 @@ model InventoryLot {
   quantityRemaining Decimal   @db.Decimal(10, 3)
   unitCostCents     Int
   supplier          String?
-  receivedAt        DateTime  @default(now())
-  expiresAt         DateTime?
+  receivedAt        DateTime  @default(now()) @db.Timestamptz(3)
+  expiresAt         DateTime? @db.Timestamptz(3)
   discountPercent   Int?
-  createdAt         DateTime  @default(now())
-  updatedAt         DateTime  @updatedAt
+  createdAt         DateTime  @default(now()) @db.Timestamptz(3)
+  updatedAt         DateTime  @updatedAt @db.Timestamptz(3)
 
   ingredient Ingredient          @relation(fields: [ingredientId], references: [id], onDelete: Restrict)
   movements  InventoryMovement[]
@@ -273,8 +274,8 @@ model Recipe {
   productId       String
   ingredientId    String
   quantityPerUnit Decimal  @db.Decimal(10, 3)
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+  createdAt       DateTime @default(now()) @db.Timestamptz(3)
+  updatedAt       DateTime @updatedAt @db.Timestamptz(3)
 
   product    Product    @relation(fields: [productId], references: [id], onDelete: Restrict)
   ingredient Ingredient @relation(fields: [ingredientId], references: [id], onDelete: Restrict)
@@ -288,8 +289,8 @@ model ModifierRecipe {
   modifierId      String
   ingredientId    String
   quantityPerUnit Decimal  @db.Decimal(10, 3)
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+  createdAt       DateTime @default(now()) @db.Timestamptz(3)
+  updatedAt       DateTime @updatedAt @db.Timestamptz(3)
 
   modifier   Modifier   @relation(fields: [modifierId], references: [id], onDelete: Restrict)
   ingredient Ingredient @relation(fields: [ingredientId], references: [id], onDelete: Restrict)
@@ -306,10 +307,10 @@ model InventoryMovement {
   quantity           Decimal               @db.Decimal(10, 3)
   relatedOrderItemId String?
   performedById      String
-  occurredAt         DateTime              @default(now())
+  occurredAt         DateTime              @default(now()) @db.Timestamptz(3)
   notes              String?
-  createdAt          DateTime              @default(now())
-  updatedAt          DateTime              @updatedAt
+  createdAt          DateTime              @default(now()) @db.Timestamptz(3)
+  updatedAt          DateTime              @updatedAt @db.Timestamptz(3)
 
   ingredient       Ingredient    @relation(fields: [ingredientId], references: [id], onDelete: Restrict)
   lot              InventoryLot? @relation(fields: [lotId], references: [id], onDelete: Restrict)
