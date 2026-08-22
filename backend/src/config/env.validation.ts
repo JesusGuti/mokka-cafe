@@ -14,4 +14,7 @@ export const envValidationSchema = Joi.object({
   DATABASE_POOL_MAX: Joi.number().default(10),
   DATABASE_POOL_IDLE_TIMEOUT_MS: Joi.number().default(30000),
   DATABASE_POOL_CONNECTION_TIMEOUT_MS: Joi.number().default(5000),
+
+  JWT_SECRET: Joi.string().min(32).required(),
+  JWT_EXPIRES_IN_SECONDS: Joi.number().default(900),
 });
