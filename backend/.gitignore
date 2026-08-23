@@ -4,6 +4,12 @@
 /build
 *.tsbuildinfo
 
+# prisma/ se ejecuta con ts-node (sin emitir a disco); si algo lo compila
+# directo con tsc, no debe colarse al repo
+prisma/**/*.js
+prisma/**/*.js.map
+prisma/**/*.d.ts
+
 # Logs
 logs
 *.log
