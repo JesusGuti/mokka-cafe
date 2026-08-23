@@ -17,5 +17,6 @@ import { PrismaUserRepository } from './infrastructure/persistence/prisma-user.r
     GetUserUseCase,
     ListUsersUseCase,
   ],
+  exports: [UserRepository],
 })
 export class UsersModule {}
