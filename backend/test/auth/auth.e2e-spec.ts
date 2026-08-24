@@ -55,7 +55,7 @@ describe('Auth (e2e)', () => {
 
   it('inicia sesión con credenciales correctas y persiste el último login', async () => {
     const res = await request(app.getHttpServer())
-      .post('/auth')
+      .post('/auth/sign-in')
       .send({ email, password })
       .expect(200);
 
@@ -69,14 +69,14 @@ describe('Auth (e2e)', () => {
 
   it('rechaza credenciales incorrectas con 401', async () => {
     await request(app.getHttpServer())
-      .post('/auth')
+      .post('/auth/sign-in')
       .send({ email, password: 'wrong-password' })
       .expect(401);
   });
 
   it('rechaza payloads inválidos con 400', async () => {
     await request(app.getHttpServer())
-      .post('/auth')
+      .post('/auth/sign-in')
       .send({ email: 'not-an-email', password: '' })
       .expect(400);
   });
