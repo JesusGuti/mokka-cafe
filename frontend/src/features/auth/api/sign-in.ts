@@ -1,9 +1,7 @@
 import { apiClient } from "@/shared/lib/api/client";
+import type { SignInPayload } from "../schemas/sign-in.schema";
 
-export interface SignInPayload {
-  email: string;
-  password: string;
-}
+export type { SignInPayload };
 
 export interface SignInResponse {
   accessToken: string;
