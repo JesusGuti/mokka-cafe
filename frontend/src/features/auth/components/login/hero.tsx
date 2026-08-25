@@ -2,7 +2,7 @@ import Image from "next/image";
 
 export const Hero = () => {
   return (
-    <section className="relative">
+    <section className="hidden lg:block relative">
       <Image
         alt=""
         className="hidden lg:block object-cover"

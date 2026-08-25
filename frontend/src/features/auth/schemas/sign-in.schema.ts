@@ -5,10 +5,8 @@ import { z } from "zod";
  * si cambia el DTO del backend, revisar este schema también.
  */
 export const signInSchema = z.object({
-  email: z.email("Ingresá un correo válido"),
-  password: z
-    .string()
-    .min(8, "La contraseña debe tener al menos 8 caracteres"),
+  email: z.email("Ingresa un correo válido"),
+  password: z.string().min(8, "La contraseña debe tener al menos 8 caracteres"),
 });
 
 export type SignInPayload = z.infer<typeof signInSchema>;

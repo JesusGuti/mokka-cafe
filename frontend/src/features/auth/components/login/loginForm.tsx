@@ -44,7 +44,7 @@ export const LoginForm = () => {
     <section className="flex flex-col p-8">
       <Image
         alt="mokka-wordmark"
-        className="object-cover"
+        className="object-cover self-start"
         height={40}
         src="/brand/logo-wordmark.webp"
         width={140}
@@ -54,7 +54,7 @@ export const LoginForm = () => {
         <div className="flex w-full max-w-sm flex-col gap-8">
           <div className="flex flex-col gap-1">
             <h1 className="font-heading text-3xl font-medium text-primary">
-              Iniciá sesión
+              Inicia sesión
             </h1>
             <p className="text-sm text-muted-foreground">
               Sistema de gestión interno de Mokka Café

@@ -24,12 +24,13 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 ## Comandos
 
 ```bash
-pnpm dev      # servidor de desarrollo
-pnpm build    # build de producción (corre type-check)
-pnpm lint     # eslint
+pnpm dev        # servidor de desarrollo
+pnpm build      # build de producción (corre type-check)
+pnpm lint       # eslint
+pnpm test       # vitest run
+pnpm test:watch # vitest en watch mode
+pnpm test:cov   # vitest run --coverage
 ```
-
-No hay test runner configurado todavía. Si el usuario pide agregar tests, preguntar por la herramienta preferida (Vitest + Testing Library es lo estándar en este stack) en vez de asumir una.
 
 ## Estructura de carpetas
 
@@ -69,6 +70,16 @@ Los alias de import (`@/src/shared/...`) están definidos en `components.json` y
 - Toda llamada a `features/<feature>/api/` desde un Client Component se consume vía hooks de TanStack Query (`features/<feature>/hooks/`), nunca invocando la función de la capa `api/` directo en el componente — así se aprovecha cache, invalidación y estados de loading/error de forma consistente.
 - Usar el helper `cn()` (`shared/lib/utils`) para componer clases de Tailwind condicionales, no template strings manuales.
 - El modelo de datos del backend usa `orderType` en `Order` desde el día uno (ver project-context.md §4) aunque hoy solo exista `dine-in` — no asumas que dine-in es el único caso al tipar.
+
+## Testing
+
+- **Vitest** (`jsdom`) + **React Testing Library** para unit y componentes. Playwright queda pendiente para e2e (`frontend/e2e/`, todavía no existe).
+- Tests colocados junto al archivo que prueban (`*.spec.ts`/`*.spec.tsx`), mismo criterio que ya usa `backend/`.
+- `vitest.setup.ts` ya trae: matchers de `@testing-library/jest-dom`, mock de `next/font/google` (genérico, cubre cualquier fuente que se agregue), y `afterEach(cleanup)` global — sin ese `cleanup`, el DOM de un test queda montado cuando arranca el siguiente y las queries empiezan a matchear elementos viejos. No lo repitas por archivo, ya está resuelto una sola vez ahí.
+- Preferí `getByRole(elemento, { name })` sobre `getByLabelText` cuando el label tiene contenido `aria-hidden` adentro (como el asterisco de "requerido" en `FormInput`) — `getByLabelText` compara contra el `textContent` completo del `<label>` (`"Correo*"`, sin match exacto con `"Correo"`), mientras que `getByRole` calcula el nombre accesible real y excluye lo `aria-hidden`. Para inputs `type="password"` (sin rol ARIA implícito) sí hace falta `getByLabelText(..., { exact: false })`.
+- Componentes que dependen de `useFormContext()` (como `FormInput`) no son standalone — necesitan un harness con `useForm()` + `Form` alrededor para poder renderizarse en un test. Ver `form-input.spec.tsx`.
+- Componentes que llaman hooks de `features/<feature>/hooks/` (mutations/queries de TanStack) o `next/navigation` deben mockear esos módulos por archivo con `vi.mock(...)` — nunca dejar que un test de componente toque axios/red real (el `apiClient` explota en `env.ts` si `NEXT_PUBLIC_API_URL` no está seteada en el entorno de test, y aunque lo estuviera, terminarías pegándole a un backend real). El mock de `next/font/google` es la única excepción que vive en el setup global, porque aplica a toda la app por igual.
+- Para compartir referencias de mocks entre el factory de `vi.mock` (que Vitest hoistea arriba de los imports del archivo) y el cuerpo de los tests, usar `vi.hoisted(() => ({...}))` — si no, Vitest tira error de "no se puede acceder a la variable antes de inicializarse". Ver `loginForm.spec.tsx` como referencia completa del patrón: mockear un hook de mutation + `next/navigation`, y controlar `onSuccess`/`onError` desde el mock para probar el flujo sin red real.
 
 ## Server-state: fetch vs axios+TanStack Query
 
