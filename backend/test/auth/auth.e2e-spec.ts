@@ -68,10 +68,14 @@ describe('Auth (e2e)', () => {
   });
 
   it('rechaza credenciales incorrectas con 401', async () => {
-    await request(app.getHttpServer())
+    const res = await request(app.getHttpServer())
       .post('/auth/sign-in')
       .send({ email, password: 'wrong-password' })
       .expect(401);
+
+    expect(res.body.message).toBe(
+      'El correo electrónico o la contraseña no son correctos',
+    );
   });
 
   it('rechaza payloads inválidos con 400', async () => {

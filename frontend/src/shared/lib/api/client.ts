@@ -1,4 +1,4 @@
-import axios, { type AxiosError } from "axios"
+import axios, { HttpStatusCode, type AxiosError } from "axios"
 import { env } from "@/shared/lib/env"
 import { getQueryClient } from "@/shared/lib/query-client"
 import { useAuthStore } from "@/shared/store/auth-store"
@@ -21,7 +21,7 @@ apiClient.interceptors.request.use((config) => {
 apiClient.interceptors.response.use(
   (response) => response,
   (error: AxiosError) => {
-    if (error.response?.status === 401) {
+    if (error.response?.status === HttpStatusCode.Unauthorized) {
       useAuthStore.getState().clearSession()
       getQueryClient().clear()
 

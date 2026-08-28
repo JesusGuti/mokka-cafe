@@ -4,7 +4,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import type { AxiosError } from "axios";
+import { HttpStatusCode, type AxiosError } from "axios";
 import { Form } from "@/shared/components/form/form";
 import { FormInput } from "@/shared/components/form/form-input";
 import { Button } from "@/shared/components/ui/button";
@@ -18,12 +18,15 @@ import type { ApiErrorResponse } from "@/shared/types/api-error";
 
 const INVALID_CREDENTIALS_MESSAGE =
   "El correo electrónico o la contraseña no son correctos";
+const GENERIC_ERROR_MESSAGE = "No pudimos iniciar sesión. Intentá de nuevo.";
 
 const getErrorMessage = (error: AxiosError<ApiErrorResponse>) => {
-  if (error.response?.status === 401) return INVALID_CREDENTIALS_MESSAGE;
+  if (error.response?.status === HttpStatusCode.Unauthorized) {
+    return INVALID_CREDENTIALS_MESSAGE;
+  }
 
   const message = error.response?.data.message;
-  if (!message) return "No pudimos iniciar sesión. Intentá de nuevo.";
+  if (!message) return GENERIC_ERROR_MESSAGE;
   return Array.isArray(message) ? message[0] : message;
 };
 
@@ -37,6 +40,7 @@ export const LoginForm = () => {
   });
 
   const onSubmit = (data: SignInPayload) => {
+    form.clearErrors("root");
     mutate(data, {
       onSuccess: () => router.push("/pos"),
       onError: (error) => {
