@@ -53,12 +53,25 @@ describe("LoginForm", () => {
     expect(mutateMock).not.toHaveBeenCalled();
   });
 
+  it("muestra el error de validación si la contraseña es demasiado corta", async () => {
+    render(<LoginForm />);
+
+    fillAndSubmit("mesero@mokka.cafe", "short");
+
+    expect(
+      await screen.findByText("La contraseña debe tener al menos 8 caracteres"),
+    ).toBeInTheDocument();
+    expect(mutateMock).not.toHaveBeenCalled();
+  });
+
   it("deshabilita el botón mientras isPending es true", () => {
     useSignInMock.mockReturnValue({ mutate: mutateMock, isPending: true });
 
     render(<LoginForm />);
 
-    expect(screen.getByRole("button", { name: "Ingresando..." })).toBeDisabled();
+    expect(
+      screen.getByRole("button", { name: "Ingresando..." }),
+    ).toBeDisabled();
   });
 
   it("llama a mutate con los datos del form y redirige a /pos si el login es exitoso", async () => {
@@ -76,10 +89,13 @@ describe("LoginForm", () => {
     expect(pushMock).toHaveBeenCalledWith("/pos");
   });
 
-  it("muestra el mensaje de error del backend si el login falla", async () => {
+  it("muestra un mensaje genérico si el backend rechaza las credenciales", async () => {
     mutateMock.mockImplementation((_data, { onError }) =>
       onError?.({
-        response: { data: { message: "Credenciales inválidas" } },
+        response: {
+          status: 401,
+          data: { message: "La contraseña es incorrecta" },
+        },
       }),
     );
     render(<LoginForm />);
@@ -87,7 +103,12 @@ describe("LoginForm", () => {
     fillAndSubmit("mesero@mokka.cafe", "password123");
 
     expect(
-      await screen.findByText("Credenciales inválidas"),
+      await screen.findByText(
+        "El correo electrónico o la contraseña no son correctos",
+      ),
     ).toBeInTheDocument();
+    expect(
+      screen.queryByText("La contraseña es incorrecta"),
+    ).not.toBeInTheDocument();
   });
 });

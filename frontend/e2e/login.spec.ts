@@ -33,7 +33,7 @@ test("la pantalla de login renderiza correctamente en un browser real", async ({
   await expect(page.getByRole("button", { name: "Ingresar" })).toBeVisible();
 });
 
-test("muestra el error real del backend con credenciales inexistentes", async ({
+test("muestra un mensaje genérico con credenciales inexistentes", async ({
   page,
 }) => {
   const reachable = await isBackendReachable();
@@ -53,5 +53,7 @@ test("muestra el error real del backend con credenciales inexistentes", async ({
     .fill("cualquier-password");
   await page.getByRole("button", { name: "Ingresar" }).click();
 
-  await expect(page.getByText("El usuario no existe")).toBeVisible();
+  await expect(
+    page.getByText("El correo electrónico o la contraseña no son correctos"),
+  ).toBeVisible();
 });

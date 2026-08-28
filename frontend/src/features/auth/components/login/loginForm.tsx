@@ -16,7 +16,12 @@ import {
 } from "@/features/auth/schemas/sign-in.schema";
 import type { ApiErrorResponse } from "@/shared/types/api-error";
 
+const INVALID_CREDENTIALS_MESSAGE =
+  "El correo electrónico o la contraseña no son correctos";
+
 const getErrorMessage = (error: AxiosError<ApiErrorResponse>) => {
+  if (error.response?.status === 401) return INVALID_CREDENTIALS_MESSAGE;
+
   const message = error.response?.data.message;
   if (!message) return "No pudimos iniciar sesión. Intentá de nuevo.";
   return Array.isArray(message) ? message[0] : message;
