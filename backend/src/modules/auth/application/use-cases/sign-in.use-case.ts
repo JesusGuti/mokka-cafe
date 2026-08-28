@@ -25,11 +25,11 @@ export class SignInUseCase {
     const user = await this.userRepository.findByEmail(command.email);
 
     if (!user) {
-      throw new InvalidCredentialsError('El usuario no existe');
+      throw new InvalidCredentialsError();
     }
 
     if (!user.isActive) {
-      throw new InvalidCredentialsError('El usuario no está activo');
+      throw new InvalidCredentialsError();
     }
 
     const isPasswordValid = await this.passwordHasher.compare(
@@ -38,7 +38,7 @@ export class SignInUseCase {
     );
 
     if (!isPasswordValid) {
-      throw new InvalidCredentialsError('La contraseña es incorrecta');
+      throw new InvalidCredentialsError();
     }
 
     // Update last login timestamp for audit

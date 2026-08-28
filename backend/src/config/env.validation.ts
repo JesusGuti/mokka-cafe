@@ -8,6 +8,9 @@ export const envValidationSchema = Joi.object({
 
   CORS_ORIGIN: Joi.string().default('http://localhost:3000'),
 
+  SWAGGER_ENABLED: Joi.boolean().optional(),
+  SWAGGER_PATH: Joi.string().default('api'),
+
   DATABASE_URL: Joi.string()
     .uri({ scheme: ['postgresql', 'postgres'] })
     .required(),

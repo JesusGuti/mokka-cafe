@@ -15,7 +15,7 @@ import { SignInDto } from './dto/sign-in.dto';
 export class AuthController {
   constructor(private readonly signInUseCase: SignInUseCase) {}
 
-  @Post()
+  @Post('sign-in')
   @HttpCode(HttpStatus.OK)
   async signIn(@Body() dto: SignInDto): Promise<SignInResponseDto> {
     try {

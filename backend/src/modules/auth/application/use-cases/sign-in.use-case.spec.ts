@@ -58,7 +58,7 @@ describe('SignInUseCase', () => {
         email: 'no-existe@example.com',
         password: 'supersecret',
       }),
-    ).rejects.toThrow('El usuario no existe');
+    ).rejects.toThrow('El correo electrónico o la contraseña no son correctos');
   });
 
   it('rechaza el login si la contraseña es incorrecta', async () => {
@@ -73,7 +73,7 @@ describe('SignInUseCase', () => {
 
     await expect(
       useCase.execute({ email: user.email, password: 'wrong-password' }),
-    ).rejects.toThrow('La contraseña es incorrecta');
+    ).rejects.toThrow('El correo electrónico o la contraseña no son correctos');
   });
 
   it('rechaza el login de un usuario desactivado', async () => {
@@ -90,6 +90,6 @@ describe('SignInUseCase', () => {
 
     await expect(
       useCase.execute({ email: user.email, password: 'supersecret' }),
-    ).rejects.toThrow('El usuario no existe');
+    ).rejects.toThrow('El correo electrónico o la contraseña no son correctos');
   });
 });
