@@ -61,7 +61,9 @@ describe("FormInput", () => {
   it("sanea el valor con cleanValue antes de que llegue al form", () => {
     renderFormInput({ mode: "numeric" });
 
-    const input = screen.getByRole("textbox", { name: "Campo" }) as HTMLInputElement;
+    const input = screen.getByRole("textbox", {
+      name: "Campo",
+    }) as HTMLInputElement;
     fireEvent.change(input, { target: { value: "12a3" } });
 
     expect(input.value).toBe("123");
@@ -70,7 +72,9 @@ describe("FormInput", () => {
   it("fuerza type=text en modo numeric/decimal aunque se pida otro type", () => {
     renderFormInput({ mode: "decimal", type: "number" });
 
-    const input = screen.getByRole("textbox", { name: "Campo" }) as HTMLInputElement;
+    const input = screen.getByRole("textbox", {
+      name: "Campo",
+    }) as HTMLInputElement;
     expect(input.type).toBe("text");
   });
 
