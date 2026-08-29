@@ -1,16 +1,17 @@
-"use client"
+"use client";
 
-import Link from "next/link"
-import { usePathname } from "next/navigation"
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import {
+  ChartColumn,
   ChefHat,
   Coffee,
   LogOut,
   Package,
-  ChartColumn,
   Settings,
   ShoppingCart,
-} from "lucide-react"
+  Users,
+} from "lucide-react";
 
 import {
   Sidebar,
@@ -22,20 +23,21 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-} from "@/shared/components/ui/sidebar"
-import { Avatar, AvatarFallback } from "@/shared/components/ui/avatar"
+} from "@/shared/components/ui/sidebar";
+import { Avatar, AvatarFallback } from "@/shared/components/ui/avatar";
 
 const NAV_ITEMS = [
   { href: "/pos", label: "POS", icon: ShoppingCart },
   { href: "/cocina", label: "Cocina", icon: ChefHat },
   { href: "/inventario", label: "Inventario", icon: Package },
   { href: "/reportes", label: "Reportes", icon: ChartColumn },
-] as const
+  { href: "/usuarios", label: "Usuarios", icon: Users },
+] as const;
 
-const NAV_ITEM_CLASS = "h-11 gap-3 px-4 text-base [&_svg]:size-5"
+const NAV_ITEM_CLASS = "h-11 gap-3 px-4 text-base [&_svg]:size-5";
 
 export function AppSidebar() {
-  const pathname = usePathname()
+  const pathname = usePathname();
 
   return (
     <Sidebar collapsible="icon">
@@ -98,5 +100,5 @@ export function AppSidebar() {
         </SidebarMenu>
       </SidebarFooter>
     </Sidebar>
-  )
+  );
 }
