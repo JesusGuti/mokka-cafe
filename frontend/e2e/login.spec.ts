@@ -1,4 +1,5 @@
 import { test, expect } from "@playwright/test";
+import { BACKEND_URL, isBackendReachable } from "./utils/backend";
 
 /**
  * No repetimos acá la validación de zod (ya está cubierta a nivel de
@@ -7,17 +8,6 @@ import { test, expect } from "@playwright/test";
  * reales, y la integración real contra el backend — eso es lo que se
  * prueba en este archivo.
  */
-
-const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8080";
-
-const isBackendReachable = async () => {
-  try {
-    await fetch(BACKEND_URL, { signal: AbortSignal.timeout(2000) });
-    return true;
-  } catch {
-    return false;
-  }
-};
 
 test("la pantalla de login renderiza correctamente en un browser real", async ({
   page,
@@ -29,7 +19,9 @@ test("la pantalla de login renderiza correctamente en un browser real", async ({
     page.getByRole("heading", { name: "Inicia sesión" }),
   ).toBeVisible();
   await expect(page.getByRole("textbox", { name: "Correo" })).toBeVisible();
-  await expect(page.getByLabel("Contraseña", { exact: false })).toBeVisible();
+  await expect(
+    page.getByRole("textbox", { name: "Contraseña" }),
+  ).toBeVisible();
   await expect(page.getByRole("button", { name: "Ingresar" })).toBeVisible();
 });
 
@@ -49,7 +41,7 @@ test("muestra un mensaje genérico con credenciales inexistentes", async ({
     .getByRole("textbox", { name: "Correo" })
     .fill("usuario-que-no-existe@mokka.cafe");
   await page
-    .getByLabel("Contraseña", { exact: false })
+    .getByRole("textbox", { name: "Contraseña" })
     .fill("cualquier-password");
   await page.getByRole("button", { name: "Ingresar" }).click();
 
