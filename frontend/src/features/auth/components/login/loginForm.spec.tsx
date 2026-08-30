@@ -24,9 +24,10 @@ const fillAndSubmit = (email: string, password: string) => {
   fireEvent.change(screen.getByRole("textbox", { name: "Correo" }), {
     target: { value: email },
   });
-  fireEvent.change(screen.getByLabelText("Contraseña", { exact: false }), {
-    target: { value: password },
-  });
+  fireEvent.change(
+    screen.getByLabelText("Contraseña", { exact: false, selector: "input" }),
+    { target: { value: password } },
+  );
   fireEvent.click(screen.getByRole("button", { name: "Ingresar" }));
 };
 
@@ -62,6 +63,22 @@ describe("LoginForm", () => {
       await screen.findByText("La contraseña debe tener al menos 8 caracteres"),
     ).toBeInTheDocument();
     expect(mutateMock).not.toHaveBeenCalled();
+  });
+
+  it("alterna la visibilidad de la contraseña al hacer click en el botón de mostrar/ocultar", () => {
+    render(<LoginForm />);
+
+    const passwordInput = screen.getByLabelText("Contraseña", {
+      exact: false,
+      selector: "input",
+    }) as HTMLInputElement;
+    expect(passwordInput.type).toBe("password");
+
+    fireEvent.click(screen.getByRole("button", { name: "Mostrar contraseña" }));
+    expect(passwordInput.type).toBe("text");
+
+    fireEvent.click(screen.getByRole("button", { name: "Ocultar contraseña" }));
+    expect(passwordInput.type).toBe("password");
   });
 
   it("deshabilita el botón mientras isPending es true", () => {

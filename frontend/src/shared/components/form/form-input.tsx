@@ -20,7 +20,7 @@ const resolveType = (type: InputType, mode: InputMode): InputType => {
   return type;
 };
 
-interface FormInputProps<T extends FieldValues> {
+export interface FormInputProps<T extends FieldValues> {
   name: FieldPath<T>;
   placeholder?: string;
   label: string;

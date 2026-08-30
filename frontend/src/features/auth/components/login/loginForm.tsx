@@ -7,6 +7,7 @@ import { useForm } from "react-hook-form";
 import { HttpStatusCode, type AxiosError } from "axios";
 import { Form } from "@/shared/components/form/form";
 import { FormInput } from "@/shared/components/form/form-input";
+import { FormPasswordInput } from "@/shared/components/form/form-password-input";
 import { Button } from "@/shared/components/ui/button";
 import { FieldError } from "@/shared/components/ui/field";
 import { useSignIn } from "@/features/auth/hooks/use-sign-in";
@@ -83,11 +84,9 @@ export const LoginForm = () => {
               autoComplete="email"
               autoFocus
             />
-            <FormInput<SignInPayload>
+            <FormPasswordInput<SignInPayload>
               name="password"
               label="Contraseña"
-              type="password"
-              mode="none"
               autoComplete="current-password"
             />
 

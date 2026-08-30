@@ -32,7 +32,10 @@ Los valores por defecto de `.env.example` ya coinciden con el Postgres que levan
 ```bash
 pnpm docker:up             # Postgres en :5432 + pgAdmin en :5050 (admin@mokka.com / admin)
 pnpm prisma:migrate:dev    # aplica las migraciones (crea la BD si no existe)
+pnpm prisma:generate       # genera el cliente en src/generated/prisma
 ```
+
+`migrate dev` solo corre `generate` automáticamente cuando aplica una migración nueva — si tu schema ya está al día (por ejemplo, clonaste el repo y las migraciones ya existían), puede no generarlo. Si al arrancar el servidor ves errores de módulo no encontrado en `src/generated/prisma`, corre `pnpm prisma:generate` a mano.
 
 Para bajar los contenedores: `pnpm docker:down`.
 

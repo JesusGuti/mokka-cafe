@@ -1,5 +1,6 @@
 import {
   Body,
+  ConflictException,
   Controller,
   Get,
   HttpCode,
@@ -11,6 +12,7 @@ import {
 import { CreateUserUseCase } from '../../application/use-cases/create-user.use-case';
 import { GetUserUseCase } from '../../application/use-cases/get-user.use-case';
 import { ListUsersUseCase } from '../../application/use-cases/list-users.use-case';
+import { DuplicatedEmailError } from '../../domain/errors/duplicated-email.error';
 import { UserNotFoundError } from '../../domain/errors/user-not-found.error';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UserResponseDto } from './dto/user-response.dto';
@@ -26,8 +28,15 @@ export class UserController {
   @Post()
   @HttpCode(HttpStatus.CREATED)
   async create(@Body() dto: CreateUserDto): Promise<UserResponseDto> {
-    const user = await this.createUser.execute(dto);
-    return UserResponseDto.fromDomain(user);
+    try {
+      const user = await this.createUser.execute(dto);
+      return UserResponseDto.fromDomain(user);
+    } catch (error) {
+      if (error instanceof DuplicatedEmailError) {
+        throw new ConflictException(error.message);
+      }
+      throw error;
+    }
   }
 
   @Get()
