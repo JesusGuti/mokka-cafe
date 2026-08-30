@@ -2,17 +2,9 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import {
-  ChartColumn,
-  ChefHat,
-  Coffee,
-  LogOut,
-  Package,
-  Settings,
-  ShoppingCart,
-  Users,
-} from "lucide-react";
+import { Coffee, LogOut, Settings } from "lucide-react";
 
+import { NAV_ITEMS } from "@/shared/config/nav";
 import {
   Sidebar,
   SidebarContent,
@@ -25,14 +17,6 @@ import {
   SidebarMenuItem,
 } from "@/shared/components/ui/sidebar";
 import { Avatar, AvatarFallback } from "@/shared/components/ui/avatar";
-
-const NAV_ITEMS = [
-  { href: "/pos", label: "POS", icon: ShoppingCart },
-  { href: "/cocina", label: "Cocina", icon: ChefHat },
-  { href: "/inventario", label: "Inventario", icon: Package },
-  { href: "/reportes", label: "Reportes", icon: ChartColumn },
-  { href: "/usuarios", label: "Usuarios", icon: Users },
-] as const;
 
 const NAV_ITEM_CLASS = "h-11 gap-3 px-4 text-base [&_svg]:size-5";
 

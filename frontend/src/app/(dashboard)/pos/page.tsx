@@ -1,10 +1,9 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { Bell, Search, UserCircle } from "lucide-react";
+import { Search } from "lucide-react";
 
 import { Input } from "@/shared/components/ui/input";
-import { SidebarTrigger } from "@/shared/components/ui/sidebar";
 import {
   Dialog,
   DialogContent,
@@ -75,33 +74,6 @@ export default function PosPage() {
 
   return (
     <div className="flex h-full flex-col">
-      <header className="flex h-16 shrink-0 items-center justify-between gap-4 border-b border-border bg-card px-4 lg:px-6">
-        <div className="flex items-center gap-4">
-          <SidebarTrigger />
-          <h1 className="font-heading text-xl font-semibold text-foreground">
-            Punto de Venta
-          </h1>
-        </div>
-        <div className="flex items-center gap-1">
-          <button
-            type="button"
-            aria-label="Notificaciones"
-            className="flex size-9 items-center justify-center rounded-full text-foreground hover:bg-accent/30"
-          >
-            <Bell className="size-5" />
-          </button>
-          <button
-            type="button"
-            className="flex items-center gap-2 rounded-full px-2 py-1.5 text-foreground hover:bg-accent/30"
-          >
-            <UserCircle className="size-5" />
-            <span className="hidden text-sm font-medium sm:inline">
-              Barista Alex
-            </span>
-          </button>
-        </div>
-      </header>
-
       <div className="flex min-h-0 flex-1 overflow-hidden">
         <div className="flex-1 overflow-y-auto p-4 lg:p-6">
           <div className="sticky top-0 z-10 mb-6 flex flex-col gap-3 bg-background/85 pb-3 backdrop-blur-md">
