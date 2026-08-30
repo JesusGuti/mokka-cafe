@@ -7,3 +7,13 @@ export const USER_ROLE_LABELS: Record<UserRole, string> = {
   CAJERO: "Cajero",
   ADMIN: "Administrador",
 };
+
+export interface UserResponse {
+  id: string;
+  name: string;
+  email: string;
+  role: string;
+  isActive: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+}
