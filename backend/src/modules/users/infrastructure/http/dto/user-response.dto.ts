@@ -11,7 +11,13 @@ export class UserResponseDto {
 
   static fromDomain(user: User): UserResponseDto {
     const dto = new UserResponseDto();
-    Object.assign(dto, user.toPrimitives());
+    dto.id = user.id;
+    dto.name = user.name;
+    dto.email = user.email;
+    dto.role = user.role;
+    dto.isActive = user.isActive;
+    dto.createdAt = user.createdAt;
+    dto.updatedAt = user.updatedAt;
     return dto;
   }
 }

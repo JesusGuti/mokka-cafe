@@ -26,3 +26,6 @@ $RECYCLE.BIN/
 # ==== Entornos ====
 .env
 .env.local
+
+
+mokka-workspace.code-workspace
