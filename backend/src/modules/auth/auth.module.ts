@@ -1,9 +1,11 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { APP_GUARD } from '@nestjs/core';
 import { JwtModule } from '@nestjs/jwt';
 import { SignInUseCase } from './application/use-cases/sign-in.use-case';
 import { TokenGenerator } from './domain/ports/token-generator';
 import { AuthController } from './infrastructure/http/auth.controller';
+import { JwtAuthGuard } from './infrastructure/guards/jwt-auth.guard';
 import { JwtTokenGenerator } from './infrastructure/security/jwt-token-generator';
 import { UsersModule } from '../users/users.module';
 
@@ -27,6 +29,10 @@ import { UsersModule } from '../users/users.module';
     {
       provide: TokenGenerator,
       useClass: JwtTokenGenerator,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: JwtAuthGuard,
     },
   ],
 })

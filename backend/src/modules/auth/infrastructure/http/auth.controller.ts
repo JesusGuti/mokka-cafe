@@ -7,6 +7,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { SignInUseCase } from '../../application/use-cases/sign-in.use-case';
+import { Public } from '../decorators/public.decorator';
 import { InvalidCredentialsError } from '../../domain/errors/invalid-credentials';
 import { SignInResponseDto } from './dto/auth-response-dto';
 import { SignInDto } from './dto/sign-in.dto';
@@ -15,6 +16,7 @@ import { SignInDto } from './dto/sign-in.dto';
 export class AuthController {
   constructor(private readonly signInUseCase: SignInUseCase) {}
 
+  @Public()
   @Post('sign-in')
   @HttpCode(HttpStatus.OK)
   async signIn(@Body() dto: SignInDto): Promise<SignInResponseDto> {
