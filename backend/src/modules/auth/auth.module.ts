@@ -6,6 +6,7 @@ import { SignInUseCase } from './application/use-cases/sign-in.use-case';
 import { TokenGenerator } from './domain/ports/token-generator';
 import { AuthController } from './infrastructure/http/auth.controller';
 import { JwtAuthGuard } from './infrastructure/guards/jwt-auth.guard';
+import { RolesGuard } from './infrastructure/guards/roles.guard';
 import { JwtTokenGenerator } from './infrastructure/security/jwt-token-generator';
 import { UsersModule } from '../users/users.module';
 
@@ -33,6 +34,10 @@ import { UsersModule } from '../users/users.module';
     {
       provide: APP_GUARD,
       useClass: JwtAuthGuard,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: RolesGuard,
     },
   ],
 })

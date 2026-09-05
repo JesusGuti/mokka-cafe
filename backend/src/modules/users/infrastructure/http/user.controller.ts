@@ -1,3 +1,4 @@
+import { UserRole } from '@generated/prisma/enums';
 import {
   Body,
   ConflictException,
@@ -12,6 +13,7 @@ import {
 import { CreateUserUseCase } from '../../application/use-cases/create-user.use-case';
 import { GetUserUseCase } from '../../application/use-cases/get-user.use-case';
 import { ListUsersUseCase } from '../../application/use-cases/list-users.use-case';
+import { Roles } from '../../../auth/infrastructure/decorators/roles.decorator';
 import { DuplicatedEmailError } from '../../domain/errors/duplicated-email.error';
 import { UserNotFoundError } from '../../domain/errors/user-not-found.error';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -25,6 +27,7 @@ export class UserController {
     private readonly listUsers: ListUsersUseCase,
   ) {}
 
+  @Roles(UserRole.ADMIN)
   @Post()
   @HttpCode(HttpStatus.CREATED)
   async create(@Body() dto: CreateUserDto): Promise<UserResponseDto> {
@@ -39,6 +42,7 @@ export class UserController {
     }
   }
 
+  @Roles(UserRole.ADMIN)
   @Get()
   @HttpCode(HttpStatus.OK)
   async findAll(): Promise<UserResponseDto[]> {
