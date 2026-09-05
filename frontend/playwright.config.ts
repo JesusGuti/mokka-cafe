@@ -2,6 +2,7 @@ import path from "node:path";
 import { defineConfig, devices } from "@playwright/test";
 
 const E2E_BACKEND_URL = "http://localhost:8081";
+const isCI = !!process.env.CI;
 
 /**
  * Read environment variables from file.
@@ -74,10 +75,10 @@ export default defineConfig({
   ],
 
   /*
-   * Levanta el backend de test (base aislada `mokka_cafe_test`, puerto
-   * 8081) y el dev server del frontend apuntado a él — así los e2e no
-   * pisan la base de desarrollo real. `db:test:reset` trunca la base de
-   * test antes de arrancar; `reuseExistingServer: false` en el backend
+   * En local: levanta el backend de test (base aislada `mokka_cafe_test`,
+   * puerto 8081) y el dev server del frontend apuntado a él — así los e2e
+   * no pisan la base de desarrollo real. `db:test:reset` trunca la base
+   * de test antes de arrancar; `reuseExistingServer: false` en el backend
    * asegura que ese reset corra siempre, no solo la primera vez.
    *
    * Importante: si ya hay un `pnpm dev` corriendo (por fuera de
@@ -85,20 +86,32 @@ export default defineConfig({
    * reutiliza tal cual (`reuseExistingServer: !CI`) y NEXT_PUBLIC_API_URL
    * no cambia — hay que pararlo antes de correr los e2e para que tomen el
    * backend de test.
+   *
+   * En CI: el workflow (`.github/workflows/playwright.yml`) solo instala
+   * `frontend/` — no hay `node_modules` del backend ni Postgres — así que
+   * ahí no se levanta el backend. Los tests que lo necesitan ya se
+   * saltean solos vía `isBackendReachable()` (ver `e2e/utils/backend.ts`),
+   * igual que antes de este cambio.
    */
-  webServer: [
-    {
-      command: "pnpm run db:test:reset && pnpm run e2e:serve",
-      cwd: path.resolve(__dirname, "../backend"),
-      url: E2E_BACKEND_URL,
-      reuseExistingServer: false,
-      timeout: 30_000,
-    },
-    {
-      command: "pnpm dev",
-      url: "http://localhost:3000",
-      env: { NEXT_PUBLIC_API_URL: E2E_BACKEND_URL },
-      reuseExistingServer: !process.env.CI,
-    },
-  ],
+  webServer: isCI
+    ? {
+        command: "pnpm dev",
+        url: "http://localhost:3000",
+        reuseExistingServer: false,
+      }
+    : [
+        {
+          command: "pnpm run db:test:reset && pnpm run e2e:serve",
+          cwd: path.resolve(__dirname, "../backend"),
+          url: E2E_BACKEND_URL,
+          reuseExistingServer: false,
+          timeout: 30_000,
+        },
+        {
+          command: "pnpm dev",
+          url: "http://localhost:3000",
+          env: { NEXT_PUBLIC_API_URL: E2E_BACKEND_URL },
+          reuseExistingServer: true,
+        },
+      ],
 });
