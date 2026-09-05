@@ -1,5 +1,6 @@
 import { test, expect } from "@playwright/test";
 import { BACKEND_URL, isBackendReachable } from "./utils/backend";
+import { fillStable } from "./utils/fill-stable";
 
 /**
  * No repetimos acá la validación de zod (ya está cubierta a nivel de
@@ -37,12 +38,14 @@ test("muestra un mensaje genérico con credenciales inexistentes", async ({
 
   await page.goto("/login");
 
-  await page
-    .getByRole("textbox", { name: "Correo" })
-    .fill("usuario-que-no-existe@mokka.cafe");
-  await page
-    .getByRole("textbox", { name: "Contraseña" })
-    .fill("cualquier-password");
+  await fillStable(
+    page.getByRole("textbox", { name: "Correo" }),
+    "usuario-que-no-existe@mokka.cafe",
+  );
+  await fillStable(
+    page.getByRole("textbox", { name: "Contraseña" }),
+    "cualquier-password",
+  );
   await page.getByRole("button", { name: "Ingresar" }).click();
 
   await expect(

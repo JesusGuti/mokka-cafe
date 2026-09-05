@@ -1,5 +1,6 @@
 import { test, expect } from "@playwright/test";
 import { BACKEND_URL, isBackendReachable } from "../utils/backend";
+import { fillStable } from "../utils/fill-stable";
 import {
   createManyUsers,
   createUser,
@@ -48,7 +49,7 @@ test("la pantalla de usuarios muestra una tabla con usuarios reales traidos del 
   await expect(expectUserCreatedToast(page)).toBeVisible();
 
   const searchBox = page.getByRole("textbox", { name: "Buscar" });
-  await searchBox.fill(email);
+  await fillStable(searchBox, email);
   await expect(page.getByRole("cell", { name: email })).toBeVisible();
 });
 
@@ -85,7 +86,10 @@ test('la tabla muestra "No hay usuarios registrados." cuando no hay resultados',
   await page.goto("/usuarios");
 
   const searchBox = page.getByRole("textbox", { name: "Buscar" });
-  await searchBox.fill("no-existe-ningun-usuario-con-este-nombre-o-correo");
+  await fillStable(
+    searchBox,
+    "no-existe-ningun-usuario-con-este-nombre-o-correo",
+  );
   await expect(
     page.getByRole("cell", { name: "No hay usuarios registrados." }),
   ).toBeVisible();
@@ -112,7 +116,7 @@ test("filtrar por nombre en el buscador muestra solo los usuarios que coinciden"
   await expect(expectUserCreatedToast(page)).toBeVisible();
 
   const searchBox = page.getByRole("textbox", { name: "Buscar" });
-  await searchBox.fill("john");
+  await fillStable(searchBox, "john");
 
   await expect(
     page.getByRole("row", { name: new RegExp(name1) }),
@@ -145,7 +149,7 @@ test("filtrar por correo en el buscador muestra solo los usuarios que coinciden"
   await expect(expectUserCreatedToast(page)).toBeVisible();
 
   const searchBox = page.getByRole("textbox", { name: "Buscar" });
-  await searchBox.fill("john");
+  await fillStable(searchBox, "john");
 
   await expect(
     page.getByRole("row", { name: new RegExp(email1) }),
@@ -176,7 +180,7 @@ test("el filtro de Rol muestra solo usuarios con el rol seleccionado", async ({
   await expect(expectUserCreatedToast(page)).toBeVisible();
 
   const searchBox = page.getByRole("textbox", { name: "Buscar" });
-  await searchBox.fill(String(suffix));
+  await fillStable(searchBox, String(suffix));
 
   await facetedFilterButton(page, "Rol").click();
   await page.getByRole("menuitemcheckbox", { name: "Cajero" }).click();
@@ -207,7 +211,7 @@ test("se pueden combinar el filtro de Rol y el de Estado", async ({
   await expect(expectUserCreatedToast(page)).toBeVisible();
 
   const searchBox = page.getByRole("textbox", { name: "Buscar" });
-  await searchBox.fill(String(suffix));
+  await fillStable(searchBox, String(suffix));
 
   await facetedFilterButton(page, "Rol").click();
   await page.getByRole("menuitemcheckbox", { name: "Cajero" }).click();
@@ -256,7 +260,7 @@ test("el filtro de Estado muestra solo usuarios activos o inactivos según lo se
   await expect(expectUserCreatedToast(page)).toBeVisible();
 
   const searchBox = page.getByRole("textbox", { name: "Buscar" });
-  await searchBox.fill(String(suffix));
+  await fillStable(searchBox, String(suffix));
 
   await facetedFilterButton(page, "Estado").click();
   await page.getByRole("menuitemcheckbox", { name: "Inactivo" }).click();
@@ -288,11 +292,11 @@ test('el botón "Limpiar" solo aparece cuando hay filtros aplicados', async ({
   ).not.toBeVisible();
 
   const searchBox = page.getByRole("textbox", { name: "Buscar" });
-  await searchBox.fill("cualquier-texto");
+  await fillStable(searchBox, "cualquier-texto");
 
   await expect(page.getByRole("button", { name: "Limpiar" })).toBeVisible();
 
-  await searchBox.fill("");
+  await fillStable(searchBox, "");
 
   await expect(
     page.getByRole("button", { name: "Limpiar" }),
@@ -305,7 +309,7 @@ test('el botón "Limpiar" resetea la búsqueda y los filtros de Rol/Estado', asy
   await page.goto("/usuarios");
 
   const searchBox = page.getByRole("textbox", { name: "Buscar" });
-  await searchBox.fill("cualquier-texto");
+  await fillStable(searchBox, "cualquier-texto");
 
   await facetedFilterButton(page, "Rol").click();
   await page.getByRole("menuitemcheckbox", { name: "Cajero" }).click();
@@ -352,7 +356,7 @@ test('hacer clic en el encabezado "Nombre" ordena la tabla alfabéticamente', as
   await expect(expectUserCreatedToast(page)).toBeVisible();
 
   const searchBox = page.getByRole("textbox", { name: "Buscar" });
-  await searchBox.fill(String(suffix));
+  await fillStable(searchBox, String(suffix));
 
   const rows = page.getByRole("row").filter({ hasText: String(suffix) });
   await expect(rows).toHaveCount(3);
@@ -398,7 +402,7 @@ test('hacer clic en el encabezado "Creado" ordena por fecha de creación', async
   await expect(expectUserCreatedToast(page)).toBeVisible();
 
   const searchBox = page.getByRole("textbox", { name: "Buscar" });
-  await searchBox.fill(String(suffix));
+  await fillStable(searchBox, String(suffix));
 
   const rows = page.getByRole("row").filter({ hasText: String(suffix) });
   await expect(rows).toHaveCount(3);
@@ -433,7 +437,7 @@ test('la paginación muestra el texto "N-M de X" acorde a los datos', async ({
   await createManyUsers(page, `Res-${suffix}`, 2);
 
   const searchBox = page.getByRole("textbox", { name: "Buscar" });
-  await searchBox.fill(String(suffix));
+  await fillStable(searchBox, String(suffix));
 
   await expect(page.getByText("1-2 de 2")).toBeVisible();
 });
@@ -454,7 +458,7 @@ test('cambiar "Filas por página" actualiza la cantidad de filas mostradas', asy
   await createManyUsers(page, `Filas-${suffix}`, 11);
 
   const searchBox = page.getByRole("textbox", { name: "Buscar" });
-  await searchBox.fill(String(suffix));
+  await fillStable(searchBox, String(suffix));
 
   const rows = page.getByRole("row").filter({ hasText: String(suffix) });
   await expect(rows).toHaveCount(10);
@@ -485,7 +489,7 @@ test('los botones "Página siguiente"/"Página anterior" navegan entre páginas'
   await createManyUsers(page, `Next-${suffix}`, 11);
 
   const searchBox = page.getByRole("textbox", { name: "Buscar" });
-  await searchBox.fill(String(suffix));
+  await fillStable(searchBox, String(suffix));
 
   const rows = page.getByRole("row").filter({ hasText: String(suffix) });
   await expect(page.getByText("Página 1 de 2")).toBeVisible();
@@ -520,7 +524,7 @@ test('los botones "Primera página"/"Última página" saltan a los extremos', as
   await createManyUsers(page, `Last-${suffix}`, 11);
 
   const searchBox = page.getByRole("textbox", { name: "Buscar" });
-  await searchBox.fill(String(suffix));
+  await fillStable(searchBox, String(suffix));
 
   const rows = page.getByRole("row").filter({ hasText: String(suffix) });
   await expect(page.getByText("Página 1 de 2")).toBeVisible();
@@ -552,7 +556,7 @@ test("los botones de paginación se deshabilitan en los límites (primera/últim
   await createManyUsers(page, `Bounds-${suffix}`, 11);
 
   const searchBox = page.getByRole("textbox", { name: "Buscar" });
-  await searchBox.fill(String(suffix));
+  await fillStable(searchBox, String(suffix));
 
   await expect(page.getByText("Página 1 de 2")).toBeVisible();
   await expect(
@@ -603,7 +607,7 @@ test("crear un usuario contra el backend real y verlo aparecer en la tabla", asy
   await expect(expectUserCreatedToast(page)).toBeVisible();
 
   const searchBox = page.getByRole("textbox", { name: "Buscar" });
-  await searchBox.fill(email);
+  await fillStable(searchBox, email);
 
   const row = page.getByRole("row", { name: new RegExp(email) });
   await expect(row).toBeVisible();
@@ -636,7 +640,7 @@ test("un usuario nuevo aparece correctamente ordenado/paginado tras crearse", as
   await expect(expectUserCreatedToast(page)).toBeVisible();
 
   const searchBox = page.getByRole("textbox", { name: "Buscar" });
-  await searchBox.fill(String(suffix));
+  await fillStable(searchBox, String(suffix));
 
   const rows = page.getByRole("row").filter({ hasText: String(suffix) });
   await expect(rows).toHaveCount(2);
