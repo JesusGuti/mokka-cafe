@@ -1,6 +1,11 @@
 "use client";
 
-import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from "lucide-react";
+import {
+  ChevronLeft,
+  ChevronRight,
+  ChevronsLeft,
+  ChevronsRight,
+} from "lucide-react";
 import type { RowData } from "@tanstack/react-table";
 
 import { Button } from "@/shared/components/ui/button";
@@ -26,14 +31,18 @@ export function DataTablePagination<TData extends RowData>({
 }: Readonly<DataTablePaginationProps<TData>>) {
   const { pageIndex, pageSize } = table.state.pagination;
   const rowCount = table.getRowCount();
+  const getRowCountText = () => {
+    if (rowCount === 0) {
+      return "0 resultados";
+    }
+    const start = pageIndex * pageSize + 1;
+    const end = Math.min(rowCount, (pageIndex + 1) * pageSize);
+    return `${start}-${end} de ${rowCount} registro${rowCount !== 1 ? "s" : ""}`;
+  };
 
   return (
     <div className="flex flex-wrap items-center justify-between gap-3">
-      <p className="text-sm text-muted-foreground">
-        {rowCount === 0
-          ? "0 resultados"
-          : `${pageIndex * pageSize + 1}-${Math.min(rowCount, (pageIndex + 1) * pageSize)} de ${rowCount}`}
-      </p>
+      <p className="text-sm text-muted-foreground">{getRowCountText()}</p>
 
       <div className="flex items-center gap-4">
         <div className="flex items-center gap-2">

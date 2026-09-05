@@ -24,7 +24,8 @@ export function DataTableToolbar<TData extends RowData>({
   className,
 }: Readonly<DataTableToolbarProps<TData>>) {
   const globalFilter = (table.state.globalFilter as string | undefined) ?? "";
-  const isFiltered = globalFilter.length > 0 || table.state.columnFilters.length > 0;
+  const isFiltered =
+    globalFilter.length > 0 || table.state.columnFilters.length > 0;
 
   const resetFilters = () => {
     table.setGlobalFilter("");
@@ -36,10 +37,11 @@ export function DataTableToolbar<TData extends RowData>({
       <div className="relative w-full max-w-xs">
         <Search className="pointer-events-none absolute top-1/2 left-2.5 size-4 -translate-y-1/2 text-muted-foreground" />
         <Input
-          value={globalFilter}
+          aria-label="Buscar"
+          className="pl-8"
           onChange={(event) => table.setGlobalFilter(event.target.value)}
           placeholder={searchPlaceholder}
-          className="pl-8"
+          value={globalFilter}
         />
       </div>
 

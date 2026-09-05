@@ -1,4 +1,5 @@
 import { test, expect } from "@playwright/test";
+import { createUser } from "./users-utils";
 import { BACKEND_URL, isBackendReachable } from "../utils/backend";
 
 /**
@@ -9,19 +10,13 @@ import { BACKEND_URL, isBackendReachable } from "../utils/backend";
  * (creación exitosa y el 409 de email duplicado). Ver login.spec.ts.
  */
 
-const openCreateUserForm = async (page: import("@playwright/test").Page) => {
-  await page.getByRole("button", { name: "Nuevo usuario" }).click();
-};
-
 test("la pantalla de usuarios renderiza correctamente en un browser real", async ({
   page,
 }) => {
   await page.goto("/usuarios");
 
   await expect(page).toHaveTitle(/Mokka Café/);
-  await expect(
-    page.getByRole("heading", { name: "Usuarios" }),
-  ).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Usuarios" })).toBeVisible();
   await expect(
     page.getByRole("button", { name: "Nuevo usuario" }),
   ).toBeVisible();
@@ -36,23 +31,9 @@ test("crea un usuario contra el backend real y muestra el toast de éxito", asyn
   test.skip(!reachable, `El backend no responde en ${BACKEND_URL}`);
 
   await page.goto("/usuarios");
-  await openCreateUserForm(page);
+  await createUser(page);
 
-  const uniqueEmail = `e2e-${Date.now()}@mokka.cafe`;
-
-  await page.getByRole("textbox", { name: "Nombre" }).fill("Usuario E2E");
-  await page.getByRole("textbox", { name: "Correo" }).fill(uniqueEmail);
-  await page
-    .getByRole("textbox", { name: "Contraseña" })
-    .fill("password123");
-  // El rol ya viene con "Mesero" seleccionado por defaultValues, no hace
-  // falta abrir el select para el caso feliz.
-
-  await page.getByRole("button", { name: "Crear usuario" }).click();
-
-  await expect(
-    page.getByText("Usuario creado correctamente."),
-  ).toBeVisible();
+  await expect(page.getByText("Usuario creado correctamente.")).toBeVisible();
   // El Toast de Base UI también usa role="dialog" (aria-modal="false"),
   // así que hay que apuntar al FormDialog por su nombre accesible.
   await expect(
@@ -71,24 +52,18 @@ test("muestra el email duplicado del backend en el campo Correo", async ({
   await page.goto("/usuarios");
   const duplicatedEmail = `e2e-duplicado-${Date.now()}@mokka.cafe`;
 
-  await openCreateUserForm(page);
-  await page.getByRole("textbox", { name: "Nombre" }).fill("Usuario Uno");
-  await page.getByRole("textbox", { name: "Correo" }).fill(duplicatedEmail);
-  await page
-    .getByRole("textbox", { name: "Contraseña" })
-    .fill("password123");
-  await page.getByRole("button", { name: "Crear usuario" }).click();
-  await expect(
-    page.getByText("Usuario creado correctamente."),
-  ).toBeVisible();
+  await createUser(page, {
+    name: "Usuario Uno",
+    email: duplicatedEmail,
+    password: "password123",
+  });
+  await expect(page.getByText("Usuario creado correctamente.")).toBeVisible();
 
-  await openCreateUserForm(page);
-  await page.getByRole("textbox", { name: "Nombre" }).fill("Usuario Dos");
-  await page.getByRole("textbox", { name: "Correo" }).fill(duplicatedEmail);
-  await page
-    .getByRole("textbox", { name: "Contraseña" })
-    .fill("password123");
-  await page.getByRole("button", { name: "Crear usuario" }).click();
+  await createUser(page, {
+    name: "Usuario Dos",
+    email: duplicatedEmail,
+    password: "password123",
+  });
 
   const dialog = page.getByRole("dialog", { name: "Crear usuario" });
   const emailInput = dialog.getByRole("textbox", { name: "Correo" });
