@@ -15,6 +15,7 @@ import { UserPayload, userSchema } from "../schemas/users.schema";
 import { USER_ROLE_LABELS, USER_ROLES } from "../types/users.types";
 import { AxiosError, HttpStatusCode } from "axios";
 import { useForm } from "react-hook-form";
+import { UserRoundPlus } from "lucide-react";
 
 const USER_CREATED_MESSAGE = "Usuario creado correctamente.";
 
@@ -103,7 +104,12 @@ export const UserForm = () => {
       onConfirm={onConfirm}
       submitingLabel={USER_FORM_DIALOG.submitingLabel}
       title={USER_FORM_DIALOG.title}
-      trigger={<Button>{USER_FORM_DIALOG.triggerLabel}</Button>}
+      trigger={
+        <Button>
+          <UserRoundPlus />
+          {USER_FORM_DIALOG.triggerLabel}
+        </Button>
+      }
     >
       <div className="flex flex-col gap-4">
         <FormInput<UserPayload>
