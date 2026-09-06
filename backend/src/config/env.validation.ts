@@ -20,4 +20,6 @@ export const envValidationSchema = Joi.object({
 
   JWT_SECRET: Joi.string().min(32).required(),
   JWT_EXPIRES_IN_SECONDS: Joi.number().default(900),
+  REFRESH_JWT_SECRET: Joi.string().min(32).required(),
+  REFRESH_JWT_EXPIRES_IN_SECONDS: Joi.number().default(604800),
 });
