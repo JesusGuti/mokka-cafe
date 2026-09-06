@@ -1,3 +1,4 @@
+import { AuthGate } from "@/shared/components/auth/auth-gate";
 import { AppSidebar } from "@/shared/components/layout/app-sidebar";
 import { PageHeader } from "@/shared/components/layout/page-header";
 import { SidebarInset, SidebarProvider } from "@/shared/components/ui/sidebar";
@@ -9,15 +10,17 @@ export default function DashboardLayout({
   children,
 }: Readonly<{ children: ReactNode }>) {
   return (
-    <TooltipProvider delay={300}>
-      <SidebarProvider className="h-svh">
-        <AppSidebar />
-        <SidebarInset className="h-svh overflow-hidden">
-          <PageHeader />
-          <div className="flex min-h-0 flex-1 flex-col">{children}</div>
-          <Toaster />
-        </SidebarInset>
-      </SidebarProvider>
-    </TooltipProvider>
+    <AuthGate>
+      <TooltipProvider delay={300}>
+        <SidebarProvider className="h-svh">
+          <AppSidebar />
+          <SidebarInset className="h-svh overflow-hidden">
+            <PageHeader />
+            <div className="flex min-h-0 flex-1 flex-col">{children}</div>
+            <Toaster />
+          </SidebarInset>
+        </SidebarProvider>
+      </TooltipProvider>
+    </AuthGate>
   );
 }
