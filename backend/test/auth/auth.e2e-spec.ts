@@ -11,6 +11,15 @@ import { resetDatabase } from '../utils/reset-database';
 
 interface SignInResponseBody {
   accessToken: string;
+  refreshToken: string;
+}
+
+interface ErrorResponseBody {
+  message: string;
+}
+
+interface RefreshResponseBody {
+  accessToken: string;
 }
 
 describe('Auth (e2e)', () => {
@@ -62,6 +71,8 @@ describe('Auth (e2e)', () => {
     const body = res.body as SignInResponseBody;
     expect(typeof body.accessToken).toBe('string');
     expect(body.accessToken.length).toBeGreaterThan(0);
+    expect(typeof body.refreshToken).toBe('string');
+    expect(body.refreshToken.length).toBeGreaterThan(0);
 
     const user = await prisma.user.findUniqueOrThrow({ where: { email } });
     expect(user.lastLoginAt).not.toBeNull();
@@ -73,7 +84,8 @@ describe('Auth (e2e)', () => {
       .send({ email, password: 'wrong-password' })
       .expect(401);
 
-    expect(res.body.message).toBe(
+    const body = res.body as ErrorResponseBody;
+    expect(body.message).toBe(
       'El correo electrónico o la contraseña no son correctos',
     );
   });
@@ -83,5 +95,46 @@ describe('Auth (e2e)', () => {
       .post('/auth/sign-in')
       .send({ email: 'not-an-email', password: '' })
       .expect(400);
+  });
+
+  describe('POST /auth/refresh', () => {
+    it('devuelve un nuevo access token con un refresh token válido', async () => {
+      const signInRes = await request(app.getHttpServer())
+        .post('/auth/sign-in')
+        .send({ email, password })
+        .expect(200);
+      const { refreshToken } = signInRes.body as SignInResponseBody;
+
+      const res = await request(app.getHttpServer())
+        .post('/auth/refresh')
+        .send({ refreshToken })
+        .expect(200);
+
+      const body = res.body as RefreshResponseBody;
+      expect(typeof body.accessToken).toBe('string');
+      expect(body.accessToken.length).toBeGreaterThan(0);
+    });
+
+    it('rechaza un refresh token inválido con 401', async () => {
+      await request(app.getHttpServer())
+        .post('/auth/refresh')
+        .send({ refreshToken: 'not-a-valid-token' })
+        .expect(401);
+    });
+
+    it('rechaza el refresh de un usuario desactivado', async () => {
+      const signInRes = await request(app.getHttpServer())
+        .post('/auth/sign-in')
+        .send({ email, password })
+        .expect(200);
+      const { refreshToken } = signInRes.body as SignInResponseBody;
+
+      await prisma.user.update({ where: { email }, data: { isActive: false } });
+
+      await request(app.getHttpServer())
+        .post('/auth/refresh')
+        .send({ refreshToken })
+        .expect(401);
+    });
   });
 });

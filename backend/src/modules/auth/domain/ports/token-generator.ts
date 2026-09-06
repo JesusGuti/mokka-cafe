@@ -8,4 +8,6 @@ export interface AuthTokenPayload {
 export abstract class TokenGenerator {
   abstract sign(payload: AuthTokenPayload): string;
   abstract verify(token: string): AuthTokenPayload;
+  abstract signRefreshToken(payload: AuthTokenPayload): string;
+  abstract verifyRefreshToken(token: string): AuthTokenPayload;
 }

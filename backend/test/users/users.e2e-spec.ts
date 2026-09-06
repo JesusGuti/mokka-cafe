@@ -6,6 +6,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { PrismaService } from '@shared/infrastructure/prisma/prisma.service';
 import { AppModule } from '../../src/app.module';
 import { resetDatabase } from '../utils/reset-database';
+import { authHeader } from '../utils/auth-header';
 import request from 'supertest';
 import type { App } from 'supertest/types';
 
@@ -40,6 +41,7 @@ const createUserPayload = (payload: Partial<UserPayload> = {}) => ({
 describe('Users (e2e)', () => {
   let app: INestApplication<App>;
   let prisma: PrismaService;
+  let auth: string;
 
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -53,6 +55,7 @@ describe('Users (e2e)', () => {
     await app.init();
 
     prisma = moduleFixture.get(PrismaService);
+    auth = authHeader(moduleFixture);
   });
 
   beforeEach(async () => {
@@ -69,6 +72,7 @@ describe('Users (e2e)', () => {
 
       const createRes = await request(app.getHttpServer())
         .post('/users')
+        .set('Authorization', auth)
         .send(userPayload)
         .expect(201);
 
@@ -78,6 +82,7 @@ describe('Users (e2e)', () => {
 
       await request(app.getHttpServer())
         .get(`/users/${createdUser.id}`)
+        .set('Authorization', auth)
         .expect(200)
         .expect((res) => {
           expect((res.body as UserResponseBody).name).toBe(userPayload.name);
@@ -89,6 +94,7 @@ describe('Users (e2e)', () => {
 
       const createRes = await request(app.getHttpServer())
         .post('/users')
+        .set('Authorization', auth)
         .send(userPayload)
         .expect(201);
 
@@ -98,6 +104,7 @@ describe('Users (e2e)', () => {
 
       await request(app.getHttpServer())
         .get(`/users/${createdUser.id}`)
+        .set('Authorization', auth)
         .expect(200)
         .expect((res) => {
           expect(res.body).not.toHaveProperty('passwordHash');
@@ -109,6 +116,7 @@ describe('Users (e2e)', () => {
 
       const createRes = await request(app.getHttpServer())
         .post('/users')
+        .set('Authorization', auth)
         .send(userPayload)
         .expect(201);
 
@@ -126,21 +134,25 @@ describe('Users (e2e)', () => {
 
       await request(app.getHttpServer())
         .post('/users')
+        .set('Authorization', auth)
         .send(invalidNamePayload)
         .expect(400);
 
       await request(app.getHttpServer())
         .post('/users')
+        .set('Authorization', auth)
         .send(invalidEmailPayload)
         .expect(400);
 
       await request(app.getHttpServer())
         .post('/users')
+        .set('Authorization', auth)
         .send(invalidPasswordPayload)
         .expect(400);
 
       await request(app.getHttpServer())
         .post('/users')
+        .set('Authorization', auth)
         .send(invalidRolePayload)
         .expect(400);
     });
@@ -148,6 +160,7 @@ describe('Users (e2e)', () => {
     it('rechaza un rol fuera del enum con 400', async () => {
       await request(app.getHttpServer())
         .post('/users')
+        .set('Authorization', auth)
         .send({ ...createUserPayload(), role: 'GERENTE' })
         .expect(400);
     });
@@ -157,11 +170,13 @@ describe('Users (e2e)', () => {
 
       await request(app.getHttpServer())
         .post('/users')
+        .set('Authorization', auth)
         .send(userPayload)
         .expect(201);
 
       await request(app.getHttpServer())
         .post('/users')
+        .set('Authorization', auth)
         .send(userPayload)
         .expect(409);
     });
@@ -171,11 +186,13 @@ describe('Users (e2e)', () => {
 
       await request(app.getHttpServer())
         .post('/users')
+        .set('Authorization', auth)
         .send(userPayload)
         .expect(201);
 
       await request(app.getHttpServer())
         .post('/users')
+        .set('Authorization', auth)
         .send(createUserPayload({ email: 'prueba@gmail.com' }))
         .expect(409);
     });
@@ -185,10 +202,14 @@ describe('Users (e2e)', () => {
     it('lista los usuarios creados', async () => {
       await request(app.getHttpServer())
         .post('/users')
+        .set('Authorization', auth)
         .send(createUserPayload())
         .expect(201);
 
-      const res = await request(app.getHttpServer()).get('/users').expect(200);
+      const res = await request(app.getHttpServer())
+        .get('/users')
+        .set('Authorization', auth)
+        .expect(200);
 
       expect(res.body).toHaveLength(1);
     });
@@ -198,7 +219,12 @@ describe('Users (e2e)', () => {
     it('devuelve 404 si el usuario no existe', async () => {
       await request(app.getHttpServer())
         .get(`/users/${randomUUID()}`)
+        .set('Authorization', auth)
         .expect(404);
     });
+  });
+
+  it('rechaza requests sin token con 401', async () => {
+    await request(app.getHttpServer()).get('/users').expect(401);
   });
 });

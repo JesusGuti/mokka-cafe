@@ -11,6 +11,7 @@ export interface SignInCommand {
 
 export interface SignInResult {
   accessToken: string;
+  refreshToken: string;
 }
 
 @Injectable()
@@ -41,16 +42,13 @@ export class SignInUseCase {
       throw new InvalidCredentialsError();
     }
 
-    // Update last login timestamp for audit
     user.updateLastLogin();
     await this.userRepository.update(user);
 
-    // Generate JWT token
-    const accessToken = this.tokenGenerator.sign({
-      sub: user.id,
-      role: user.role,
-    });
+    const payload = { sub: user.id, role: user.role };
+    const accessToken = this.tokenGenerator.sign(payload);
+    const refreshToken = this.tokenGenerator.signRefreshToken(payload);
 
-    return { accessToken };
+    return { accessToken, refreshToken };
   }
 }

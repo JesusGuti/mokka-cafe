@@ -9,4 +9,13 @@ export class FakeTokenGenerator implements TokenGenerator {
     const [, sub, role] = token.split('.');
     return { sub, role: role as AuthTokenPayload['role'] };
   }
+
+  signRefreshToken(payload: AuthTokenPayload): string {
+    return `fake-refresh-token.${payload.sub}.${payload.role}`;
+  }
+
+  verifyRefreshToken(token: string): AuthTokenPayload {
+    const [, sub, role] = token.split('.');
+    return { sub, role: role as AuthTokenPayload['role'] };
+  }
 }
