@@ -6,14 +6,26 @@ jobs:
   test:
     timeout-minutes: 60
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: frontend
     env:
-      # El backend no corre en este workflow todavía (ver test.skip en
-      # e2e/login.spec.ts) — esta URL no necesita responder, pero la app
-      # explota en el render inicial si la variable no está definida.
-      NEXT_PUBLIC_API_URL: http://localhost:8080
+      # playwright.config.ts levanta el backend de test en este puerto vía
+      # su webServer (db:test:reset + db:test:seed + e2e:serve) antes de
+      # correr los tests — ver e2e/auth.setup.ts, que necesita loguearse
+      # contra un backend real como ADMIN.
+      NEXT_PUBLIC_API_URL: http://localhost:8081
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: mokka
+          POSTGRES_PASSWORD: mokka
+          POSTGRES_DB: mokka_cafe_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U mokka -d mokka_cafe_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
@@ -23,12 +35,28 @@ jobs:
         with:
           node-version: lts/*
           cache: pnpm
-          cache-dependency-path: frontend/pnpm-lock.yaml
-      - name: Install dependencies
+          cache-dependency-path: |
+            backend/pnpm-lock.yaml
+            frontend/pnpm-lock.yaml
+
+      - name: Install backend dependencies
+        working-directory: backend
+        run: pnpm install --frozen-lockfile
+      - name: Generate Prisma client
+        working-directory: backend
+        run: pnpm prisma:generate
+      - name: Migrate test database
+        working-directory: backend
+        run: pnpm db:test:migrate
+
+      - name: Install frontend dependencies
+        working-directory: frontend
         run: pnpm install --frozen-lockfile
       - name: Install Playwright Browsers
+        working-directory: frontend
         run: pnpm exec playwright install --with-deps
       - name: Run Playwright tests
+        working-directory: frontend
         run: pnpm exec playwright test
       - uses: actions/upload-artifact@v4
         if: ${{ !cancelled() }}

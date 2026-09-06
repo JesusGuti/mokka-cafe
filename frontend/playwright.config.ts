@@ -1,8 +1,8 @@
 import path from "node:path";
 import { defineConfig, devices } from "@playwright/test";
+import { ADMIN_AUTH_FILE } from "./e2e/utils/auth";
 
 const E2E_BACKEND_URL = "http://localhost:8081";
-const isCI = !!process.env.CI;
 
 /**
  * Read environment variables from file.
@@ -38,19 +38,33 @@ export default defineConfig({
 
   /* Configure projects for major browsers */
   projects: [
+    /*
+     * Hace login una vez contra el backend real como ADMIN y guarda el
+     * storageState (incluye localStorage, donde vive el accessToken de
+     * zustand) — necesario desde que AuthGate gatea (dashboard) y el
+     * backend exige JWT vía guards globales. Ver e2e/auth.setup.ts.
+     */
+    {
+      name: "setup",
+      testMatch: /\.setup\.ts$/,
+    },
+
     {
       name: "chromium",
-      use: { ...devices["Desktop Chrome"] },
+      use: { ...devices["Desktop Chrome"], storageState: ADMIN_AUTH_FILE },
+      dependencies: ["setup"],
     },
 
     {
       name: "firefox",
-      use: { ...devices["Desktop Firefox"] },
+      use: { ...devices["Desktop Firefox"], storageState: ADMIN_AUTH_FILE },
+      dependencies: ["setup"],
     },
 
     {
       name: "webkit",
-      use: { ...devices["Desktop Safari"] },
+      use: { ...devices["Desktop Safari"], storageState: ADMIN_AUTH_FILE },
+      dependencies: ["setup"],
     },
 
     /* Test against mobile viewports. */
@@ -75,43 +89,35 @@ export default defineConfig({
   ],
 
   /*
-   * En local: levanta el backend de test (base aislada `mokka_cafe_test`,
-   * puerto 8081) y el dev server del frontend apuntado a él — así los e2e
-   * no pisan la base de desarrollo real. `db:test:reset` trunca la base
-   * de test antes de arrancar; `reuseExistingServer: false` en el backend
-   * asegura que ese reset corra siempre, no solo la primera vez.
+   * Levanta el backend de test (base aislada `mokka_cafe_test`, puerto
+   * 8081) y el dev server del frontend apuntado a él — así los e2e no
+   * pisan la base de desarrollo real, tanto en local como en CI (el
+   * workflow `.github/workflows/playwright.yml` ya instala el backend y
+   * levanta Postgres para esto). `db:test:reset` trunca la base de test y
+   * `db:test:seed` repone los usuarios fijos (`admin@mokka.local`, etc. —
+   * ver `prisma/seeders/users.seeder.ts`) que `e2e/auth.setup.ts` necesita
+   * para loguearse; `reuseExistingServer: false` en el backend asegura que
+   * ese ciclo reset+seed corra siempre, no solo la primera vez.
    *
    * Importante: si ya hay un `pnpm dev` corriendo (por fuera de
    * Playwright) apuntado al backend de desarrollo (8080), este config lo
-   * reutiliza tal cual (`reuseExistingServer: !CI`) y NEXT_PUBLIC_API_URL
-   * no cambia — hay que pararlo antes de correr los e2e para que tomen el
-   * backend de test.
-   *
-   * En CI: el workflow (`.github/workflows/playwright.yml`) solo instala
-   * `frontend/` — no hay `node_modules` del backend ni Postgres — así que
-   * ahí no se levanta el backend. Los tests que lo necesitan ya se
-   * saltean solos vía `isBackendReachable()` (ver `e2e/utils/backend.ts`),
-   * igual que antes de este cambio.
+   * reutiliza tal cual (`reuseExistingServer: !process.env.CI`) y
+   * NEXT_PUBLIC_API_URL no cambia — hay que pararlo antes de correr los
+   * e2e para que tomen el backend de test.
    */
-  webServer: isCI
-    ? {
-        command: "pnpm dev",
-        url: "http://localhost:3000",
-        reuseExistingServer: false,
-      }
-    : [
-        {
-          command: "pnpm run db:test:reset && pnpm run e2e:serve",
-          cwd: path.resolve(__dirname, "../backend"),
-          url: E2E_BACKEND_URL,
-          reuseExistingServer: false,
-          timeout: 30_000,
-        },
-        {
-          command: "pnpm dev",
-          url: "http://localhost:3000",
-          env: { NEXT_PUBLIC_API_URL: E2E_BACKEND_URL },
-          reuseExistingServer: true,
-        },
-      ],
+  webServer: [
+    {
+      command: "pnpm run db:test:reset && pnpm run db:test:seed && pnpm run e2e:serve",
+      cwd: path.resolve(__dirname, "../backend"),
+      url: E2E_BACKEND_URL,
+      reuseExistingServer: false,
+      timeout: 30_000,
+    },
+    {
+      command: "pnpm dev",
+      url: "http://localhost:3000",
+      env: { NEXT_PUBLIC_API_URL: E2E_BACKEND_URL },
+      reuseExistingServer: !process.env.CI,
+    },
+  ],
 });
