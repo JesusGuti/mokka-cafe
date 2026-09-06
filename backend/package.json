@@ -25,6 +25,7 @@
     "prisma:studio": "prisma studio",
     "db:test:migrate": "cross-env NODE_ENV=test prisma migrate deploy",
     "db:test:reset": "tsx scripts/reset-test-db.ts",
+    "db:test:seed": "cross-env NODE_ENV=test tsx prisma/seed.ts",
     "e2e:serve": "cross-env NODE_ENV=test nest start",
     "docker:up": "docker compose up -d",
     "docker:down": "docker compose down"

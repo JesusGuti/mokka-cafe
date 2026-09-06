@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { Coffee, LogOut, Settings } from "lucide-react";
 
 import { NAV_ITEMS } from "@/shared/config/nav";
@@ -17,11 +17,24 @@ import {
   SidebarMenuItem,
 } from "@/shared/components/ui/sidebar";
 import { Avatar, AvatarFallback } from "@/shared/components/ui/avatar";
+import { getQueryClient } from "@/shared/lib/query-client";
+import { useAuthStore } from "@/shared/store/auth-store";
 
 const NAV_ITEM_CLASS = "h-11 gap-3 px-4 text-base [&_svg]:size-5";
 
 export function AppSidebar() {
   const pathname = usePathname();
+  const router = useRouter();
+  const clearSession = useAuthStore((state) => state.clearSession);
+
+  function handleLogout() {
+    // El refresh token emitido sigue siendo válido hasta su expiración
+    // natural si alguien lo capturó antes de este logout — no hay tabla de
+    // refresh tokens revocables en v1 (ver auth-strategy.md).
+    clearSession();
+    getQueryClient().clear();
+    router.push("/login");
+  }
 
   return (
     <Sidebar collapsible="icon">
@@ -76,6 +89,7 @@ export function AppSidebar() {
             <SidebarMenuButton
               tooltip="Cerrar sesión"
               className={NAV_ITEM_CLASS}
+              onClick={handleLogout}
             >
               <LogOut />
               <span>Cerrar sesión</span>

@@ -38,8 +38,9 @@ test("la pantalla de usuarios muestra una tabla con usuarios reales traidos del 
   page,
 }) => {
   const reachable = await isBackendReachable();
-  // NOSONAR: skip condicional, no un test abandonado — depende del
-  // backend real en BACKEND_URL, que hoy no corre en el workflow de CI.
+  // NOSONAR: skip condicional, no un test abandonado — red de seguridad
+  // por si el backend de test (BACKEND_URL) no llegó a levantar en este
+  // run, no un skip esperado en el día a día (ver e2e/utils/backend.ts).
   test.skip(!reachable, `El backend no responde en ${BACKEND_URL}`);
 
   await page.goto("/usuarios");
@@ -57,8 +58,9 @@ test("la tabla muestra un estado de carga (skeleton) mientras se obtienen los us
   page,
 }) => {
   const reachable = await isBackendReachable();
-  // NOSONAR: skip condicional, no un test abandonado — depende del
-  // backend real en BACKEND_URL, que hoy no corre en el workflow de CI.
+  // NOSONAR: skip condicional, no un test abandonado — red de seguridad
+  // por si el backend de test (BACKEND_URL) no llegó a levantar en este
+  // run, no un skip esperado en el día a día (ver e2e/utils/backend.ts).
   test.skip(!reachable, `El backend no responde en ${BACKEND_URL}`);
 
   await page.route("**/users", async (route) => {
@@ -79,8 +81,9 @@ test('la tabla muestra "No hay usuarios registrados." cuando no hay resultados',
   page,
 }) => {
   const reachable = await isBackendReachable();
-  // NOSONAR: skip condicional, no un test abandonado — depende del
-  // backend real en BACKEND_URL, que hoy no corre en el workflow de CI.
+  // NOSONAR: skip condicional, no un test abandonado — red de seguridad
+  // por si el backend de test (BACKEND_URL) no llegó a levantar en este
+  // run, no un skip esperado en el día a día (ver e2e/utils/backend.ts).
   test.skip(!reachable, `El backend no responde en ${BACKEND_URL}`);
 
   await page.goto("/usuarios");
@@ -99,8 +102,9 @@ test("filtrar por nombre en el buscador muestra solo los usuarios que coinciden"
   page,
 }) => {
   const reachable = await isBackendReachable();
-  // NOSONAR: skip condicional, no un test abandonado — depende del
-  // backend real en BACKEND_URL, que hoy no corre en el workflow de CI.
+  // NOSONAR: skip condicional, no un test abandonado — red de seguridad
+  // por si el backend de test (BACKEND_URL) no llegó a levantar en este
+  // run, no un skip esperado en el día a día (ver e2e/utils/backend.ts).
   test.skip(!reachable, `El backend no responde en ${BACKEND_URL}`);
 
   await page.goto("/usuarios");
@@ -130,8 +134,9 @@ test("filtrar por correo en el buscador muestra solo los usuarios que coinciden"
   page,
 }) => {
   const reachable = await isBackendReachable();
-  // NOSONAR: skip condicional, no un test abandonado — depende del
-  // backend real en BACKEND_URL, que hoy no corre en el workflow de CI.
+  // NOSONAR: skip condicional, no un test abandonado — red de seguridad
+  // por si el backend de test (BACKEND_URL) no llegó a levantar en este
+  // run, no un skip esperado en el día a día (ver e2e/utils/backend.ts).
   test.skip(!reachable, `El backend no responde en ${BACKEND_URL}`);
 
   await page.goto("/usuarios");
@@ -163,8 +168,9 @@ test("el filtro de Rol muestra solo usuarios con el rol seleccionado", async ({
   page,
 }) => {
   const reachable = await isBackendReachable();
-  // NOSONAR: skip condicional, no un test abandonado — depende del
-  // backend real en BACKEND_URL, que hoy no corre en el workflow de CI.
+  // NOSONAR: skip condicional, no un test abandonado — red de seguridad
+  // por si el backend de test (BACKEND_URL) no llegó a levantar en este
+  // run, no un skip esperado en el día a día (ver e2e/utils/backend.ts).
   test.skip(!reachable, `El backend no responde en ${BACKEND_URL}`);
 
   await page.goto("/usuarios");
@@ -198,8 +204,9 @@ test("se pueden combinar el filtro de Rol y el de Estado", async ({
   page,
 }) => {
   const reachable = await isBackendReachable();
-  // NOSONAR: skip condicional, no un test abandonado — depende del
-  // backend real en BACKEND_URL, que hoy no corre en el workflow de CI.
+  // NOSONAR: skip condicional, no un test abandonado — red de seguridad
+  // por si el backend de test (BACKEND_URL) no llegó a levantar en este
+  // run, no un skip esperado en el día a día (ver e2e/utils/backend.ts).
   test.skip(!reachable, `El backend no responde en ${BACKEND_URL}`);
 
   await page.goto("/usuarios");
@@ -246,8 +253,9 @@ test("el filtro de Estado muestra solo usuarios activos o inactivos según lo se
   page,
 }) => {
   const reachable = await isBackendReachable();
-  // NOSONAR: skip condicional, no un test abandonado — depende del
-  // backend real en BACKEND_URL, que hoy no corre en el workflow de CI.
+  // NOSONAR: skip condicional, no un test abandonado — red de seguridad
+  // por si el backend de test (BACKEND_URL) no llegó a levantar en este
+  // run, no un skip esperado en el día a día (ver e2e/utils/backend.ts).
   test.skip(!reachable, `El backend no responde en ${BACKEND_URL}`);
 
   await page.goto("/usuarios");
@@ -337,8 +345,9 @@ test('hacer clic en el encabezado "Nombre" ordena la tabla alfabéticamente', as
   page,
 }) => {
   const reachable = await isBackendReachable();
-  // NOSONAR: skip condicional, no un test abandonado — depende del
-  // backend real en BACKEND_URL, que hoy no corre en el workflow de CI.
+  // NOSONAR: skip condicional, no un test abandonado — red de seguridad
+  // por si el backend de test (BACKEND_URL) no llegó a levantar en este
+  // run, no un skip esperado en el día a día (ver e2e/utils/backend.ts).
   test.skip(!reachable, `El backend no responde en ${BACKEND_URL}`);
 
   await page.goto("/usuarios");
@@ -383,8 +392,9 @@ test('hacer clic en el encabezado "Creado" ordena por fecha de creación', async
   page,
 }) => {
   const reachable = await isBackendReachable();
-  // NOSONAR: skip condicional, no un test abandonado — depende del
-  // backend real en BACKEND_URL, que hoy no corre en el workflow de CI.
+  // NOSONAR: skip condicional, no un test abandonado — red de seguridad
+  // por si el backend de test (BACKEND_URL) no llegó a levantar en este
+  // run, no un skip esperado en el día a día (ver e2e/utils/backend.ts).
   test.skip(!reachable, `El backend no responde en ${BACKEND_URL}`);
 
   await page.goto("/usuarios");
@@ -427,8 +437,9 @@ test('la paginación muestra el texto "N-M de X" acorde a los datos', async ({
   page,
 }) => {
   const reachable = await isBackendReachable();
-  // NOSONAR: skip condicional, no un test abandonado — depende del
-  // backend real en BACKEND_URL, que hoy no corre en el workflow de CI.
+  // NOSONAR: skip condicional, no un test abandonado — red de seguridad
+  // por si el backend de test (BACKEND_URL) no llegó a levantar en este
+  // run, no un skip esperado en el día a día (ver e2e/utils/backend.ts).
   test.skip(!reachable, `El backend no responde en ${BACKEND_URL}`);
 
   await page.goto("/usuarios");
@@ -446,8 +457,9 @@ test('cambiar "Filas por página" actualiza la cantidad de filas mostradas', asy
   page,
 }) => {
   const reachable = await isBackendReachable();
-  // NOSONAR: skip condicional, no un test abandonado — depende del
-  // backend real en BACKEND_URL, que hoy no corre en el workflow de CI.
+  // NOSONAR: skip condicional, no un test abandonado — red de seguridad
+  // por si el backend de test (BACKEND_URL) no llegó a levantar en este
+  // run, no un skip esperado en el día a día (ver e2e/utils/backend.ts).
   test.skip(!reachable, `El backend no responde en ${BACKEND_URL}`);
   // Crea 11 usuarios para forzar 2 páginas con el pageSize por defecto (10).
   test.slow();
@@ -478,8 +490,9 @@ test('los botones "Página siguiente"/"Página anterior" navegan entre páginas'
   page,
 }) => {
   const reachable = await isBackendReachable();
-  // NOSONAR: skip condicional, no un test abandonado — depende del
-  // backend real en BACKEND_URL, que hoy no corre en el workflow de CI.
+  // NOSONAR: skip condicional, no un test abandonado — red de seguridad
+  // por si el backend de test (BACKEND_URL) no llegó a levantar en este
+  // run, no un skip esperado en el día a día (ver e2e/utils/backend.ts).
   test.skip(!reachable, `El backend no responde en ${BACKEND_URL}`);
   test.slow();
 
@@ -513,8 +526,9 @@ test('los botones "Primera página"/"Última página" saltan a los extremos', as
   page,
 }) => {
   const reachable = await isBackendReachable();
-  // NOSONAR: skip condicional, no un test abandonado — depende del
-  // backend real en BACKEND_URL, que hoy no corre en el workflow de CI.
+  // NOSONAR: skip condicional, no un test abandonado — red de seguridad
+  // por si el backend de test (BACKEND_URL) no llegó a levantar en este
+  // run, no un skip esperado en el día a día (ver e2e/utils/backend.ts).
   test.skip(!reachable, `El backend no responde en ${BACKEND_URL}`);
   test.slow();
 
@@ -545,8 +559,9 @@ test("los botones de paginación se deshabilitan en los límites (primera/últim
   page,
 }) => {
   const reachable = await isBackendReachable();
-  // NOSONAR: skip condicional, no un test abandonado — depende del
-  // backend real en BACKEND_URL, que hoy no corre en el workflow de CI.
+  // NOSONAR: skip condicional, no un test abandonado — red de seguridad
+  // por si el backend de test (BACKEND_URL) no llegó a levantar en este
+  // run, no un skip esperado en el día a día (ver e2e/utils/backend.ts).
   test.skip(!reachable, `El backend no responde en ${BACKEND_URL}`);
   test.slow();
 
@@ -593,8 +608,9 @@ test("crear un usuario contra el backend real y verlo aparecer en la tabla", asy
   page,
 }) => {
   const reachable = await isBackendReachable();
-  // NOSONAR: skip condicional, no un test abandonado — depende del
-  // backend real en BACKEND_URL, que hoy no corre en el workflow de CI.
+  // NOSONAR: skip condicional, no un test abandonado — red de seguridad
+  // por si el backend de test (BACKEND_URL) no llegó a levantar en este
+  // run, no un skip esperado en el día a día (ver e2e/utils/backend.ts).
   test.skip(!reachable, `El backend no responde en ${BACKEND_URL}`);
 
   await page.goto("/usuarios");
@@ -623,8 +639,9 @@ test("un usuario nuevo aparece correctamente ordenado/paginado tras crearse", as
   page,
 }) => {
   const reachable = await isBackendReachable();
-  // NOSONAR: skip condicional, no un test abandonado — depende del
-  // backend real en BACKEND_URL, que hoy no corre en el workflow de CI.
+  // NOSONAR: skip condicional, no un test abandonado — red de seguridad
+  // por si el backend de test (BACKEND_URL) no llegó a levantar en este
+  // run, no un skip esperado en el día a día (ver e2e/utils/backend.ts).
   test.skip(!reachable, `El backend no responde en ${BACKEND_URL}`);
 
   await page.goto("/usuarios");
