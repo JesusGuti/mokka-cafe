@@ -5,6 +5,7 @@ import type { App } from 'supertest/types';
 import { AppModule } from '../../src/app.module';
 import { PrismaService } from '@shared/infrastructure/prisma/prisma.service';
 import { resetDatabase } from '../utils/reset-database';
+import { authHeader } from '../utils/auth-header';
 
 interface ProductResponseBody {
   id: string;
@@ -14,6 +15,7 @@ interface ProductResponseBody {
 describe('Products (e2e)', () => {
   let app: INestApplication<App>;
   let prisma: PrismaService;
+  let auth: string;
 
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -27,6 +29,7 @@ describe('Products (e2e)', () => {
     await app.init();
 
     prisma = moduleFixture.get(PrismaService);
+    auth = authHeader(moduleFixture);
   });
 
   let categoryId: string;
@@ -46,6 +49,7 @@ describe('Products (e2e)', () => {
   it('crea un producto y lo puede recuperar por id', async () => {
     const createRes = await request(app.getHttpServer())
       .post('/products')
+      .set('Authorization', auth)
       .send({ name: 'Cappuccino', priceCents: 3200, categoryId })
       .expect(201);
     const created = createRes.body as ProductResponseBody;
@@ -54,6 +58,7 @@ describe('Products (e2e)', () => {
 
     await request(app.getHttpServer())
       .get(`/products/${created.id}`)
+      .set('Authorization', auth)
       .expect(200)
       .expect((res) => {
         expect((res.body as ProductResponseBody).name).toBe('Cappuccino');
@@ -63,23 +68,33 @@ describe('Products (e2e)', () => {
   it('lista productos creados', async () => {
     await request(app.getHttpServer())
       .post('/products')
+      .set('Authorization', auth)
       .send({ name: 'Latte', priceCents: 3000, categoryId })
       .expect(201);
 
-    const res = await request(app.getHttpServer()).get('/products').expect(200);
+    const res = await request(app.getHttpServer())
+      .get('/products')
+      .set('Authorization', auth)
+      .expect(200);
     expect(res.body).toHaveLength(1);
   });
 
   it('devuelve 404 si el producto no existe', async () => {
     await request(app.getHttpServer())
       .get('/products/00000000-0000-0000-0000-000000000000')
+      .set('Authorization', auth)
       .expect(404);
   });
 
   it('rechaza payloads inválidos con 400', async () => {
     await request(app.getHttpServer())
       .post('/products')
+      .set('Authorization', auth)
       .send({ name: 'x', priceCents: -5 })
       .expect(400);
+  });
+
+  it('rechaza requests sin token con 401', async () => {
+    await request(app.getHttpServer()).get('/products').expect(401);
   });
 });
