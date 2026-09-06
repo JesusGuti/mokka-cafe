@@ -26,8 +26,9 @@ test("crea un usuario contra el backend real y muestra el toast de éxito", asyn
   page,
 }) => {
   const reachable = await isBackendReachable();
-  // NOSONAR: skip condicional, no un test abandonado — depende del
-  // backend real en BACKEND_URL, que hoy no corre en el workflow de CI.
+  // NOSONAR: skip condicional, no un test abandonado — red de seguridad
+  // por si el backend de test (BACKEND_URL) no llegó a levantar en este
+  // run, no un skip esperado en el día a día (ver e2e/utils/backend.ts).
   test.skip(!reachable, `El backend no responde en ${BACKEND_URL}`);
 
   await page.goto("/usuarios");
@@ -45,8 +46,9 @@ test("muestra el email duplicado del backend en el campo Correo", async ({
   page,
 }) => {
   const reachable = await isBackendReachable();
-  // NOSONAR: skip condicional, no un test abandonado — depende del
-  // backend real en BACKEND_URL, que hoy no corre en el workflow de CI.
+  // NOSONAR: skip condicional, no un test abandonado — red de seguridad
+  // por si el backend de test (BACKEND_URL) no llegó a levantar en este
+  // run, no un skip esperado en el día a día (ver e2e/utils/backend.ts).
   test.skip(!reachable, `El backend no responde en ${BACKEND_URL}`);
 
   await page.goto("/usuarios");

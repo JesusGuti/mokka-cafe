@@ -30,10 +30,9 @@ test("muestra un mensaje genérico con credenciales inexistentes", async ({
   page,
 }) => {
   const reachable = await isBackendReachable();
-  // NOSONAR: skip condicional, no un test abandonado — depende de
-  // infraestructura externa (backend real en BACKEND_URL) que hoy no
-  // corre en el workflow de CI. Se saltea con motivo explícito en vez
-  // de fallar en rojo cada vez que no está levantado.
+  // NOSONAR: skip condicional, no un test abandonado — red de seguridad
+  // por si el backend de test (BACKEND_URL) no llegó a levantar en este
+  // run, no un skip esperado en el día a día (ver e2e/utils/backend.ts).
   test.skip(!reachable, `El backend no responde en ${BACKEND_URL}`);
 
   await page.goto("/login");
