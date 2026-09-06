@@ -3,6 +3,7 @@ import type { SignInPayload } from "../schemas/sign-in.schema";
 
 export interface SignInResponse {
   accessToken: string;
+  refreshToken: string;
 }
 
 export async function signIn(payload: SignInPayload): Promise<SignInResponse> {

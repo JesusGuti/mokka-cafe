@@ -6,13 +6,13 @@ import { useAuthStore } from "@/shared/store/auth-store";
 import type { ApiErrorResponse } from "@/shared/types/api-error";
 
 export function useSignIn() {
-  const setAccessToken = useAuthStore((state) => state.setAccessToken);
+  const setSession = useAuthStore((state) => state.setSession);
 
   return useMutation<SignInResponse, AxiosError<ApiErrorResponse>, SignInPayload>({
     mutationFn: signIn,
     retry: false,
     onSuccess: (data) => {
-      setAccessToken(data.accessToken);
+      setSession(data);
     },
   });
 }
