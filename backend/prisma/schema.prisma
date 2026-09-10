@@ -233,7 +233,7 @@ model IngredientCategory {
 
 model Ingredient {
   id                String   @id @default(uuid())
-  name              String
+  name              String   @unique
   unit              String
   categoryId        String
   currentStockQty   Decimal  @default(0) @db.Decimal(10, 3)
