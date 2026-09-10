@@ -17,5 +17,6 @@ import { PrismaIngredientCategoryRepository } from './infrastructure/persistence
     GetIngredientCategoryUseCase,
     ListIngredientCategoryUseCase,
   ],
+  exports: [IngredientCategoryRepository],
 })
 export class IngredientCategoriesModule {}
