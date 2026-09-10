@@ -1,5 +1,5 @@
 import { AuthGate } from "@/shared/components/auth/auth-gate";
-import { AppSidebar } from "@/shared/components/layout/app-sidebar";
+import { AppSidebar } from "@/shared/components/layout/sidebar/app-sidebar";
 import { PageHeader } from "@/shared/components/layout/page-header";
 import { SidebarInset, SidebarProvider } from "@/shared/components/ui/sidebar";
 import { Toaster } from "@/shared/components/ui/toast";
