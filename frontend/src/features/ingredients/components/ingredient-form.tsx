@@ -169,7 +169,9 @@ export const IngredientForm = () => {
           name="categoryId"
           label={INGREDIENT_FORM_FIELDS.categoryId.label}
           placeholder={INGREDIENT_FORM_FIELDS.categoryId.placeholder}
-          searchPlaceholder={INGREDIENT_FORM_FIELDS.categoryId.searchPlaceholder}
+          searchPlaceholder={
+            INGREDIENT_FORM_FIELDS.categoryId.searchPlaceholder
+          }
           options={categoryOptions}
           onCreateOption={handleCreateCategory}
           createOptionLabel={(value) => `Crear categoría "${value}"`}

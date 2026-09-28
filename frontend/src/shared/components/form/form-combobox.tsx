@@ -165,9 +165,8 @@ const FormCombobox = <T extends FieldValues>({
                       option.label
                         .toLowerCase()
                         .includes(trimmedSearch.toLowerCase()),
-                    ).length && !canCreate && (
-                      <CommandEmpty>{emptyMessage}</CommandEmpty>
-                    )}
+                    ).length &&
+                      !canCreate && <CommandEmpty>{emptyMessage}</CommandEmpty>}
                     <CommandGroup>
                       {props.options
                         .filter((option) =>
