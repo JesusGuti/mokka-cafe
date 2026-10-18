@@ -204,6 +204,13 @@ describe('Ingredient categories (e2e)', () => {
   });
 
   describe('/GET ingredient-categories/:id', () => {
+    it('devuelve 400 si el id no es un UUID', async () => {
+      await request(app.getHttpServer())
+        .get('/ingredient-categories/no-es-un-uuid')
+        .set('Authorization', auth)
+        .expect(400);
+    });
+
     it('devuelve 404 si la categoría no existe', async () => {
       await request(app.getHttpServer())
         .get(`/ingredient-categories/${randomUUID()}`)

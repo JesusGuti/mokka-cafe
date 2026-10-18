@@ -9,6 +9,7 @@ import {
   HttpStatus,
   NotFoundException,
   Param,
+  ParseUUIDPipe,
   Post,
 } from '@nestjs/common';
 import { Roles } from '../../../auth/infrastructure/decorators/roles.decorator';
@@ -75,7 +76,9 @@ export class IngredientController {
   }
 
   @Get(':id')
-  async findOne(@Param('id') id: string): Promise<IngredientResponseDto> {
+  async findOne(
+    @Param('id', ParseUUIDPipe) id: string,
+  ): Promise<IngredientResponseDto> {
     try {
       const ingredient = await this.getIngredientUseCase.execute(id);
       return IngredientResponseDto.fromDomain(ingredient);

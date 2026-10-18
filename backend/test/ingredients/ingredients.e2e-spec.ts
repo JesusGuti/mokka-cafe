@@ -172,15 +172,16 @@ describe('Ingredients (e2e)', () => {
         .expect(400);
     });
 
-    it('acepta umbrales en el límite de la columna (3 decimales y valor máximo)', async () => {
-      for (const minStockThreshold of [0.125, 9999999.999]) {
+    it.each([0.125, 9999999.999])(
+      'acepta el umbral mínimo de stock %s (límite de la columna)',
+      async (minStockThreshold) => {
         await request(app.getHttpServer())
           .post('/ingredients')
           .set('Authorization', auth)
           .send(createIngredientPayload({ minStockThreshold }))
           .expect(201);
-      }
-    });
+      },
+    );
 
     it('rechaza nombre repetido con 409', async () => {
       const payload = createIngredientPayload({ name: 'Café en grano' });
@@ -284,6 +285,13 @@ describe('Ingredients (e2e)', () => {
   });
 
   describe('/GET ingredients/:id', () => {
+    it('devuelve 400 si el id no es un UUID', async () => {
+      await request(app.getHttpServer())
+        .get('/ingredients/no-es-un-uuid')
+        .set('Authorization', auth)
+        .expect(400);
+    });
+
     it('devuelve 404 si el ingrediente no existe', async () => {
       await request(app.getHttpServer())
         .get(`/ingredients/${randomUUID()}`)
