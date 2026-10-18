@@ -1,5 +1,6 @@
 import { UserRole } from '@generated/prisma/enums';
 import {
+  BadRequestException,
   Body,
   ConflictException,
   Controller,
@@ -19,6 +20,10 @@ import { IngredientNotFoundError } from '../../domain/errors/ingredient-not-foun
 import { IngredientCategoryNotFoundError } from '../../../ingredient-categories/domain/errors/ingredient-category-not-found.error';
 import { CreateIngredientDto } from './dto/create-ingredient.dto';
 import { IngredientResponseDto } from './dto/ingredient-response.dto';
+import { InvalidUnitError } from '../../domain/errors/invalid-unit.error';
+import { InvalidIngredientError } from '../../domain/errors/invalid-ingredient.error';
+import { InvalidMinStockThresholdError } from '../../domain/errors/invalid-min-stock-threshold.error';
+import { InvalidIngredientCategoryError } from '../../../ingredient-categories/domain/errors/invalid-ingredient-category.error';
 
 @Controller('ingredients')
 export class IngredientController {
@@ -47,6 +52,14 @@ export class IngredientController {
       }
       if (error instanceof IngredientCategoryNotFoundError) {
         throw new NotFoundException(error.message);
+      }
+      if (
+        error instanceof InvalidIngredientError ||
+        error instanceof InvalidIngredientCategoryError ||
+        error instanceof InvalidMinStockThresholdError ||
+        error instanceof InvalidUnitError
+      ) {
+        throw new BadRequestException(error.message);
       }
       throw error;
     }
