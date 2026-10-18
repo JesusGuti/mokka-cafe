@@ -3,19 +3,29 @@ import { PrismaService } from '@shared/infrastructure/prisma/prisma.service';
 import { IngredientRepository } from '../../domain/ports/ingredient.repository';
 import { Ingredient } from '../../domain/entities/ingredient.entity';
 import { IngredientMapper } from './ingredient.mapper';
+import { DuplicatedIngredientNameError } from '../../domain/errors/duplicated-ingredient.error';
+import { Prisma } from '@generated/prisma/client';
 
 @Injectable()
 export class PrismaIngredientRepository implements IngredientRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  async save(ingredient: Ingredient): Promise<void> {
+  async create(ingredient: Ingredient): Promise<void> {
     const data = IngredientMapper.toPersistence(ingredient);
 
-    await this.prisma.ingredient.upsert({
-      where: { id: data.id },
-      create: data,
-      update: data,
-    });
+    try {
+      await this.prisma.ingredient.create({
+        data,
+      });
+    } catch (error) {
+      if (
+        error instanceof Prisma.PrismaClientKnownRequestError &&
+        error.code === 'P2002'
+      ) {
+        throw new DuplicatedIngredientNameError();
+      }
+      throw error;
+    }
   }
 
   async findAll(): Promise<Ingredient[]> {

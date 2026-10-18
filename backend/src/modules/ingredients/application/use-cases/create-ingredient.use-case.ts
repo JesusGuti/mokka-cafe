@@ -45,7 +45,7 @@ export class CreateIngredientUseCase {
       throw new DuplicatedIngredientNameError();
     }
 
-    await this.ingredientRepository.save(ingredient);
+    await this.ingredientRepository.create(ingredient);
 
     return ingredient;
   }

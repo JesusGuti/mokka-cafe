@@ -31,7 +31,7 @@ export class CreateIngredientCategoryUseCase {
       throw new DuplicatedIngredientCategoryNameError();
     }
 
-    await this.ingredientCategoryRepository.save(ingredientCategory);
+    await this.ingredientCategoryRepository.create(ingredientCategory);
 
     return ingredientCategory;
   }

@@ -3,19 +3,29 @@ import { PrismaService } from '@shared/infrastructure/prisma/prisma.service';
 import { IngredientCategoryRepository } from '../../domain/ports/ingredient-category.repository';
 import { IngredientCategory } from '../../domain/entities/ingredient-category.entity';
 import { IngredientCategoryMapper } from './ingredient-category.mapper';
+import { Prisma } from '@generated/prisma/client';
+import { DuplicatedIngredientCategoryNameError } from '../../domain/errors/duplicated-ingredient-category-name.error';
 
 @Injectable()
 export class PrismaIngredientCategoryRepository implements IngredientCategoryRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  async save(ingredientCategory: IngredientCategory): Promise<void> {
+  async create(ingredientCategory: IngredientCategory): Promise<void> {
     const data = IngredientCategoryMapper.toPersistence(ingredientCategory);
 
-    await this.prisma.ingredientCategory.upsert({
-      where: { id: data.id },
-      create: data,
-      update: data,
-    });
+    try {
+      await this.prisma.ingredientCategory.create({
+        data,
+      });
+    } catch (error) {
+      if (
+        error instanceof Prisma.PrismaClientKnownRequestError &&
+        error.code === 'P2002'
+      ) {
+        throw new DuplicatedIngredientCategoryNameError();
+      }
+      throw error;
+    }
   }
 
   async findAll(): Promise<IngredientCategory[]> {

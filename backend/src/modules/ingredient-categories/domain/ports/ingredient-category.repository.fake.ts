@@ -1,10 +1,17 @@
 import { IngredientCategory } from '../entities/ingredient-category.entity';
+import { DuplicatedIngredientCategoryNameError } from '../errors/duplicated-ingredient-category-name.error';
 import { IngredientCategoryRepository } from './ingredient-category.repository';
 
 export class InMemoryIngredientCategoryRepository implements IngredientCategoryRepository {
   private readonly ingredientCategories = new Map<string, IngredientCategory>();
 
-  save(ingredientCategory: IngredientCategory): Promise<void> {
+  create(ingredientCategory: IngredientCategory): Promise<void> {
+    const nameTaken = [...this.ingredientCategories.values()].some(
+      (existing) => existing.name === ingredientCategory.name,
+    );
+    if (nameTaken) {
+      return Promise.reject(new DuplicatedIngredientCategoryNameError());
+    }
     this.ingredientCategories.set(ingredientCategory.id, ingredientCategory);
     return Promise.resolve();
   }

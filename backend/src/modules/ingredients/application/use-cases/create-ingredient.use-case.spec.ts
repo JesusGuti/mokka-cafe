@@ -22,7 +22,7 @@ const seedCategory = async (
   name = 'Lacteos',
 ) => {
   const category = IngredientCategory.create({ id: randomUUID(), name });
-  await repository.save(category);
+  await repository.create(category);
   return category;
 };
 
@@ -116,6 +116,26 @@ describe('CreateIngredientUseCase', () => {
         minStockThreshold: null,
       }),
     ).rejects.toThrow(DuplicatedIngredientNameError);
+  });
+
+  it('propaga el error de duplicado si otro request ganó la carrera tras findByName', async () => {
+    const { ingredientRepository, ingredientCategoryRepository, useCase } =
+      buildUseCase();
+    const category = await seedCategory(ingredientCategoryRepository);
+    const command = {
+      name: 'Café',
+      unit: 'Kilo',
+      categoryId: category.id,
+      minStockThreshold: null,
+    };
+    await useCase.execute(command);
+    // Simula que el chequeo previo no vio al otro request (carrera): el
+    // duplicado solo lo detecta la persistencia al insertar.
+    jest.spyOn(ingredientRepository, 'findByName').mockResolvedValue(null);
+
+    await expect(useCase.execute(command)).rejects.toThrow(
+      DuplicatedIngredientNameError,
+    );
   });
 
   it('propaga el error de dominio si los datos son inválidos', async () => {

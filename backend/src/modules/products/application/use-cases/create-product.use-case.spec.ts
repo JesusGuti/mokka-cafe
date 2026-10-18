@@ -41,7 +41,7 @@ describe('CreateProductUseCase', () => {
     const useCase = new CreateProductUseCase(repository);
 
     await expect(
-      useCase.execute({ name: '', priceCents: 100, category: 'bebidas' }),
+      useCase.execute({ name: '', priceCents: 100, categoryId: 'bebidas' }),
     ).rejects.toThrow('El nombre del producto es obligatorio');
   });
 });
