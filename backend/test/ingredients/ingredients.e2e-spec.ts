@@ -148,6 +148,40 @@ describe('Ingredients (e2e)', () => {
         .expect(404);
     });
 
+    it('rechaza un umbral minimo de stock mayor a 10000000 con 400', async () => {
+      const payload = createIngredientPayload({
+        minStockThreshold: 10000000,
+      });
+
+      await request(app.getHttpServer())
+        .post('/ingredients')
+        .set('Authorization', auth)
+        .send(payload)
+        .expect(400);
+    });
+
+    it('rechaza un umbral minimo de stock el cual tiene más de 3 decimales con 400', async () => {
+      const payload = createIngredientPayload({
+        minStockThreshold: 1.9999999999,
+      });
+
+      await request(app.getHttpServer())
+        .post('/ingredients')
+        .set('Authorization', auth)
+        .send(payload)
+        .expect(400);
+    });
+
+    it('acepta umbrales en el límite de la columna (3 decimales y valor máximo)', async () => {
+      for (const minStockThreshold of [0.125, 9999999.999]) {
+        await request(app.getHttpServer())
+          .post('/ingredients')
+          .set('Authorization', auth)
+          .send(createIngredientPayload({ minStockThreshold }))
+          .expect(201);
+      }
+    });
+
     it('rechaza nombre repetido con 409', async () => {
       const payload = createIngredientPayload({ name: 'Café en grano' });
 

@@ -3,6 +3,7 @@ import {
   IsOptional,
   IsString,
   IsUUID,
+  Max,
   MaxLength,
   Min,
   MinLength,
@@ -24,6 +25,7 @@ export class CreateIngredientDto {
 
   @IsOptional()
   @Min(0)
-  @IsNumber()
+  @Max(9999999.999)
+  @IsNumber({ maxDecimalPlaces: 3 })
   minStockThreshold?: number;
 }
