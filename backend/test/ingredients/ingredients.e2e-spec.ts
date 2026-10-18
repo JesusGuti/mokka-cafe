@@ -268,6 +268,19 @@ describe('Ingredients (e2e)', () => {
 
       expect(res.body).toHaveLength(1);
     });
+
+    it('permite listar a un usuario autenticado que no sea ADMIN', async () => {
+      const nonAdminAuth = authHeader(module, { role: UserRole.CAJERO });
+
+      await request(app.getHttpServer())
+        .get('/ingredients')
+        .set('Authorization', nonAdminAuth)
+        .expect(200);
+    });
+
+    it('rechaza requests sin token con 401', async () => {
+      await request(app.getHttpServer()).get('/ingredients').expect(401);
+    });
   });
 
   describe('/GET ingredients/:id', () => {
@@ -276,6 +289,12 @@ describe('Ingredients (e2e)', () => {
         .get(`/ingredients/${randomUUID()}`)
         .set('Authorization', auth)
         .expect(404);
+    });
+
+    it('rechaza requests sin token con 401', async () => {
+      await request(app.getHttpServer())
+        .get(`/ingredients/${randomUUID()}`)
+        .expect(401);
     });
   });
 });
