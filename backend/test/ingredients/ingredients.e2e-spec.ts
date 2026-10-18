@@ -4,6 +4,7 @@ import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { PrismaService } from '@shared/infrastructure/prisma/prisma.service';
 import { AppModule } from '../../src/app.module';
+import { IngredientRepository } from '../../src/modules/ingredients/domain/ports/ingredient.repository';
 import { resetDatabase } from '../utils/reset-database';
 import { authHeader } from '../utils/auth-header';
 import request from 'supertest';
@@ -63,6 +64,10 @@ describe('Ingredients (e2e)', () => {
       data: { id: randomUUID(), name: `Categoria ${randomUUID()}` },
     });
     categoryId = category.id;
+  });
+
+  afterEach(() => {
+    jest.restoreAllMocks();
   });
 
   afterAll(async () => {
@@ -151,6 +156,43 @@ describe('Ingredients (e2e)', () => {
         .set('Authorization', auth)
         .send(payload)
         .expect(201);
+
+      await request(app.getHttpServer())
+        .post('/ingredients')
+        .set('Authorization', auth)
+        .send(payload)
+        .expect(409);
+    });
+
+    it('responde 201 y 409 (nunca 500) ante dos requests concurrentes con el mismo nombre', async () => {
+      const payload = createIngredientPayload({ name: 'Café en grano' });
+
+      const responses = await Promise.all([
+        request(app.getHttpServer())
+          .post('/ingredients')
+          .set('Authorization', auth)
+          .send(payload),
+        request(app.getHttpServer())
+          .post('/ingredients')
+          .set('Authorization', auth)
+          .send(payload),
+      ]);
+
+      expect(responses.map((r) => r.status).sort()).toEqual([201, 409]);
+    });
+
+    it('responde 409 cuando el chequeo previo no ve el duplicado y lo detecta el índice único', async () => {
+      const payload = createIngredientPayload({ name: 'Café en grano' });
+      await request(app.getHttpServer())
+        .post('/ingredients')
+        .set('Authorization', auth)
+        .send(payload)
+        .expect(201);
+      // Fuerza la carrera: findByName no ve al otro request, así que el
+      // duplicado solo lo detecta el índice único (P2002) al insertar.
+      jest
+        .spyOn(module.get(IngredientRepository), 'findByName')
+        .mockResolvedValueOnce(null);
 
       await request(app.getHttpServer())
         .post('/ingredients')
