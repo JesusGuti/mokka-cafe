@@ -222,7 +222,7 @@ enum InventoryMovementType {
 
 model IngredientCategory {
   id        String   @id @default(uuid())
-  name      String   @unique
+  name      String // único sin distinguir mayúsculas: índice lower(name) en la migración
   createdAt DateTime @default(now()) @db.Timestamptz(3)
   updatedAt DateTime @updatedAt @db.Timestamptz(3)
 
@@ -233,7 +233,7 @@ model IngredientCategory {
 
 model Ingredient {
   id                String   @id @default(uuid())
-  name              String   @unique
+  name              String // único sin distinguir mayúsculas: índice lower(name) en la migración
   unit              String
   categoryId        String
   currentStockQty   Decimal  @default(0) @db.Decimal(10, 3)

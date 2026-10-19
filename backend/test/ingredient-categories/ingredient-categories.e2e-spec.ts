@@ -116,6 +116,20 @@ describe('Ingredient categories (e2e)', () => {
         .expect(409);
     });
 
+    it('rechaza nombre repetido que solo difiere en mayúsculas con 409', async () => {
+      await request(app.getHttpServer())
+        .post('/ingredient-categories')
+        .set('Authorization', auth)
+        .send(createIngredientCategoryPayload({ name: 'Leche' }))
+        .expect(201);
+
+      await request(app.getHttpServer())
+        .post('/ingredient-categories')
+        .set('Authorization', auth)
+        .send(createIngredientCategoryPayload({ name: 'LECHE' }))
+        .expect(409);
+    });
+
     it('responde 201 y 409 (nunca 500) ante dos requests concurrentes con el mismo nombre', async () => {
       const payload = createIngredientCategoryPayload({ name: 'Lácteos' });
 

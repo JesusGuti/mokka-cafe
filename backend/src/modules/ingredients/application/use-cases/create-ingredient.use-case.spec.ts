@@ -97,6 +97,27 @@ describe('CreateIngredientUseCase', () => {
     ).rejects.toThrow('El nombre del ingrediente ya está en uso');
   });
 
+  it('detecta nombres duplicados sin distinguir mayúsculas', async () => {
+    const { ingredientCategoryRepository, useCase } = buildUseCase();
+    const category = await seedCategory(ingredientCategoryRepository);
+
+    await useCase.execute({
+      name: 'Leche',
+      unit: 'Litro',
+      categoryId: category.id,
+      minStockThreshold: null,
+    });
+
+    await expect(
+      useCase.execute({
+        name: 'LECHE',
+        unit: 'Litro',
+        categoryId: category.id,
+        minStockThreshold: null,
+      }),
+    ).rejects.toThrow(DuplicatedIngredientNameError);
+  });
+
   it('detecta nombres duplicados aunque vengan con espacios extra', async () => {
     const { ingredientCategoryRepository, useCase } = buildUseCase();
     const category = await seedCategory(ingredientCategoryRepository);

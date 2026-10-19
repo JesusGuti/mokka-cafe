@@ -45,8 +45,8 @@ export class PrismaIngredientRepository implements IngredientRepository {
   }
 
   async findByName(name: string): Promise<Ingredient | null> {
-    const raw = await this.prisma.ingredient.findUnique({
-      where: { name },
+    const raw = await this.prisma.ingredient.findFirst({
+      where: { name: { equals: name, mode: 'insensitive' } },
     });
 
     return raw ? IngredientMapper.toDomain(raw) : null;

@@ -2,12 +2,14 @@ import { IngredientCategory } from '../entities/ingredient-category.entity';
 import { DuplicatedIngredientCategoryNameError } from '../errors/duplicated-ingredient-category-name.error';
 import { IngredientCategoryRepository } from './ingredient-category.repository';
 
+const sameName = (a: string, b: string) => a.toLowerCase() === b.toLowerCase();
+
 export class InMemoryIngredientCategoryRepository implements IngredientCategoryRepository {
   private readonly ingredientCategories = new Map<string, IngredientCategory>();
 
   create(ingredientCategory: IngredientCategory): Promise<void> {
-    const nameTaken = [...this.ingredientCategories.values()].some(
-      (existing) => existing.name === ingredientCategory.name,
+    const nameTaken = [...this.ingredientCategories.values()].some((existing) =>
+      sameName(existing.name, ingredientCategory.name),
     );
     if (nameTaken) {
       return Promise.reject(new DuplicatedIngredientCategoryNameError());
@@ -25,7 +27,7 @@ export class InMemoryIngredientCategoryRepository implements IngredientCategoryR
   }
   findByName(name: string): Promise<IngredientCategory | null> {
     const ingredientCategory = [...this.ingredientCategories.values()].find(
-      (ic) => ic.name === name,
+      (ic) => sameName(ic.name, name),
     );
     return Promise.resolve(ingredientCategory ?? null);
   }

@@ -45,8 +45,8 @@ export class PrismaIngredientCategoryRepository implements IngredientCategoryRep
   }
 
   async findByName(name: string): Promise<IngredientCategory | null> {
-    const raw = await this.prisma.ingredientCategory.findUnique({
-      where: { name },
+    const raw = await this.prisma.ingredientCategory.findFirst({
+      where: { name: { equals: name, mode: 'insensitive' } },
     });
 
     return raw ? IngredientCategoryMapper.toDomain(raw) : null;
