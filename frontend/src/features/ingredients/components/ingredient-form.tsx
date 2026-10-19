@@ -1,9 +1,8 @@
 "use client";
 
+import { useGetIngredientCategories } from "@/features/ingredient-categories/hooks/use-get-ingredient-categories";
+import { useCreateIngredientCategory } from "@/features/ingredient-categories/hooks/use-create-ingredient-category";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { AxiosError, HttpStatusCode } from "axios";
-import { useForm } from "react-hook-form";
-import { PackagePlus } from "lucide-react";
 import { Button } from "@/shared/components/ui/button";
 import { FieldError } from "@/shared/components/ui/field";
 import { FormDialog } from "@/shared/components/form/form-dialog";
@@ -17,8 +16,10 @@ import {
   ingredientFormSchema,
   type IngredientFormValues,
 } from "../schemas/ingredients.schema";
-import { useGetIngredientCategories } from "@/features/ingredient-categories/hooks/use-get-ingredient-categories";
-import { useCreateIngredientCategory } from "@/features/ingredient-categories/hooks/use-create-ingredient-category";
+import { toIngredientPayload } from "../utils/to-ingredient-payload";
+import { AxiosError, HttpStatusCode } from "axios";
+import { useForm } from "react-hook-form";
+import { PackagePlus } from "lucide-react";
 
 const INGREDIENT_CREATED_MESSAGE = "Ingrediente creado correctamente.";
 const CATEGORY_CREATED_MESSAGE = "Categoría creada correctamente.";
@@ -100,36 +101,27 @@ export const IngredientForm = () => {
   const onConfirm = () => {
     form.clearErrors("root");
     form.clearErrors("name");
-    const values = form.getValues();
+    const values = toIngredientPayload(
+      ingredientFormSchema.parse(form.getValues()),
+    );
 
     return new Promise<void>((resolve, reject) => {
-      mutate(
-        {
-          name: values.name,
-          unit: values.unit,
-          categoryId: values.categoryId,
-          minStockThreshold:
-            values.minStockThreshold === ""
-              ? undefined
-              : Number(values.minStockThreshold),
+      mutate(values, {
+        onSuccess: () => {
+          showToast(INGREDIENT_CREATED_MESSAGE, "success");
+          resolve();
         },
-        {
-          onSuccess: () => {
-            showToast(INGREDIENT_CREATED_MESSAGE, "success");
-            resolve();
-          },
-          onError: (error) => {
-            const message = getErrorMessage(error);
-            if (isDuplicatedNameError(error)) {
-              form.setError("name", { message });
-            } else {
-              form.setError("root", { message });
-            }
-            showToast(message, "error");
-            reject(error);
-          },
+        onError: (error) => {
+          const message = getErrorMessage(error);
+          if (isDuplicatedNameError(error)) {
+            form.setError("name", { message });
+          } else {
+            form.setError("root", { message });
+          }
+          showToast(message, "error");
+          reject(error);
         },
-      );
+      });
     });
   };
 

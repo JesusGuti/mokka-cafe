@@ -42,8 +42,9 @@ export const ingredientFormSchema = z.object({
     .pipe(z.uuid(INGREDIENT_SCHEMA_ERROR_MESSAGES.categoryId.invalid)),
   minStockThreshold: z
     .string()
+    .trim()
     .refine(
-      (value) => value === "" || Number(value) >= 0,
+      (v) => v === "" || (Number.isFinite(Number(v)) && Number(v) >= 0),
       INGREDIENT_SCHEMA_ERROR_MESSAGES.minStockThreshold.invalid,
     ),
 });

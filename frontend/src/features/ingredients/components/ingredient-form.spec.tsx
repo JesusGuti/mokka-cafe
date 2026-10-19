@@ -171,17 +171,14 @@ describe("IngredientForm", () => {
     await fillValidForm();
     submit();
 
-    await waitFor(() =>
-      expect(mutateMock).toHaveBeenCalledWith(
-        {
-          name: "Café en grano",
-          unit: "gramos",
-          categoryId: LACTEOS_CATEGORY_ID,
-          minStockThreshold: undefined,
-        },
-        expect.any(Object),
-      ),
-    );
+    await waitFor(() => expect(mutateMock).toHaveBeenCalled());
+    const [payload] = mutateMock.mock.calls[0];
+    expect(payload).toStrictEqual({
+      name: "Café en grano",
+      unit: "gramos",
+      categoryId: LACTEOS_CATEGORY_ID,
+      minStockThreshold: undefined,
+    });
   });
 
   it("convierte el stock mínimo a number cuando se completa", async () => {
@@ -200,6 +197,26 @@ describe("IngredientForm", () => {
         expect.any(Object),
       ),
     );
+  });
+
+  it("envía name y unit sin espacios sobrantes", async () => {
+    render(<IngredientForm />);
+    openForm();
+    fireEvent.change(screen.getByRole("textbox", { name: "Nombre" }), {
+      target: { value: "  Café " },
+    });
+    fireEvent.change(screen.getByRole("textbox", { name: "Unidad" }), {
+      target: { value: "  gramos  " },
+    });
+    await selectExistingCategory();
+    submit();
+
+    await waitFor(() => {
+      expect(mutateMock).toHaveBeenCalledWith(
+        expect.objectContaining({ name: "Café", unit: "gramos" }),
+        expect.any(Object),
+      );
+    });
   });
 
   it("muestra el nombre duplicado del backend en el campo Nombre, no en el root", async () => {
