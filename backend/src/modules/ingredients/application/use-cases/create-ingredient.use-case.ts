@@ -21,14 +21,6 @@ export class CreateIngredientUseCase {
   ) {}
 
   async execute(command: CreateIngredientCommand): Promise<Ingredient> {
-    const ingredient = Ingredient.create({
-      id: randomUUID(),
-      name: command.name,
-      categoryId: command.categoryId,
-      unit: command.unit,
-      minStockThreshold: command.minStockThreshold,
-    });
-
     const ingredientCategory = await this.ingredientCategoryRepository.findById(
       command.categoryId,
     );
@@ -36,6 +28,14 @@ export class CreateIngredientUseCase {
     if (!ingredientCategory) {
       throw new IngredientCategoryNotFoundError(command.categoryId);
     }
+
+    const ingredient = Ingredient.create({
+      id: randomUUID(),
+      name: command.name,
+      categoryId: command.categoryId,
+      unit: command.unit,
+      minStockThreshold: command.minStockThreshold,
+    });
 
     const existingIngredientName = await this.ingredientRepository.findByName(
       ingredient.name,

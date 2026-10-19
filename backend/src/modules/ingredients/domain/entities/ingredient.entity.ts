@@ -2,7 +2,6 @@ import { BaseEntityProps } from '@shared/domain/entities/base.entity';
 import { InvalidIngredientError } from '../errors/invalid-ingredient.error';
 import { InvalidUnitError } from '../errors/invalid-unit.error';
 import { InvalidMinStockThresholdError } from '../errors/invalid-min-stock-threshold.error';
-import { InvalidIngredientCategoryError } from '../../../ingredient-categories/domain/errors/invalid-ingredient-category.error';
 
 export interface IngredientProps extends BaseEntityProps {
   name: string;
@@ -33,9 +32,7 @@ export class Ingredient {
     }
 
     if (!props.categoryId) {
-      throw new InvalidIngredientCategoryError(
-        'La categoria de ingrediente es obligatoria',
-      );
+      throw new InvalidIngredientError('La categoría es obligatoria');
     }
 
     if (

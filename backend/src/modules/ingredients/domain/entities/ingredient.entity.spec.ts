@@ -1,4 +1,3 @@
-import { InvalidIngredientCategoryError } from '../../../ingredient-categories/domain/errors/invalid-ingredient-category.error';
 import { InvalidIngredientError } from '../errors/invalid-ingredient.error';
 import { InvalidMinStockThresholdError } from '../errors/invalid-min-stock-threshold.error';
 import { InvalidUnitError } from '../errors/invalid-unit.error';
@@ -66,7 +65,7 @@ describe('Ingredient entity', () => {
         categoryId: '',
         minStockThreshold: 10,
       }),
-    ).toThrow(InvalidIngredientCategoryError);
+    ).toThrow(InvalidIngredientError);
   });
 
   it('si minStockThreshold es un número, rechaza un minStockThreshold menor a 0', () => {

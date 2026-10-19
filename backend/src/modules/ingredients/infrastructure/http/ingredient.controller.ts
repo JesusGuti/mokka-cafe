@@ -24,7 +24,6 @@ import { IngredientResponseDto } from './dto/ingredient-response.dto';
 import { InvalidUnitError } from '../../domain/errors/invalid-unit.error';
 import { InvalidIngredientError } from '../../domain/errors/invalid-ingredient.error';
 import { InvalidMinStockThresholdError } from '../../domain/errors/invalid-min-stock-threshold.error';
-import { InvalidIngredientCategoryError } from '../../../ingredient-categories/domain/errors/invalid-ingredient-category.error';
 
 @Controller('ingredients')
 export class IngredientController {
@@ -56,7 +55,6 @@ export class IngredientController {
       }
       if (
         error instanceof InvalidIngredientError ||
-        error instanceof InvalidIngredientCategoryError ||
         error instanceof InvalidMinStockThresholdError ||
         error instanceof InvalidUnitError
       ) {
