@@ -8,6 +8,8 @@ import jwtConfig from './config/jwt.config';
 import swaggerConfig from './config/swagger.config';
 import { envValidationSchema } from './config/env.validation';
 import { AuthModule } from './modules/auth/auth.module';
+import { IngredientsModule } from './modules/ingredients/ingredient.module';
+import { IngredientCategoriesModule } from './modules/ingredient-categories/ingredient-categories.module';
 import { ProductsModule } from './modules/products/products.module';
 import { UsersModule } from './modules/users/users.module';
 import { PrismaModule } from './shared/infrastructure/prisma/prisma.module';
@@ -23,6 +25,8 @@ import { SecurityModule } from './shared/infrastructure/security/security.module
       load: [corsConfig, databaseConfig, jwtConfig, swaggerConfig],
     }),
     AuthModule,
+    IngredientsModule,
+    IngredientCategoriesModule,
     PrismaModule,
     ProductsModule,
     SecurityModule,
