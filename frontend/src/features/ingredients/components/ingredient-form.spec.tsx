@@ -219,6 +219,27 @@ describe("IngredientForm", () => {
     });
   });
 
+  it("muestra el mensaje del backend, no el de categoría inexistente, si falla crear una categoría con 404", async () => {
+    createCategoryMutateAsyncMock.mockRejectedValue({
+      response: { status: 404, data: { message: "Ruta no encontrada" } },
+    });
+    render(<IngredientForm />);
+    openForm();
+
+    fireEvent.click(screen.getByRole("button", { name: "Categoría" }));
+    fireEvent.change(screen.getByPlaceholderText("Buscar categoría..."), {
+      target: { value: "Infusiones" },
+    });
+    fireEvent.click(screen.getByText('Crear categoría "Infusiones"'));
+
+    await waitFor(() =>
+      expect(createCategoryMutateAsyncMock).toHaveBeenCalled(),
+    );
+    expect(
+      screen.queryByText("La categoría seleccionada no existe."),
+    ).not.toBeInTheDocument();
+  });
+
   it("muestra el nombre duplicado del backend en el campo Nombre, no en el root", async () => {
     mutateMock.mockImplementation((_data, { onError }) =>
       onError?.({
@@ -295,6 +316,12 @@ describe("IngredientForm", () => {
     await waitFor(() =>
       expect(screen.queryByRole("listbox")).not.toBeInTheDocument(),
     );
+
+    // La categoría nueva aún no está en `options` (el refetch está mockeado),
+    // pero el trigger igual debe mostrarla seleccionada.
+    expect(
+      screen.getByRole("button", { name: "Categoría" }),
+    ).toHaveTextContent("Infusiones");
 
     submit();
 

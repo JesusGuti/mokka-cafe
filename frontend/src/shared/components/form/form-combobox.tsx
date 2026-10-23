@@ -68,6 +68,9 @@ const FormCombobox = <T extends FieldValues>({
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState("");
   const [isCreating, setIsCreating] = useState(false);
+  // Opción recién creada: `options` no la incluye hasta que el caller
+  // refetchea, y sin esto el trigger mostraría el placeholder en ese lapso.
+  const [createdOption, setCreatedOption] = useState<SelectOption | null>(null);
 
   const descriptionId = props.description ? `${id}-description` : undefined;
   const errorId = `${id}-error`;
@@ -79,14 +82,18 @@ const FormCombobox = <T extends FieldValues>({
   const canCreate =
     !!props.onCreateOption && trimmedSearch.length > 0 && !hasExactMatch;
 
+  const filteredOptions = props.options.filter((option) =>
+    option.label.toLowerCase().includes(trimmedSearch.toLowerCase()),
+  );
+
   return (
     <Controller
       name={props.name}
       control={control}
       render={({ field, fieldState }) => {
-        const selectedOption = props.options.find(
-          (option) => option.value === field.value,
-        );
+        const selectedOption =
+          props.options.find((option) => option.value === field.value) ??
+          (createdOption?.value === field.value ? createdOption : undefined);
 
         const handleSelect = (value: string) => {
           field.onChange(value);
@@ -101,6 +108,7 @@ const FormCombobox = <T extends FieldValues>({
           try {
             const created = await props.onCreateOption(trimmedSearch);
             if (created) {
+              setCreatedOption(created);
               handleSelect(created.value);
             }
           } finally {
@@ -161,36 +169,27 @@ const FormCombobox = <T extends FieldValues>({
                     onValueChange={setSearch}
                   />
                   <CommandList>
-                    {!props.options.filter((option) =>
-                      option.label
-                        .toLowerCase()
-                        .includes(trimmedSearch.toLowerCase()),
-                    ).length &&
-                      !canCreate && <CommandEmpty>{emptyMessage}</CommandEmpty>}
+                    {!filteredOptions.length && !canCreate && (
+                      <CommandEmpty>{emptyMessage}</CommandEmpty>
+                    )}
                     <CommandGroup>
-                      {props.options
-                        .filter((option) =>
-                          option.label
-                            .toLowerCase()
-                            .includes(trimmedSearch.toLowerCase()),
-                        )
-                        .map((option) => (
-                          <CommandItem
-                            key={option.value}
-                            value={option.value}
-                            onSelect={handleSelect}
-                          >
-                            <Check
-                              className={cn(
-                                "size-4",
-                                option.value === field.value
-                                  ? "opacity-100"
-                                  : "opacity-0",
-                              )}
-                            />
-                            {option.label}
-                          </CommandItem>
-                        ))}
+                      {filteredOptions.map((option) => (
+                        <CommandItem
+                          key={option.value}
+                          value={option.value}
+                          onSelect={handleSelect}
+                        >
+                          <Check
+                            className={cn(
+                              "size-4",
+                              option.value === field.value
+                                ? "opacity-100"
+                                : "opacity-0",
+                            )}
+                          />
+                          {option.label}
+                        </CommandItem>
+                      ))}
                       {canCreate && (
                         <CommandItem
                           value={`__create__${trimmedSearch}`}

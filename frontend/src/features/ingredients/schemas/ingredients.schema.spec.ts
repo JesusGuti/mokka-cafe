@@ -19,8 +19,9 @@ describe("ingredientFormSchema", () => {
     expect(parse().success).toBe(true);
   });
 
-  it("recorta espacios en name, unit y categoryId", () => {
-    const result = parse({ name: " Café   ", unit: "  gramos " });
+  it("recorta espacios en name y unit", () => {
+    const result = parse({ name: "  Café  ", unit: " gramos " });
+
     expect(result.data).toMatchObject({ name: "Café", unit: "gramos" });
   });
 
@@ -53,15 +54,18 @@ describe("ingredientFormSchema", () => {
     ],
   ])("rechaza %s", (_label, override, message) => {
     const result = parse(override);
+
     expect(result.success).toBe(false);
-    expect(result.error?.issues.map((i) => i.message)).toContain(message);
+    expect(result.error?.issues.map((issue) => issue.message)).toContain(
+      message,
+    );
   });
 
-  it.each(["", "    ", "0", "1", "1.5", "100"])("acepta stock %j", (value) => {
+  it.each(["", "   ", "0", "5", "5.5"])("acepta stock %j", (value) => {
     expect(parse({ minStockThreshold: value }).success).toBe(true);
   });
 
-  it("normaliza el stock de solo espacios a vacío", () => {
+  it("normaliza un stock de solo espacios a vacío", () => {
     expect(parse({ minStockThreshold: "   " }).data?.minStockThreshold).toBe(
       "",
     );

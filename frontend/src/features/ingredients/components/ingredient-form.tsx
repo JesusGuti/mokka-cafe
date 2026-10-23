@@ -49,17 +49,25 @@ const INGREDIENT_FORM_FIELDS = {
 
 const GENERIC_ERROR_MESSAGE =
   "No se pudo crear el ingrediente. Intenta de nuevo.";
+const GENERIC_CATEGORY_ERROR_MESSAGE =
+  "No se pudo crear la categoría. Intenta de nuevo.";
 const CATEGORY_NOT_FOUND_MESSAGE = "La categoría seleccionada no existe.";
 
-const getErrorMessage = (error: AxiosError<ApiErrorResponse>) => {
+const getBackendMessage = (error: AxiosError<ApiErrorResponse>) => {
+  const message = error.response?.data?.message;
+  return Array.isArray(message) ? message[0] : message;
+};
+
+// Al crear un ingrediente, un 404 solo puede significar categoría inexistente.
+const getIngredientErrorMessage = (error: AxiosError<ApiErrorResponse>) => {
   if (error.response?.status === HttpStatusCode.NotFound) {
     return CATEGORY_NOT_FOUND_MESSAGE;
   }
-
-  const message = error.response?.data.message;
-  if (!message) return GENERIC_ERROR_MESSAGE;
-  return Array.isArray(message) ? message[0] : message;
+  return getBackendMessage(error) ?? GENERIC_ERROR_MESSAGE;
 };
+
+const getCategoryErrorMessage = (error: AxiosError<ApiErrorResponse>) =>
+  getBackendMessage(error) ?? GENERIC_CATEGORY_ERROR_MESSAGE;
 
 const isDuplicatedNameError = (error: AxiosError<ApiErrorResponse>) =>
   error.response?.status === HttpStatusCode.Conflict;
@@ -92,7 +100,9 @@ export const IngredientForm = () => {
       showToast(CATEGORY_CREATED_MESSAGE, "success");
       return { label: category.name, value: category.id };
     } catch (error) {
-      const message = getErrorMessage(error as AxiosError<ApiErrorResponse>);
+      const message = getCategoryErrorMessage(
+        error as AxiosError<ApiErrorResponse>,
+      );
       showToast(message, "error");
       return null;
     }
@@ -112,7 +122,7 @@ export const IngredientForm = () => {
           resolve();
         },
         onError: (error) => {
-          const message = getErrorMessage(error);
+          const message = getIngredientErrorMessage(error);
           if (isDuplicatedNameError(error)) {
             form.setError("name", { message });
           } else {
