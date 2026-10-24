@@ -111,7 +111,11 @@ export default defineConfig({
       cwd: path.resolve(__dirname, "../backend"),
       url: E2E_BACKEND_URL,
       reuseExistingServer: false,
-      timeout: 30_000,
+      // El backend ya tarda ~45s en arrancar (reset+seed+compilar todos los
+      // módulos de Nest) — 30s se quedaba corto apenas se sumaron
+      // ingredients/ingredient-categories. Margen generoso para no volver a
+      // pisarlo cada vez que crezca un poco más.
+      timeout: 90_000,
     },
     {
       command: "pnpm dev",

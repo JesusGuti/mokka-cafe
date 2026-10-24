@@ -9,14 +9,20 @@ import {
 
 export interface NavItem {
   href: string;
-  label: string;
   icon: LucideIcon;
+  items?: { href: string; label: string }[];
+  label: string;
 }
 
 export const NAV_ITEMS: readonly NavItem[] = [
   { href: "/pos", label: "POS", icon: ShoppingCart },
   { href: "/cocina", label: "Cocina", icon: ChefHat },
-  { href: "/inventario", label: "Inventario", icon: Package },
+  {
+    href: "/inventario",
+    label: "Inventario",
+    icon: Package,
+    items: [{ href: "/inventario/ingredientes", label: "Ingredientes" }],
+  },
   { href: "/reportes", label: "Reportes", icon: ChartColumn },
   { href: "/usuarios", label: "Usuarios", icon: Users },
 ] as const;
