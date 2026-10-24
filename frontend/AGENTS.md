@@ -66,6 +66,7 @@ Los alias de import (`@/src/shared/...`) están definidos en `components.json` y
 - Componentes en PascalCase, un componente por archivo, archivo en kebab-case o PascalCase consistente con lo que ya exista en la carpeta.
 - Componentes shadcn se agregan con `pnpm dlx shadcn add <componente>`, nunca copiados/pegados a mano — así siguen recibiendo updates y quedan en `shared/components/ui`.
 - Formularios: react-hook-form + resolver de zod; el schema de validación vive junto al formulario o en `shared/lib/validations/` si se reutiliza.
+- Formularios: el payload se arma con `schema.parse(form.getValues())`, nunca con `getValues()` crudo — `getValues()` devuelve los strings sin los `trim`/transforms del schema. Si la forma del form difiere de la del backend (ej. string → number), la conversión vive en una función pura `to<Entidad>Payload` en `features/<feature>/utils/`, con su propio spec.
 - Llamadas HTTP centralizadas en `shared/lib` (instancia de axios) y en `features/<feature>/api/` (funciones por endpoint) — no `fetch`/`axios` sueltos dentro de componentes.
 - Toda llamada a `features/<feature>/api/` desde un Client Component se consume vía hooks de TanStack Query (`features/<feature>/hooks/`), nunca invocando la función de la capa `api/` directo en el componente — así se aprovecha cache, invalidación y estados de loading/error de forma consistente.
 - Usar el helper `cn()` (`shared/lib/utils`) para componer clases de Tailwind condicionales, no template strings manuales.
