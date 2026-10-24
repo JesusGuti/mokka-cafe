@@ -178,14 +178,14 @@ describe("FormCombobox", () => {
     await waitFor(() =>
       expect(onCreateOption).toHaveBeenCalledWith("Infusiones"),
     );
-    // No se verifica que el trigger muestre "Infusiones": en este harness
-    // aislado `options` es estático y nunca se actualiza tras crear (a
-    // diferencia de la app real, donde useGetIngredientCategories refetchea
-    // por invalidación) — ese round-trip completo ya lo cubren
-    // ingredient-form.spec.tsx y el e2e real.
     await waitFor(() =>
       expect(screen.queryByRole("listbox")).not.toBeInTheDocument(),
     );
+    // En este harness `options` es estático y nunca incluye la opción creada
+    // (en la app real llega tras el refetch): el trigger debe mostrarla igual.
+    expect(
+      screen.getByRole("button", { name: "Categoría" }),
+    ).toHaveTextContent("Infusiones");
   });
 
   it("si onCreateOption devuelve null (el caller ya mostró el error), no cambia la selección ni cierra el popup", async () => {
