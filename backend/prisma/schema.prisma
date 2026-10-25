@@ -17,7 +17,8 @@ datasource db {
 
 model ProductCategory {
   id        String   @id @default(uuid())
-  name      String   @unique
+  name      String
+  sortOrder Int      @default(0)
   createdAt DateTime @default(now()) @db.Timestamptz(3)
   updatedAt DateTime @updatedAt @db.Timestamptz(3)
 
@@ -27,50 +28,111 @@ model ProductCategory {
 }
 
 model Product {
-  id          String   @id @default(uuid())
-  name        String
-  description String?
-  priceCents  Int
-  categoryId  String
-  isAvailable Boolean  @default(true)
-  createdAt   DateTime @default(now()) @db.Timestamptz(3)
-  updatedAt   DateTime @updatedAt @db.Timestamptz(3)
+  id                      String    @id @default(uuid())
+  name                    String
+  description             String?
+  priceCents              Int
+  categoryId              String
+  isAvailable             Boolean   @default(true)
+  sortOrder               Int       @default(0)
+  createdAt               DateTime  @default(now()) @db.Timestamptz(3)
+  updatedAt               DateTime  @updatedAt @db.Timestamptz(3)
+  archivedAt              DateTime? @db.Timestamptz(3)
+  availabilityChangedAt   DateTime? @db.Timestamptz(3)
+  availabilityChangedById String?
 
-  category   ProductCategory   @relation(fields: [categoryId], references: [id], onDelete: Restrict)
-  modifiers  ProductModifier[]
-  orderItems OrderItem[]
-  recipes    Recipe[]
+  category              ProductCategory        @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+  modifierGroups        ProductModifierGroup[]
+  orderItems            OrderItem[]
+  recipes               Recipe[]
+  availabilityChangedBy User?                  @relation("availabilityChangedBy", fields: [availabilityChangedById], references: [id], onDelete: Restrict)
+  priceChanges          ProductPriceChange[]   @relation("ProductPriceChanges")
 
   @@map("products")
 }
 
+model ProductPriceChange {
+  id            String   @id @default(uuid())
+  productId     String
+  oldPriceCents Int
+  newPriceCents Int
+  changedById   String
+  changedAt     DateTime @default(now()) @db.Timestamptz(3)
+
+  product   Product @relation("ProductPriceChanges", fields: [productId], references: [id], onDelete: Restrict)
+  changedBy User    @relation("ProductPriceChangedBy", fields: [changedById], references: [id], onDelete: Restrict)
+
+  @@index([productId, changedAt])
+  @@map("product_price_changes")
+}
+
+/// Grupo de opciones de un producto ("Tamaño", "Leche", "Extras").
+/// minSelect = 0 → opcional; ≥ 1 → obligatorio. maxSelect = null → sin tope.
+model ModifierGroup {
+  id        String   @id @default(uuid())
+  name      String
+  minSelect Int      @default(0)
+  maxSelect Int?
+  isActive  Boolean  @default(true)
+  sortOrder Int      @default(0)
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+  updatedAt DateTime @updatedAt @db.Timestamptz(3)
+
+  modifiers Modifier[]
+  products  ProductModifierGroup[]
+
+  @@map("modifier_groups")
+}
+
+/// Opción dentro de un grupo. priceCents es el incremento sobre el precio base del producto.
 model Modifier {
   id         String   @id @default(uuid())
+  groupId    String
   name       String
   priceCents Int
   isActive   Boolean  @default(true)
+  sortOrder  Int      @default(0)
   createdAt  DateTime @default(now()) @db.Timestamptz(3)
   updatedAt  DateTime @updatedAt @db.Timestamptz(3)
 
-  products   ProductModifier[]
-  orderItems OrderItemModifier[]
-  recipes    ModifierRecipe[]
+  group        ModifierGroup         @relation(fields: [groupId], references: [id], onDelete: Restrict)
+  orderItems   OrderItemModifier[]
+  recipes      ModifierRecipe[]
+  priceChanges ModifierPriceChange[] @relation("ModifierPriceChanges")
 
+  @@index([groupId, sortOrder])
   @@map("modifiers")
 }
 
-model ProductModifier {
-  id         String   @id @default(uuid())
-  productId  String
-  modifierId String
-  createdAt  DateTime @default(now()) @db.Timestamptz(3)
-  updatedAt  DateTime @updatedAt @db.Timestamptz(3)
+model ProductModifierGroup {
+  id        String   @id @default(uuid())
+  productId String
+  groupId   String
+  sortOrder Int      @default(0)
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+  updatedAt DateTime @updatedAt @db.Timestamptz(3)
 
-  product  Product  @relation(fields: [productId], references: [id], onDelete: Restrict)
-  modifier Modifier @relation(fields: [modifierId], references: [id], onDelete: Restrict)
+  product Product       @relation(fields: [productId], references: [id], onDelete: Restrict)
+  group   ModifierGroup @relation(fields: [groupId], references: [id], onDelete: Restrict)
 
-  @@unique([productId, modifierId])
-  @@map("product_modifiers")
+  @@unique([productId, groupId])
+  @@index([groupId])
+  @@map("product_modifier_groups")
+}
+
+model ModifierPriceChange {
+  id            String   @id @default(uuid())
+  modifierId    String
+  oldPriceCents Int
+  newPriceCents Int
+  changedById   String
+  changedAt     DateTime @default(now()) @db.Timestamptz(3)
+
+  modifier  Modifier @relation("ModifierPriceChanges", fields: [modifierId], references: [id], onDelete: Restrict)
+  changedBy User     @relation("ModifierPriceChangedBy", fields: [changedById], references: [id], onDelete: Restrict)
+
+  @@index([modifierId, changedAt])
+  @@map("modifier_price_changes")
 }
 
 // ============================================================
@@ -202,9 +264,12 @@ model User {
   createdAt    DateTime  @default(now()) @db.Timestamptz(3)
   updatedAt    DateTime  @updatedAt @db.Timestamptz(3)
 
-  ordersAsWaiter     Order[]             @relation("OrderWaiter")
-  paymentsAsCashier  Payment[]           @relation("PaymentCashier")
-  inventoryMovements InventoryMovement[]
+  ordersAsWaiter              Order[]               @relation("OrderWaiter")
+  paymentsAsCashier           Payment[]             @relation("PaymentCashier")
+  inventoryMovements          InventoryMovement[]
+  productsAvailabilityChanged Product[]             @relation("availabilityChangedBy")
+  productPriceChanges         ProductPriceChange[]  @relation("ProductPriceChangedBy")
+  modifierPriceChanges        ModifierPriceChange[] @relation("ModifierPriceChangedBy")
 
   @@map("users")
 }

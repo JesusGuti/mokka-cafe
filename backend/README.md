@@ -47,6 +47,45 @@ pnpm start:dev
 
 Queda escuchando en `http://localhost:8080` (o el `PORT` que hayas configurado en `.env`), con recarga automática al guardar cambios.
 
+## Migraciones
+
+El schema vive en `prisma/schema.prisma`; cada cambio se registra como una carpeta en `prisma/migrations/`. Nunca edites una migración que ya se aplicó o se mergeó: crea una nueva.
+
+**Crear y aplicar una migración** (flujo normal):
+
+```bash
+# 1. Edita prisma/schema.prisma
+pnpm exec prisma format                                        # alinea el schema
+pnpm exec prisma validate                                      # comprueba que sea válido
+pnpm prisma:migrate:dev --create-only --name <que_cambia>      # genera el SQL SIN aplicarlo
+# 2. Revisa prisma/migrations/<timestamp>_<que_cambia>/migration.sql
+# 3. Aplícala y regenera el cliente
+pnpm prisma:migrate:dev
+```
+
+Usa `--create-only` siempre que la migración deba llevar SQL a mano o quieras revisar antes de aplicar. Cosas que Prisma **no** puede expresar en el schema (índices sobre `lower(...)`, índices parciales con `WHERE`) se escriben directamente en el `migration.sql`; deja un comentario explicando por qué, como en `20261018120000_case_insensitive_unique_names`.
+
+Nombres de migración: minúsculas con guiones bajos, describiendo el cambio (`catalog_additive_columns`), no el ticket.
+
+**Estado y otros entornos:**
+
+```bash
+pnpm exec prisma migrate status    # qué migraciones están aplicadas o pendientes
+pnpm prisma:migrate:deploy         # aplica las pendientes sin crear nada (producción/CI)
+pnpm db:test:migrate               # lo mismo sobre la BD de test
+```
+
+**Reiniciar la base de desarrollo desde cero** (borra todos los datos):
+
+```bash
+pnpm exec prisma migrate reset     # elimina y recrea la BD, reaplica todas las migraciones
+pnpm prisma:seed                    # vuelve a cargar los datos de prueba
+```
+
+> `migrate reset` es destructivo y solo debe usarse contra la BD local. Prisma 7 ya no corre el seed automáticamente después del reset, por eso va como paso aparte. Para la BD de test, `pnpm db:test:reset` solo **vacía las tablas** (no toca las migraciones); si necesitas rehacerla entera, `pnpm db:test:migrate` aplica las pendientes.
+
+**Si una migración falla a la mitad:** corre `pnpm exec prisma migrate status`. Cada migración se ejecuta en una transacción, así que normalmente no queda nada a medias; corrige el SQL (o los datos que lo bloquean) y vuelve a aplicar. Si la migración quedó marcada como fallida, en desarrollo es más simple un `migrate reset`.
+
 ## Tests
 
 ```bash

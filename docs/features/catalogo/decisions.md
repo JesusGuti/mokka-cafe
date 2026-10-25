@@ -79,7 +79,7 @@ Estados: ✅ Tomada · 🟡 Propuesta (recomendada, falta confirmar) · ❌ Reem
 - **Decisión**: `GET /products` devuelve la lista completa; búsqueda y filtros se resuelven en cliente o con query simple. Se agrega paginación solo si el menú crece de verdad.
 
 ## D-15 ✅ Historial de cambios de precio
-- **Decisión recomendada**: tabla `PriceChange` (`entityType` PRODUCT|MODIFIER, `entityId`, `oldPriceCents`, `newPriceCents`, `changedById`, `changedAt`) escrita **en la misma transacción** que el `PATCH` de precio. Sin pantalla en el MVP; consulta por SQL o endpoint de lectura admin después. ~2–3 pts.
+- **Decisión recomendada**: dos tablas, `ProductPriceChange` y `ModifierPriceChange` (no una polimórfica: así cada una tiene su clave foránea real), cada una con `productId`/`modifierId`, `oldPriceCents`, `newPriceCents`, `changedById`, `changedAt`) escrita **en la misma transacción** que el `PATCH` de precio. Sin pantalla en el MVP; consulta por SQL o endpoint de lectura admin después. ~2–3 pts.
 - **Por qué ahora**: el historial anterior a la tabla no se puede reconstruir, y los precios son lo más sensible del catálogo.
 - **Confirmada 2026-10-24.** HU E2.7; se entrega junto con la edición de productos para que no haya cambios de precio sin registrar.
 

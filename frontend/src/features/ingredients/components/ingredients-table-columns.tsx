@@ -4,7 +4,7 @@ import type { ColumnDef } from "@tanstack/react-table";
 
 import { DataTableColumnHeader } from "@/shared/components/table/data-table-column-header";
 import type { DataTableFeatures } from "@/shared/components/table/data-table-features";
-import { formatDate } from "@/shared/lib/format";
+import { formatDate } from "@/shared/helpers/date";
 import { IngredientResponse } from "../types/ingredients.types";
 
 interface BuildIngredientsTableColumnsParams {

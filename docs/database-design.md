@@ -7,8 +7,13 @@
 ```mermaid
 erDiagram
     ProductCategory ||--o{ Product : "clasifica"
-    Product ||--o{ ProductModifier : "ofrece"
-    Modifier ||--o{ ProductModifier : "disponible en"
+    Product ||--o{ ProductModifierGroup : "ofrece"
+    ModifierGroup ||--o{ ProductModifierGroup : "disponible en"
+    ModifierGroup ||--o{ Modifier : "agrupa"
+    Product ||--o{ ProductPriceChange : "historial de precio"
+    Modifier ||--o{ ModifierPriceChange : "historial de precio"
+    User ||--o{ ProductPriceChange : "registra"
+    User ||--o{ ModifierPriceChange : "registra"
     Product ||--o{ OrderItem : "se pide como"
     Product ||--o{ Recipe : "se prepara con"
     Modifier ||--o{ ModifierRecipe : "consume"
@@ -42,10 +47,13 @@ erDiagram
 
 | Tabla | Propósito | Campos clave |
 |---|---|---|
-| `product_categories` | Catálogo normalizado de categorías de menú (ej. "Bebidas Calientes", "Postres"). | `name` (único) |
-| `products` | Catálogo de venta (ya existía antes de esta pasada). | `priceCents`, `categoryId`, `isAvailable` |
-| `modifiers` | Catálogo de personalizaciones con precio propio (ej. "Extra Shot", "Leche de Almendra"). Reutilizable entre productos. | `name`, `priceCents`, `isActive` |
-| `product_modifiers` | Qué modificadores están disponibles para qué producto (catálogo, no parte de un pedido todavía). | `productId`, `modifierId` — único por par |
+| `product_categories` | Catálogo normalizado de categorías de menú (ej. "Bebidas Calientes", "Postres"). | `name` (único sin distinguir mayúsculas), `sortOrder` |
+| `products` | Catálogo de venta. | `priceCents`, `categoryId`, `isAvailable`, `sortOrder`, `archivedAt`, `availabilityChangedAt`/`ById` |
+| `modifiers` | Opciones con incremento de precio propio (ej. "Extra Shot", "Grande"). Cada una pertenece a un grupo. | `groupId`, `name`, `priceCents`, `isActive`, `sortOrder` |
+| `modifier_groups` | Grupos de opciones con regla de selección (ej. "Tamaño", "Leche", "Extras"). | `name`, `minSelect`, `maxSelect`, `isActive`, `sortOrder` |
+| `product_modifier_groups` | Qué grupos de opciones tiene cada producto (catálogo, no parte de un pedido). | `productId`, `groupId`, `sortOrder` — único por par |
+| `product_price_changes` | Historial de cambios de precio de productos. | `productId`, `oldPriceCents`, `newPriceCents`, `changedById`, `changedAt` |
+| `modifier_price_changes` | Historial de cambios de precio de opciones. | `modifierId`, `oldPriceCents`, `newPriceCents`, `changedById`, `changedAt` |
 
 ### Pedidos y pagos
 
@@ -90,7 +98,7 @@ Se evaluaron dos opciones: una bandera de "por vencer" directamente en `Ingredie
 
 ### 3. Los modificadores tienen precio propio, no son solo texto libre
 
-El mock de POS muestra "+ Leche de Almendra" y "+ Extra Shot" en los tickets. Se modelaron como `Modifier` con `priceCents` (en vez de texto plano) porque afectan el ingreso real y deben poder reportarse — "cuánto se vendió en extras" es una pregunta de negocio válida. `OrderItem.notes` se mantiene aparte para pedidos puntuales que no ameritan su propia entrada de catálogo (ej. "sin hielo").
+El mock de POS muestra "+ Leche de Almendra" y "+ Extra Shot" en los tickets. Se modelaron como `Modifier` (opciones, agrupadas según la decisión 14) con `priceCents` (en vez de texto plano) porque afectan el ingreso real y deben poder reportarse — "cuánto se vendió en extras" es una pregunta de negocio válida. `OrderItem.notes` se mantiene aparte para pedidos puntuales que no ameritan su propia entrada de catálogo (ej. "sin hielo").
 
 ### 4. Los precios se congelan al momento del pedido
 
@@ -140,6 +148,26 @@ Se evaluó si el modelo soporta un pedido hecho directo por el cliente (web/app)
 
 Lo único que vale la pena fijar **ahora**, aunque no se construya nada: cuando llegue el momento, el **origen del pedido** (POS / web / app / marketplace) debe modelarse aparte de `OrderType`, que solo describe el fulfillment (`DINE_IN`/`TAKEAWAY`/`DELIVERY`). Mezclar ambos conceptos en un solo enum llevaría a una explosión combinatoria (`TAKEAWAY_WEB`, `TAKEAWAY_POS`, ...) en vez de dos ejes ortogonales. No se agrega el campo hoy porque nada lo usa todavía, pero cualquier implementación futura de pedidos en línea debería respetar esa separación en vez de forzarla dentro de `OrderType`.
 
+### 14. Los modificadores se organizan en grupos con reglas de selección (`modifier_groups`)
+
+Una lista plana de modificadores no puede expresar "elige un tamaño (obligatorio)" ni "elige la leche": todo sería opcional y combinable. En vez de agregar un modelo para tamaños y otro para opciones obligatorias, se unificó en un concepto: `ModifierGroup` (`minSelect`, `maxSelect`; `minSelect = 0` es opcional, `maxSelect = 1` es excluyente, `maxSelect = null` es sin tope). Cada `Modifier` (opción) pertenece a **un** grupo y su `priceCents` es el **incremento** sobre el precio base del producto. El producto se asocia a **grupos** (`product_modifier_groups`), no a opciones sueltas, lo que reemplaza a `product_modifiers`.
+
+Se evaluó también modelar tamaños como `ProductVariant` con receta propia: es más rígido y no resuelve "elige la leche". Con grupos, "Grande" puede llevar su propio `ModifierRecipe` (decisión 11) para sumar más insumo. La migración fue barata porque las tablas de modificadores estaban vacías; con datos habría sido una migración de datos. Las reglas se validan en el caso de uso; la base solo las respalda con `CHECK` (`minSelect >= 0`, `maxSelect` nulo o `>= max(1, minSelect)`, `priceCents >= 0` en opciones). Validar mínimos y máximos al guardar un `OrderItem` queda del lado del pedido.
+
+### 15. Los productos se archivan, y la disponibilidad deja rastro (`archivedAt`, `availabilityChangedAt/ById`)
+
+`OrderItem → Product` es `Restrict`, así que un producto vendido no se puede borrar. "Eliminar" en la interfaz es **archivar** (`archivedAt`): desaparece del menú y del admin por defecto, conserva el historial y se puede restaurar. `isAvailable` significa otra cosa ("agotado hoy") y tiene ciclo distinto, por eso no se reutiliza. Como mesero, cajero y admin pueden cambiar la disponibilidad, `availabilityChangedAt` y `availabilityChangedById` (opcional: un producto nuevo no tiene cambio aún) registran quién y cuándo.
+
+El orden en el menú es manual (`sortOrder` en `product_categories`, `products`, `modifier_groups`, `modifiers`, `product_modifier_groups`): el personal aprende el menú por posición, y con orden alfabético cada producto nuevo la desplaza.
+
+### 16. La unicidad de nombres vive en índices sobre `lower(...)`, no en `@unique`
+
+Prisma no puede expresar índices sobre expresiones ni parciales, así que se declaran solo en las migraciones SQL y los modelos no llevan `@unique` en `name`. Son: `product_categories` y `modifier_groups` (`lower(name)` global), `modifiers` (`groupId, lower(name)`), y `products` (`categoryId, lower(name)` **parcial**, `WHERE "archivedAt" IS NULL`). El índice de producto es parcial para que un producto archivado no bloquee su nombre; consecuencia: restaurar uno debe validar el duplicado en el caso de uso, y un seed no puede apoyarse en `skipDuplicates` para productos archivados.
+
+### 17. El historial de precios va en dos tablas, una por entidad (`product_price_changes`, `modifier_price_changes`)
+
+Cada cambio de precio guarda precio anterior, precio nuevo, quién (`changedById`, obligatorio: solo `ADMIN` cambia precios) y cuándo, y se escribe en la misma transacción que el cambio. Se evaluó una tabla polimórfica (`entityType` + `entityId`), pero no admite una clave foránea real hacia dos tablas distintas; con dos tablas la integridad la garantiza la base. Complementa a la decisión 4: los pedidos conservan su precio congelado, y este historial responde "quién cambió el precio de X y cuándo".
+
 ---
 
 ## Flujo de una venta, de punta a punta
@@ -156,12 +184,12 @@ Lo único que vale la pena fijar **ahora**, aunque no se construya nada: cuando 
 
 ## Qué queda deliberadamente fuera (no bloqueado, solo no construido)
 
-- **Autenticación** (login, hashing, sesión/JWT) — `User.passwordHash` existe, el flujo no.
+- **Autenticación**: implementada (login, sesión y guards por rol); ver `docs/architecture/auth-strategy.md`.
 - **Permisos exactos por rol** — pendiente de confirmar con el cliente.
 - **Entidad `Supplier`** — hoy es un `String` simple en `InventoryLot`; se separa si el cliente confirma que necesita más que un nombre.
 - **División de cuenta** — el modelo no la bloquea (varios `Payment`s por `Order` ya lo permite en esencia), pero no se diseñó su flujo especial.
 - **Multi-sucursal** — nada en el esquema lo impide; agregar un `branchId` nullable después sería aditivo en la mayoría de las tablas. La excepción es `Table.number`, que hoy es `@unique` **global**: dos sucursales no podrían tener cada una una "Mesa 5". Al agregar `branchId` ese `@unique` debe volverse compuesto (`@@unique([branchId, number])`) — no se pierden datos al migrarlo, pero sí es un cambio de restricción real, no un simple `ALTER TABLE ADD COLUMN`.
-- **Modificadores sustitutivos** (reemplazan un ingrediente de la receta base en vez de sumarse) — ver decisión 11. `ModifierRecipe` cubre el caso aditivo; el sustitutivo espera un caso de negocio real.
+- **Modificadores sustitutivos** (reemplazan un ingrediente de la receta base en vez de sumarse) — ver decisión 11. Los grupos de la decisión 14 resuelven qué se puede elegir, no qué ingrediente se sustituye: "Avena" dentro de "Leche" sigue sumando a la receta base. `ModifierRecipe` cubre el caso aditivo; el sustitutivo espera un caso de negocio real.
 - **Conversión de unidades entre `Ingredient.unit` y `Recipe`/`ModifierRecipe.quantityPerUnit`** — el esquema asume que quien carga una receta usa la misma unidad que el insumo (ej. ambos en gramos). No hay tabla de conversión; se valida a mano al cargar el catálogo. Se agrega si aparecen recetas que mezclan unidades del mismo insumo.
 - **Mesas fusionadas** (un grupo grande ocupando dos mesas físicas como un solo pedido) — `Order.tableId` sigue siendo una sola mesa. No es un cambio aditivo trivial (implica un concepto de "grupo de mesas"), así que se deja fuera hasta confirmar que el negocio lo necesita.
 - **Reembolso parcial de un `Payment`** — `voidedAt` (decisión 12) cubre anular el pago completo; un reembolso parcial (ej. devolver solo el tip) necesitaría su propio monto y no está modelado todavía.

@@ -2,7 +2,7 @@
 
 import { Coffee, Croissant, CupSoda, Snowflake } from "lucide-react";
 
-import { formatCurrency } from "@/shared/lib/format";
+import { formatCurrency } from "@/shared/helpers/currency";
 import type { Product } from "@/features/pos/types";
 
 const CATEGORY_ICON = {

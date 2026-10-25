@@ -4,6 +4,7 @@ import { PrismaClient } from '@generated/prisma/client';
 import { PrismaPg } from '@prisma/adapter-pg';
 import { Pool } from 'pg';
 import { seedUsers } from './seeders/users.seeder';
+import { seedCatalog } from './seeders/catalog.seeder';
 
 // `dotenv/config` solo carga `.env` (desarrollo). Para poder sembrar la
 // base de test (usada por los e2e de Playwright) explícitamente con
@@ -27,6 +28,7 @@ async function main() {
 
   try {
     await seedUsers(prisma);
+    await seedCatalog(prisma);
 
     console.log('\n:✅ Seeding completed...');
   } catch (error: unknown) {

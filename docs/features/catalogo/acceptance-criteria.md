@@ -81,7 +81,7 @@ Los criterios marcados 🟡 dependen de una decisión aún no confirmada ([decis
 - **AC-2.17** El switch "Disponible" es visible en la propia lista (acción rápida), sin abrir el formulario de edición (ver E2.3).
 - **AC-2.18** Al editar, se muestra qué cambió o al menos se confirma con el nombre del producto ("«Capuchino» actualizado").
 - **AC-2.19** Cerrar el formulario con cambios sin guardar pide confirmación; sin cambios cierra directo.
-- **AC-2.21** Cada cambio de precio de producto registra un `PriceChange` (anterior, nuevo, quién, cuándo) en la misma transacción; si el guardado falla, no queda registro huérfano (D-15 🟡).
+- **AC-2.21** Cada cambio de precio de producto registra un `ProductPriceChange` o `ModifierPriceChange` (anterior, nuevo, quién, cuándo) en la misma transacción; si el guardado falla, no queda registro huérfano (D-15 ✅).
 - **AC-2.20** Archivar muestra un mensaje que explique el efecto en lenguaje del negocio: "Dejará de aparecer en el POS. Los pedidos anteriores no se afectan. Puedes restaurarlo." (no "se eliminará").
 
 ---
