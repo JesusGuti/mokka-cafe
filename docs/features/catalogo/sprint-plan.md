@@ -16,7 +16,7 @@
 | Categoría con productos no se borra | ✅ D-3 |
 | Unicidad de nombres (sin importar mayúsculas) | ✅ D-4, D-5 |
 | `sortOrder` en categorías, productos, grupos y opciones | ✅ D-8 |
-| Historial de precios (`PriceChange`) | ✅ D-15 |
+| Historial de precios (`ProductPriceChange`, `ModifierPriceChange`) | ✅ D-15 |
 | Disponibilidad: ADMIN, CAJERO y MESERO; precios solo ADMIN | ✅ D-10 |
 | Grupos de opciones con min/max (tamaños, leche, extras) | ✅ D-17 |
 | Bs, sin impuestos, "Agotado" visible, sin paginación, imágenes después | ✅ D-11 a D-14, D-16 |
@@ -70,7 +70,7 @@ Recomendación: planificar el Sprint 1 hasta **M1 (14 pts)** y dejar E2.3 como "
 **Alcance**: E2.0, E2.1, E2.2, E2.7, E2.5 (14 pts) · stretch: E2.3 (3).
 
 ### E2.0 — Preparación (hacerla primero y sola, en un PR)
-- [ ] Migración Prisma: `Product.archivedAt`, `Product.sortOrder`, `ProductCategory.sortOrder`, `Product.availabilityChangedById/At`, tabla `PriceChange`, `ModifierGroup`, `Modifier.groupId` (+ `sortOrder`), `ProductModifierGroup` reemplazando a `ProductModifier`.
+- [ ] Migración Prisma: `Product.archivedAt`, `Product.sortOrder`, `ProductCategory.sortOrder`, `Product.availabilityChangedById/At`, tablas `ProductPriceChange` y `ModifierPriceChange`, `ModifierGroup`, `Modifier.groupId` (+ `sortOrder`), `ProductModifierGroup` reemplazando a `ProductModifier`.
 - [ ] Migración SQL: índices únicos funcionales `lower(name)` (categorías, grupos), `(categoryId, lower(name))` (productos), `(groupId, lower(name))` (opciones).
 - [ ] Verificar que `modifiers` y `product_modifiers` están vacías en todos los entornos antes de migrar.
 - [ ] Seed reutilizable según el [test-plan](./test-plan.md) (categorías, productos, grupos, 3 roles).

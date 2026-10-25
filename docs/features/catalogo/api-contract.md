@@ -110,7 +110,7 @@ Regla: **nunca `500` por entrada de usuario.** Todo caso de la matriz del [test-
 | Índice único funcional `lower(name)` en `ProductCategory` y `Modifier` | Unicidad real e insensible a mayúsculas, a prueba de concurrencia | D-4 ✅ |
 | Índice único `(categoryId, lower(name))` en `Product` | Nombres únicos por categoría | D-5 ✅ |
 | `ProductCategory.sortOrder Int` y `Product.sortOrder Int` | Orden personalizado en el POS | D-8 ✅ |
-| Tabla `PriceChange` | Historial de cambios de precio | D-15 ✅ |
+| Tablas `ProductPriceChange` y `ModifierPriceChange` | Historial de cambios de precio (dos tablas para conservar claves foráneas reales) | D-15 ✅ |
 | `ModifierGroup` (nuevo) y `Modifier.groupId` obligatorio | Grupos de opciones con reglas min/max | D-17 ✅ |
 | `ProductModifier` → `ProductModifierGroup (productId, groupId, sortOrder)` | Asociar producto a grupos | D-17 ✅ |
 | `Modifier.sortOrder`, `Product.availabilityChangedById/At` | Orden de opciones; trazabilidad de agotados | D-8 ✅, D-10 ✅ |
