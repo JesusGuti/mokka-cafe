@@ -35,10 +35,10 @@
 | E2.1 | Como admin, quiero crear/editar categorías de producto, para organizar el menú. | CRUD `ProductCategory`; nombre único. | 🔴 | 3 |
 | E2.2 | Como admin, quiero crear/editar productos con precio, descripción y categoría, para mantener el menú actualizado. | Completar `list`/`update`/`delete` sobre lo ya iniciado en `products`. | 🔴 | 3 |
 | E2.3 | Como admin, quiero marcar un producto como no disponible temporalmente, para ocultarlo del POS sin borrarlo. | Toggle `isAvailable`; no aparece en el POS si está apagado. | 🟡 | 2 |
-| E2.4 | Como admin, quiero crear modificadores (extras) con precio propio y asociarlos a productos, para ofrecer personalizaciones. | CRUD `Modifier` + `ProductModifier`. | 🔴 | 5 |
+| E2.4 | Como admin, quiero crear grupos de opciones (tamaño, leche, extras) con reglas de selección y asociarlos a productos, para ofrecer personalizaciones. | Detalle en [`features/catalogo`](./features/catalogo/README.md): CRUD `ModifierGroup` + `Modifier`, `ProductModifierGroup`; validación min/max. | 🔴 | 8 |
 | E2.5 | Como mesero, quiero ver el menú real (no mock) organizado por categoría en el POS, para tomar pedidos con datos verdaderos. | Reemplaza `mock-products.ts` por `features/pos/api/get-products.ts`. | 🔴 | 3 |
 
-**Subtotal: 16 pts**
+**Subtotal: 30 pts** (ver [`features/catalogo/sprint-plan.md`](./features/catalogo/sprint-plan.md): se añadieron preparación, historial de precios, orden personalizado, disponibilidad ampliada y cierre)
 
 ---
 
