@@ -23,9 +23,6 @@ jobs:
   playwright-test:
     timeout-minutes: 60
     runs-on: ubuntu-latest
-    concurrency:
-      group: ${{ github.workflow }}-${{ github.ref }}
-      cancel-in-progress: true
     env:
       # playwright.config.ts levanta el backend de test en este puerto vía
       # su webServer (db:test:reset + db:test:seed + e2e:serve) antes de
