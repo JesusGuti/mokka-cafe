@@ -17,7 +17,8 @@ datasource db {
 
 model ProductCategory {
   id        String   @id @default(uuid())
-  name      String   @unique
+  name      String
+  sortOrder Int      @default(0)
   createdAt DateTime @default(now()) @db.Timestamptz(3)
   updatedAt DateTime @updatedAt @db.Timestamptz(3)
 
@@ -27,19 +28,24 @@ model ProductCategory {
 }
 
 model Product {
-  id          String   @id @default(uuid())
-  name        String
-  description String?
-  priceCents  Int
-  categoryId  String
-  isAvailable Boolean  @default(true)
-  createdAt   DateTime @default(now()) @db.Timestamptz(3)
-  updatedAt   DateTime @updatedAt @db.Timestamptz(3)
+  id                      String    @id @default(uuid())
+  name                    String
+  description             String?
+  priceCents              Int
+  categoryId              String
+  isAvailable             Boolean   @default(true)
+  sortOrder               Int       @default(0)
+  createdAt               DateTime  @default(now()) @db.Timestamptz(3)
+  updatedAt               DateTime  @updatedAt @db.Timestamptz(3)
+  archivedAt              DateTime? @db.Timestamptz(3)
+  availabilityChangedAt   DateTime? @db.Timestamptz(3)
+  availabilityChangedById String?
 
-  category   ProductCategory   @relation(fields: [categoryId], references: [id], onDelete: Restrict)
-  modifiers  ProductModifier[]
-  orderItems OrderItem[]
-  recipes    Recipe[]
+  category              ProductCategory   @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+  modifiers             ProductModifier[]
+  orderItems            OrderItem[]
+  recipes               Recipe[]
+  availabilityChangedBy User?             @relation("availabilityChangedBy", fields: [availabilityChangedById], references: [id], onDelete: Restrict)
 
   @@map("products")
 }
@@ -202,9 +208,10 @@ model User {
   createdAt    DateTime  @default(now()) @db.Timestamptz(3)
   updatedAt    DateTime  @updatedAt @db.Timestamptz(3)
 
-  ordersAsWaiter     Order[]             @relation("OrderWaiter")
-  paymentsAsCashier  Payment[]           @relation("PaymentCashier")
-  inventoryMovements InventoryMovement[]
+  ordersAsWaiter              Order[]             @relation("OrderWaiter")
+  paymentsAsCashier           Payment[]           @relation("PaymentCashier")
+  inventoryMovements          InventoryMovement[]
+  productsAvailabilityChanged Product[]           @relation("availabilityChangedBy")
 
   @@map("users")
 }
