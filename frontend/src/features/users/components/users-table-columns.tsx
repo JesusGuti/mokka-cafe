@@ -5,30 +5,42 @@ import type { ColumnDef } from "@tanstack/react-table";
 import { Badge } from "@/shared/components/ui/badge";
 import { DataTableColumnHeader } from "@/shared/components/table/data-table-column-header";
 import type { DataTableFeatures } from "@/shared/components/table/data-table-features";
-import { formatDate } from "@/shared/lib/format";
+import { formatDate } from "@/shared/helpers/date";
 import { USER_ROLE_LABELS, UserResponse } from "../types/users.types";
 
 export const usersTableColumns: ColumnDef<DataTableFeatures, UserResponse>[] = [
   {
     accessorKey: "name",
-    header: ({ column }) => <DataTableColumnHeader column={column} title="Nombre" />,
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Nombre" />
+    ),
   },
   {
     accessorKey: "email",
-    header: ({ column }) => <DataTableColumnHeader column={column} title="Correo" />,
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Correo" />
+    ),
   },
   {
     accessorKey: "role",
-    header: ({ column }) => <DataTableColumnHeader column={column} title="Rol" />,
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Rol" />
+    ),
     filterFn: "faceted",
     cell: ({ getValue }) => {
       const role = getValue<string>();
-      return <Badge variant="secondary">{USER_ROLE_LABELS[role as keyof typeof USER_ROLE_LABELS] ?? role}</Badge>;
+      return (
+        <Badge variant="secondary">
+          {USER_ROLE_LABELS[role as keyof typeof USER_ROLE_LABELS] ?? role}
+        </Badge>
+      );
     },
   },
   {
     accessorKey: "isActive",
-    header: ({ column }) => <DataTableColumnHeader column={column} title="Estado" />,
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Estado" />
+    ),
     filterFn: "faceted",
     cell: ({ getValue }) =>
       getValue<boolean>() ? (
@@ -39,9 +51,13 @@ export const usersTableColumns: ColumnDef<DataTableFeatures, UserResponse>[] = [
   },
   {
     accessorKey: "createdAt",
-    header: ({ column }) => <DataTableColumnHeader column={column} title="Creado" />,
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Creado" />
+    ),
     cell: ({ getValue }) => (
-      <span className="text-muted-foreground">{formatDate(getValue<string>())}</span>
+      <span className="text-muted-foreground">
+        {formatDate(getValue<string>())}
+      </span>
     ),
   },
 ];
