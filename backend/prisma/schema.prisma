@@ -41,13 +41,29 @@ model Product {
   availabilityChangedAt   DateTime? @db.Timestamptz(3)
   availabilityChangedById String?
 
-  category              ProductCategory   @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+  category              ProductCategory      @relation(fields: [categoryId], references: [id], onDelete: Restrict)
   modifiers             ProductModifier[]
   orderItems            OrderItem[]
   recipes               Recipe[]
-  availabilityChangedBy User?             @relation("availabilityChangedBy", fields: [availabilityChangedById], references: [id], onDelete: Restrict)
+  availabilityChangedBy User?                @relation("availabilityChangedBy", fields: [availabilityChangedById], references: [id], onDelete: Restrict)
+  priceChanges          ProductPriceChange[] @relation("ProductPriceChanges")
 
   @@map("products")
+}
+
+model ProductPriceChange {
+  id            String   @id @default(uuid())
+  productId     String
+  oldPriceCents Int
+  newPriceCents Int
+  changedById   String
+  changedAt     DateTime @default(now()) @db.Timestamptz(3)
+
+  product   Product @relation("ProductPriceChanges", fields: [productId], references: [id], onDelete: Restrict)
+  changedBy User    @relation("ProductPriceChangedBy", fields: [changedById], references: [id], onDelete: Restrict)
+
+  @@index([productId, changedAt])
+  @@map("product_price_changes")
 }
 
 model Modifier {
@@ -208,10 +224,11 @@ model User {
   createdAt    DateTime  @default(now()) @db.Timestamptz(3)
   updatedAt    DateTime  @updatedAt @db.Timestamptz(3)
 
-  ordersAsWaiter              Order[]             @relation("OrderWaiter")
-  paymentsAsCashier           Payment[]           @relation("PaymentCashier")
+  ordersAsWaiter              Order[]              @relation("OrderWaiter")
+  paymentsAsCashier           Payment[]            @relation("PaymentCashier")
   inventoryMovements          InventoryMovement[]
-  productsAvailabilityChanged Product[]           @relation("availabilityChangedBy")
+  productsAvailabilityChanged Product[]            @relation("availabilityChangedBy")
+  productPriceChanges         ProductPriceChange[] @relation("ProductPriceChangedBy")
 
   @@map("users")
 }
