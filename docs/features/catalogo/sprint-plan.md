@@ -70,10 +70,10 @@ Recomendación: planificar el Sprint 1 hasta **M1 (14 pts)** y dejar E2.3 como "
 **Alcance**: E2.0, E2.1, E2.2, E2.7, E2.5 (14 pts) · stretch: E2.3 (3).
 
 ### E2.0 — Preparación (hacerla primero y sola, en un PR)
-- [ ] Migración Prisma: `Product.archivedAt`, `Product.sortOrder`, `ProductCategory.sortOrder`, `Product.availabilityChangedById/At`, tablas `ProductPriceChange` y `ModifierPriceChange`, `ModifierGroup`, `Modifier.groupId` (+ `sortOrder`), `ProductModifierGroup` reemplazando a `ProductModifier`.
-- [ ] Migración SQL: índices únicos funcionales `lower(name)` (categorías, grupos), `(categoryId, lower(name))` (productos), `(groupId, lower(name))` (opciones).
-- [ ] Verificar que `modifiers` y `product_modifiers` están vacías en todos los entornos antes de migrar.
-- [ ] Seed reutilizable según el [test-plan](./test-plan.md) (categorías, productos, grupos, 3 roles).
+- [x] Migración Prisma (`catalog_additive_columns`, `product_price_changes`, `modifier_groups`): `Product.archivedAt`, `Product.sortOrder`, `ProductCategory.sortOrder`, `Product.availabilityChangedById/At`, tablas `ProductPriceChange` y `ModifierPriceChange`, `ModifierGroup`, `Modifier.groupId` (+ `sortOrder`), `ProductModifierGroup` reemplazando a `ProductModifier`.
+- [x] Migración SQL (incluida en las migraciones anteriores, más `CHECK` de min/max y precio): índices únicos funcionales `lower(name)` (categorías, grupos), `(categoryId, lower(name))` (productos), `(groupId, lower(name))` (opciones).
+- [x] Verificar que `modifiers` y `product_modifiers` están vacías en todos los entornos antes de migrar.
+- [x] Seed reutilizable (`backend/prisma/seeders/catalog.seeder.ts`) según el [test-plan](./test-plan.md) (categorías, productos, grupos, 3 roles).
 - [ ] Helper único de dinero en frontend: parseo (`4,5`, `4.50`) → centavos; formato `es-BO` / BOB; con tests (AC-2.2, AC-2.8).
 - [ ] Actualizar `docs/database-design.md` con el cambio de modelo.
 
