@@ -39,7 +39,7 @@ Puntos relativos (Fibonacci). La velocidad real se conoce tras el primer sprint;
 
 | # | ID | Historia | Pts | Acumulado | Depende de | Hito |
 |---|---|---|---|---|---|---|
-| 1 | **E2.0** | Preparación técnica: migración con todos los cambios de schema, seed, helper de dinero (Bs) | 3 | 3 | — | |
+| 1 | **E2.0** ✅ | Preparación técnica: migración con todos los cambios de schema, seed, helper de dinero (Bs) | 3 | 3 | — | **Hecha** |
 | 2 | **E2.1** | CRUD de categorías | 3 | 6 | E2.0 | |
 | 3 | **E2.2** | CRUD de productos + archivar/restaurar + búsqueda y filtros | 3 | 9 | E2.1 | |
 | 4 | **E2.7** | Historial de precios | 2 | 11 | E2.2 | |
@@ -74,8 +74,8 @@ Recomendación: planificar el Sprint 1 hasta **M1 (14 pts)** y dejar E2.3 como "
 - [x] Migración SQL (incluida en las migraciones anteriores, más `CHECK` de min/max y precio): índices únicos funcionales `lower(name)` (categorías, grupos), `(categoryId, lower(name))` (productos), `(groupId, lower(name))` (opciones).
 - [x] Verificar que `modifiers` y `product_modifiers` están vacías en todos los entornos antes de migrar.
 - [x] Seed reutilizable (`backend/prisma/seeders/catalog.seeder.ts`) según el [test-plan](./test-plan.md) (categorías, productos, grupos, 3 roles).
-- [ ] Helper único de dinero en frontend: parseo (`4,5`, `4.50`) → centavos; formato `es-BO` / BOB; con tests (AC-2.2, AC-2.8).
-- [ ] Actualizar `docs/database-design.md` con el cambio de modelo.
+- [x] Helper único de dinero en frontend (`shared/helpers/currency.ts`, `input-utils.ts`, `lib/validations/price.ts`, `helpers/date.ts`): parseo (`4,5`, `4.50`) → centavos; formato `es-BO` / BOB; con tests (AC-2.2, AC-2.8).
+- [x] Actualizar `docs/database-design.md` con el cambio de modelo (decisiones 14 a 17).
 
 ### E2.1 — Categorías
 - Backend: módulo `product-categories` (hexagonal, copiando `ingredient-categories`): create, list con `productCount`, update, delete con `409`. Roles ADMIN. Tests unit + e2e (AC-1.5 a AC-1.10).

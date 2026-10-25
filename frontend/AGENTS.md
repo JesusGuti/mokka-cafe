@@ -45,8 +45,9 @@ src/
   shared/
     components/ui/            # componentes shadcn (generados con `pnpm dlx shadcn add`, no a mano)
     components/layout/        # navbar, sidebar, shells compartidos entre features
-    lib/                      # utils, cliente axios, helpers puros
-    lib/validations/          # esquemas zod compartidos
+    lib/                      # infraestructura atada a una librería: cliente axios, env, query-client, toast, cn()
+    lib/validations/          # esquemas zod compartidos (ej. price.ts)
+    helpers/                  # funciones puras sin framework ni efectos, un archivo por concepto (currency, date, input-utils)
     hooks/                    # hooks reutilizables entre features
     types/                    # tipos compartidos (ej. contratos con el backend)
   features/
@@ -70,6 +71,8 @@ Los alias de import (`@/src/shared/...`) están definidos en `components.json` y
 - Llamadas HTTP centralizadas en `shared/lib` (instancia de axios) y en `features/<feature>/api/` (funciones por endpoint) — no `fetch`/`axios` sueltos dentro de componentes.
 - Toda llamada a `features/<feature>/api/` desde un Client Component se consume vía hooks de TanStack Query (`features/<feature>/hooks/`), nunca invocando la función de la capa `api/` directo en el componente — así se aprovecha cache, invalidación y estados de loading/error de forma consistente.
 - Usar el helper `cn()` (`shared/lib/utils`) para componer clases de Tailwind condicionales, no template strings manuales.
+- Dinero: siempre **centavos enteros** en estado, API y payloads; nunca floats. Texto → centavos con `parseCurrencyToCents` y centavos → pantalla con `formatCurrency` (`shared/helpers/currency`), nunca `parseFloat(x) * 100` ni `toFixed` suelto. Los campos de precio se validan con `createPriceSchema` (`shared/lib/validations/price`) y se convierten a centavos en `to<Entidad>Payload`.
+- Fechas: mostrarlas solo con `formatDate` (`shared/helpers/date`), que fija la zona `America/La_Paz` y nunca lanza con valores nulos o inválidos. No usar `new Date(x).toLocaleString()` directo en componentes: cambia según el servidor/navegador y provoca hydration mismatch.
 - El modelo de datos del backend usa `orderType` en `Order` desde el día uno (ver project-context.md §4) aunque hoy solo exista `dine-in` — no asumas que dine-in es el único caso al tipar.
 
 ## Testing
