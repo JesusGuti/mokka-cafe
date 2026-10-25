@@ -2,8 +2,23 @@ name: Backend Tests
 on:
   pull_request:
     branches: [main, develop]
+    paths:
+      - "backend/**"
+      - ".nvmrc"
+      - ".github/workflows/backend.yml"
+  push:
+    branches: [main, develop]
+    paths:
+      - "backend/**"
+      - ".nvmrc"
+      - ".github/workflows/backend.yml"
+permissions:
+  contents: read
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 jobs:
-  test:
+  backend:
     timeout-minutes: 30
     runs-on: ubuntu-latest
     defaults:
@@ -25,18 +40,23 @@ jobs:
           --health-retries 10
     steps:
       - uses: actions/checkout@v4
+      # La versión de pnpm sale de "packageManager" en backend/package.json.
       - uses: pnpm/action-setup@v4
         with:
-          version: 9.5.0
+          package_json_file: backend/package.json
       - uses: actions/setup-node@v4
         with:
-          node-version: lts/*
+          node-version-file: .nvmrc
           cache: pnpm
           cache-dependency-path: backend/pnpm-lock.yaml
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
       - name: Generate Prisma client
         run: pnpm prisma:generate
+      - name: Lint
+        run: pnpm lint:ci
+      - name: Type check
+        run: pnpm tsc --noEmit
       - name: Run unit tests
         run: pnpm test
       - name: Run e2e tests

@@ -2,8 +2,25 @@ name: Playwright Tests
 on:
   pull_request:
     branches: [main, develop]
+    paths:
+      - "backend/**"
+      - "frontend/**"
+      - ".nvmrc"
+      - ".github/workflows/playwright.yml"
+  push:
+    branches: [main, develop]
+    paths:
+      - "backend/**"
+      - "frontend/**"
+      - ".nvmrc"
+      - ".github/workflows/playwright.yml"
+permissions:
+  contents: read
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 jobs:
-  test:
+  playwright-test:
     timeout-minutes: 60
     runs-on: ubuntu-latest
     env:
@@ -28,12 +45,13 @@ jobs:
           --health-retries 10
     steps:
       - uses: actions/checkout@v4
+      # La versión de pnpm sale de "packageManager" (igual en backend y frontend).
       - uses: pnpm/action-setup@v4
         with:
-          version: 9.5.0
+          package_json_file: frontend/package.json
       - uses: actions/setup-node@v4
         with:
-          node-version: lts/*
+          node-version-file: .nvmrc
           cache: pnpm
           cache-dependency-path: |
             backend/pnpm-lock.yaml

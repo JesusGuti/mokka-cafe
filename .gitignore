@@ -29,3 +29,6 @@ $RECYCLE.BIN/
 
 
 mokka-workspace.code-workspace
+
+# ==== Claude Code (reviews de trabajo) ====
+.claude/reviews/
