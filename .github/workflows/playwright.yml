@@ -72,7 +72,7 @@ jobs:
         run: pnpm install --frozen-lockfile
       - name: Install Playwright Browsers
         working-directory: frontend
-        run: pnpm exec playwright install --with-deps chromium
+        run: pnpm exec playwright install --with-deps
       - name: Run Playwright tests
         working-directory: frontend
         run: pnpm exec playwright test
