@@ -52,6 +52,27 @@ describe("cleanValue", () => {
     it("permite un punto final mientras se sigue escribiendo", () => {
       expect(cleanValue("1.", "decimal")).toBe("1.");
     });
+
+    it("AC-2.2: convierte la coma decimal en punto", () => {
+      expect(cleanValue("4,5", "decimal")).toBe("4.5");
+      expect(cleanValue("4,50", "decimal")).toBe("4.50");
+    });
+
+    it("permite una coma final mientras se sigue escribiendo", () => {
+      expect(cleanValue("4,", "decimal")).toBe("4.");
+    });
+
+    it("antepone un 0 si el valor empieza con coma", () => {
+      expect(cleanValue(",5", "decimal")).toBe("0.5");
+    });
+
+    it("trunca a 2 decimales también con coma", () => {
+      expect(cleanValue("12,345", "decimal")).toBe("12.34");
+    });
+
+    it("mezcla de coma y punto: colapsa al primer separador", () => {
+      expect(cleanValue("1,2.3", "decimal")).toBe("1.23");
+    });
   });
 
   describe("email", () => {

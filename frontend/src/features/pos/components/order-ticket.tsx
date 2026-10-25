@@ -3,7 +3,7 @@
 import { Minus, Plus, ShoppingBag } from "lucide-react";
 
 import { cn } from "@/shared/lib/utils";
-import { formatCurrency } from "@/shared/lib/format";
+import { formatCurrency } from "@/shared/helpers/currency";
 import { PaymentMethods } from "@/features/pos/components/payment-methods";
 import type { OrderLineItem, PaymentMethod } from "@/features/pos/types";
 

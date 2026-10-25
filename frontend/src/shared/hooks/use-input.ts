@@ -1,5 +1,5 @@
 import { useId, type ChangeEvent } from "react";
-import { cleanValue } from "@/shared/lib/input-utils";
+import { cleanValue } from "@/shared/helpers/input-utils";
 import type { InputMode } from "@/shared/types/input";
 
 interface UseInputParams {

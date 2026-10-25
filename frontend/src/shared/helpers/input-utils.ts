@@ -14,6 +14,9 @@ const cleanValue = (value: string, mode: InputMode) => {
       break;
 
     case "decimal": {
+      // El teclado numérico en español solo trae coma: se normaliza a punto antes de
+      // limpiar, así el resto de la lógica (colapsar, truncar a 2) no cambia.
+      val = val.replaceAll(",", ".");
       val = val.replaceAll(/[^\d.]/g, "");
       val = val.replace(/^0+(\d)/, "$1");
 
