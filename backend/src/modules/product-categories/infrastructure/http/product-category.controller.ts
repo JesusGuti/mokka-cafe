@@ -1,5 +1,6 @@
 import { UserRole } from '@generated/prisma/enums';
 import {
+  BadRequestException,
   Body,
   ConflictException,
   Controller,
@@ -27,6 +28,7 @@ import {
   UpdateProductCategoryDto,
 } from './dto/product-category.dto';
 import { DuplicatedProductCategoryNameError } from '../../domain/errors/duplicated-product-category-name.error';
+import { InvalidProductCategoryError } from '../../domain/errors/invalid-product-category.error';
 import { ProductCategoryNotFoundError } from '../../domain/errors/product-category-not-found.error';
 import { ProductCategoryHasProductsError } from '../../domain/errors/product-category-has-products.error';
 
@@ -51,6 +53,9 @@ export class ProductCategoryController {
     } catch (error) {
       if (error instanceof DuplicatedProductCategoryNameError) {
         throw new ConflictException(error.message);
+      }
+      if (error instanceof InvalidProductCategoryError) {
+        throw new BadRequestException(error.message);
       }
       throw error;
     }
@@ -92,6 +97,9 @@ export class ProductCategoryController {
       }
       if (error instanceof DuplicatedProductCategoryNameError) {
         throw new ConflictException(error.message);
+      }
+      if (error instanceof InvalidProductCategoryError) {
+        throw new BadRequestException(error.message);
       }
       throw error;
     }
