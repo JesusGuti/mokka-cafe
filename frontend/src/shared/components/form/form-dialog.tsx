@@ -1,4 +1,4 @@
-import type { ReactElement, ReactNode } from "react";
+import type { ComponentProps, ReactElement, ReactNode } from "react";
 import type { FieldValues, UseFormReturn } from "react-hook-form";
 import { Loader } from "lucide-react";
 import {
@@ -19,6 +19,8 @@ interface FormDialogProps<T extends FieldValues> {
   children: ReactNode;
   confirmDisabled?: boolean;
   confirmLabel?: string;
+  /** Estilo del botón de confirmar; "destructive" para acciones que borran. */
+  confirmVariant?: ComponentProps<typeof Button>["variant"];
   description: string | ReactNode;
   form: UseFormReturn<T>;
   hideClose?: boolean;
@@ -82,6 +84,7 @@ export const FormDialog = <T extends FieldValues>(
 
             <Button
               type="submit"
+              variant={props.confirmVariant}
               disabled={isLoading || props.confirmDisabled}
               className="h-10 px-8 font-semibold shadow-sm transition-all active:scale-95"
             >
