@@ -2,6 +2,7 @@ import { FormDialog } from "./form-dialog";
 import { FormInput } from "./form-input";
 import { Button } from "../ui/button";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { describe, expect, it, vi } from "vitest";
 
@@ -271,9 +272,7 @@ describe("FormDialog", () => {
   it("el trigger recibido se renderiza tal cual, incluso antes de abrir el dialog", () => {
     renderFormDialog({}, { triggerLabel: "Abrir formulario personalizado" });
 
-    expect(
-      screen.getByText("Abrir formulario personalizado"),
-    ).toBeVisible();
+    expect(screen.getByText("Abrir formulario personalizado")).toBeVisible();
     expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
   });
 
@@ -290,5 +289,159 @@ describe("FormDialog", () => {
 
     expect(form).not.toBeNull();
     expect(form).toContainElement(input);
+  });
+});
+
+describe("FormDialog controlado", () => {
+  interface ControlledHarnessProps {
+    initialOpen?: boolean;
+    /** Si es true, el padre ignora los cambios y `open` nunca se actualiza. */
+    ignoreChanges?: boolean;
+    onConfirm?: () => void | Promise<void>;
+    onOpenChange?: (open: boolean) => void;
+    values?: TestFormValues;
+  }
+
+  const renderControlled = ({
+    initialOpen = true,
+    ignoreChanges = false,
+    onConfirm = () => undefined,
+    onOpenChange = () => undefined,
+    values = { field: DEFAULT_FIELD_VALUE },
+  }: ControlledHarnessProps = {}) => {
+    const Harness = () => {
+      const [open, setOpen] = useState(initialOpen);
+      const form = useForm<TestFormValues>({ values });
+
+      return (
+        <>
+          <Button onClick={() => setOpen(true)}>Abrir desde fuera</Button>
+          <FormDialog
+            form={form}
+            open={open}
+            onOpenChange={(state) => {
+              onOpenChange(state);
+              if (!ignoreChanges) setOpen(state);
+            }}
+            onConfirm={onConfirm}
+            title={FORM_DIALOG_CONSTANTS.title}
+            description={FORM_DIALOG_CONSTANTS.description}
+            cancelLabel={FORM_DIALOG_CONSTANTS.cancelLabel}
+            confirmLabel={FORM_DIALOG_CONSTANTS.confirmLabel}
+          >
+            <FormInput<TestFormValues>
+              name="field"
+              label="Campo"
+              type="text"
+              mode="text"
+              required={true}
+              description="description"
+            />
+          </FormDialog>
+        </>
+      );
+    };
+
+    return render(<Harness />);
+  };
+
+  it("se muestra abierto desde el inicio sin necesitar un trigger", () => {
+    renderControlled({ initialOpen: true });
+
+    expect(screen.getByRole("dialog")).toBeVisible();
+  });
+
+  it("no se monta mientras el padre lo mantiene cerrado", () => {
+    renderControlled({ initialOpen: false });
+
+    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+  });
+
+  it("se abre cuando el padre cambia su estado desde un botón externo", () => {
+    renderControlled({ initialOpen: false });
+
+    fireEvent.click(screen.getByRole("button", { name: "Abrir desde fuera" }));
+
+    expect(screen.getByRole("dialog")).toBeVisible();
+  });
+
+  it("al cancelar avisa al padre con onOpenChange(false) y se cierra si el padre lo acepta", () => {
+    const onOpenChange = vi.fn();
+    renderControlled({ onOpenChange });
+
+    fireEvent.click(
+      screen.getByRole("button", { name: FORM_DIALOG_CONSTANTS.cancelLabel }),
+    );
+
+    expect(onOpenChange).toHaveBeenCalledWith(false);
+    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+  });
+
+  it("no se cierra por su cuenta: obedece al padre", () => {
+    const onOpenChange = vi.fn();
+    renderControlled({ onOpenChange, ignoreChanges: true });
+
+    fireEvent.click(
+      screen.getByRole("button", { name: FORM_DIALOG_CONSTANTS.cancelLabel }),
+    );
+
+    expect(onOpenChange).toHaveBeenCalledWith(false);
+    expect(screen.getByRole("dialog")).toBeVisible();
+  });
+
+  it("si onConfirm se resuelve avisa al padre con onOpenChange(false)", async () => {
+    const onOpenChange = vi.fn();
+    const onConfirm = vi.fn().mockResolvedValue(undefined);
+    renderControlled({ onOpenChange, onConfirm });
+
+    fireEvent.click(
+      screen.getByRole("button", { name: FORM_DIALOG_CONSTANTS.confirmLabel }),
+    );
+
+    await waitFor(() => {
+      expect(onConfirm).toHaveBeenCalledTimes(1);
+    });
+    await waitFor(() => {
+      expect(onOpenChange).toHaveBeenCalledWith(false);
+    });
+  });
+
+  it("si onConfirm rechaza no avisa de cierre y el diálogo sigue abierto", async () => {
+    const onOpenChange = vi.fn();
+    const onConfirm = vi.fn().mockRejectedValue(new Error("fail"));
+    renderControlled({ onOpenChange, onConfirm });
+
+    fireEvent.click(
+      screen.getByRole("button", { name: FORM_DIALOG_CONSTANTS.confirmLabel }),
+    );
+
+    await waitFor(() => {
+      expect(onConfirm).toHaveBeenCalledTimes(1);
+    });
+    expect(onOpenChange).not.toHaveBeenCalled();
+    expect(screen.getByRole("dialog")).toBeVisible();
+  });
+
+  it("muestra los valores precargados que el padre pasa al form (caso editar)", () => {
+    renderControlled({ values: { field: "Calientes" } });
+
+    expect(screen.getByRole("textbox", { name: "Campo" })).toHaveValue(
+      "Calientes",
+    );
+  });
+
+  it("al cancelar y reabrir conserva el valor precargado, no lo deja vacío", () => {
+    renderControlled({ values: { field: "Calientes" } });
+
+    const input = screen.getByRole("textbox", { name: "Campo" });
+    fireEvent.change(input, { target: { value: "Otro" } });
+    fireEvent.click(
+      screen.getByRole("button", { name: FORM_DIALOG_CONSTANTS.cancelLabel }),
+    );
+    fireEvent.click(screen.getByRole("button", { name: "Abrir desde fuera" }));
+
+    expect(screen.getByRole("textbox", { name: "Campo" })).toHaveValue(
+      "Calientes",
+    );
   });
 });

@@ -23,9 +23,13 @@ interface FormDialogProps<T extends FieldValues> {
   form: UseFormReturn<T>;
   hideClose?: boolean;
   onConfirm: () => void | Promise<void>;
+  /** Modo controlado: si se pasa, el padre decide cuándo está abierto. */
+  onOpenChange?: (open: boolean) => void;
+  open?: boolean;
   submitingLabel?: string;
   title: string;
-  trigger: ReactElement;
+  /** Opcional: un diálogo controlado desde fuera no necesita botón propio. */
+  trigger?: ReactElement;
 }
 
 export const FormDialog = <T extends FieldValues>(
@@ -33,6 +37,8 @@ export const FormDialog = <T extends FieldValues>(
 ) => {
   const { handleConfirm, isLoading, open, setOpen } = useActionDialog({
     onConfirm: props.onConfirm,
+    onOpenChange: props.onOpenChange,
+    open: props.open,
   });
 
   const handleOpenChange = (state: boolean): void => {
@@ -42,7 +48,7 @@ export const FormDialog = <T extends FieldValues>(
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogTrigger render={props.trigger} />
+      {props.trigger && <DialogTrigger render={props.trigger} />}
       <DialogContent
         showCloseButton={!props.hideClose}
         className="flex max-h-[90vh] flex-col gap-2 p-8 sm:max-w-md"

@@ -1,9 +1,9 @@
-import { useState, type Dispatch, type SetStateAction } from "react";
+import { useState } from "react";
 
 interface UseActionDialogProps {
   onConfirm: () => void | Promise<void>;
   open?: boolean;
-  onOpenChange?: Dispatch<SetStateAction<boolean>>;
+  onOpenChange?: (open: boolean) => void;
 }
 
 export const useActionDialog = ({
