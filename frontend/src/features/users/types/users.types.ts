@@ -14,6 +14,6 @@ export interface UserResponse {
   email: string;
   role: string;
   isActive: boolean;
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt: string;
+  updatedAt: string;
 }

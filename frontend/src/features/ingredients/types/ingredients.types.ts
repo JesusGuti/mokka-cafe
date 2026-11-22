@@ -5,8 +5,8 @@ export interface IngredientResponse {
   categoryId: string;
   currentStockQty: number;
   minStockThreshold: number | null;
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt: string;
+  updatedAt: string;
 }
 
 /** Forma que espera POST /ingredients (ver CreateIngredientDto en el backend). */

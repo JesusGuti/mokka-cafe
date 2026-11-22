@@ -23,8 +23,8 @@ const users: UserResponse[] = [
     email: "ana@mokka.cafe",
     role: "ADMIN",
     isActive: true,
-    createdAt: "2026-01-01T00:00:00.000Z" as unknown as Date,
-    updatedAt: "2026-01-01T00:00:00.000Z" as unknown as Date,
+    createdAt: "2026-01-01T00:00:00.000Z",
+    updatedAt: "2026-01-01T00:00:00.000Z",
   },
   {
     id: "2",
@@ -32,8 +32,8 @@ const users: UserResponse[] = [
     email: "carlos@mokka.cafe",
     role: "CAJERO",
     isActive: false,
-    createdAt: "2026-01-02T00:00:00.000Z" as unknown as Date,
-    updatedAt: "2026-01-02T00:00:00.000Z" as unknown as Date,
+    createdAt: "2026-01-02T00:00:00.000Z",
+    updatedAt: "2026-01-02T00:00:00.000Z",
   },
 ];
 

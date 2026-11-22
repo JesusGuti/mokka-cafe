@@ -45,8 +45,8 @@ const CATEGORIES: IngredientCategoryResponse[] = [
   {
     id: LACTEOS_CATEGORY_ID,
     name: "Lácteos",
-    createdAt: "2026-01-01T00:00:00.000Z" as unknown as Date,
-    updatedAt: "2026-01-01T00:00:00.000Z" as unknown as Date,
+    createdAt: "2026-01-01T00:00:00.000Z",
+    updatedAt: "2026-01-01T00:00:00.000Z",
   },
 ];
 
