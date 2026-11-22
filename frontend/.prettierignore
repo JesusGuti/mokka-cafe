@@ -1,0 +1,10 @@
+.next
+node_modules
+pnpm-lock.yaml
+playwright-report
+test-results
+playwright/.cache
+playwright/.auth
+# Componentes de shadcn: se generan con `pnpm dlx shadcn add`; formatearlos
+# genera diferencias de estilo en cada actualización.
+src/shared/components/ui
