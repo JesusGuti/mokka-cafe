@@ -1,8 +1,9 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
-import { AxiosError, type AxiosResponse } from "axios";
+import { buildApiError } from "@/shared/testing/api-error";
 import { EditProductCategoryForm } from "./edit-product-category-form";
 import { PRODUCT_CATEGORY_SCHEMA_ERROR_MESSAGES } from "../schemas/product-categories.schema";
+import { buildProductCategory } from "../testing/product-category.fixtures";
 import type { ProductCategoryResponse } from "../types/product-category.types";
 
 const { mutateAsyncMock, showToastMock } = vi.hoisted(() => ({
@@ -15,19 +16,7 @@ vi.mock("../hooks/use-edit-product-category", () => ({
 }));
 vi.mock("@/shared/lib/toast", () => ({ showToast: showToastMock }));
 
-const CATEGORY: ProductCategoryResponse = {
-  id: "cat-1",
-  name: "Calientes",
-  sortOrder: 0,
-  createdAt: "2026-01-01T00:00:00.000Z",
-  updatedAt: "2026-01-01T00:00:00.000Z",
-};
-
-const apiError = (status: number, message: string) =>
-  new AxiosError("fail", "ERR", undefined, undefined, {
-    status,
-    data: { message },
-  } as AxiosResponse);
+const CATEGORY = buildProductCategory();
 
 const renderDialog = (category: ProductCategoryResponse | null = CATEGORY) => {
   const onClose = vi.fn();
@@ -113,7 +102,7 @@ describe("EditProductCategoryForm", () => {
 
   it("un nombre duplicado (409) se muestra junto al campo y no cierra (AC-1.6)", async () => {
     mutateAsyncMock.mockRejectedValue(
-      apiError(409, "Ya existe una categoría con ese nombre"),
+      buildApiError(409, "Ya existe una categoría con ese nombre"),
     );
     const { onClose } = renderDialog();
     typeName("Frías");
@@ -130,7 +119,7 @@ describe("EditProductCategoryForm", () => {
 
   it("si la categoría ya no existe (404) avisa y cierra (AC-1.8)", async () => {
     mutateAsyncMock.mockRejectedValue(
-      apiError(404, "Esta categoría ya no existe"),
+      buildApiError(404, "Esta categoría ya no existe"),
     );
     const { onClose } = renderDialog();
     typeName("Frías");
@@ -149,7 +138,7 @@ describe("EditProductCategoryForm", () => {
   });
 
   it("un error inesperado se muestra y deja el diálogo abierto con lo escrito", async () => {
-    mutateAsyncMock.mockRejectedValue(apiError(500, "Fallo interno"));
+    mutateAsyncMock.mockRejectedValue(buildApiError(500, "Fallo interno"));
     const { onClose } = renderDialog();
     typeName("Frías");
 

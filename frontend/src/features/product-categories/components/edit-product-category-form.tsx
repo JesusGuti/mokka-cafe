@@ -10,6 +10,10 @@ import { getApiErrorMessage } from "@/shared/helpers/api-error";
 import { useRetainedValue } from "@/shared/hooks/use-retained-value";
 import { showToast } from "@/shared/lib/toast";
 import type { ApiErrorResponse } from "@/shared/types/api-error";
+import {
+  PRODUCT_CATEGORY_NAME_FIELD,
+  PRODUCT_CATEGORY_SAVE_ERROR_MESSAGE,
+} from "../constants/product-category-form.constants";
 import { useEditProductCategory } from "../hooks/use-edit-product-category";
 import {
   productCategorySchema,
@@ -27,10 +31,6 @@ const EDIT_PRODUCT_CATEGORY_FORM = {
   title: "Editar categoría",
 };
 
-const NAME_FIELD = { label: "Nombre", placeholder: "Ej. Bebidas calientes" };
-
-const GENERIC_ERROR_MESSAGE =
-  "Algo salió mal. Tus datos siguen aquí, intenta guardar de nuevo.";
 const NOT_FOUND_MESSAGE = "Esta categoría ya no existe";
 
 interface EditProductCategoryFormProps {
@@ -82,7 +82,11 @@ export const EditProductCategoryForm = ({
         return;
       }
 
-      setProductCategoryFormError(form, axiosError, GENERIC_ERROR_MESSAGE);
+      setProductCategoryFormError(
+        form,
+        axiosError,
+        PRODUCT_CATEGORY_SAVE_ERROR_MESSAGE,
+      );
       throw error;
     }
   };
@@ -105,8 +109,8 @@ export const EditProductCategoryForm = ({
       <div className="flex flex-col gap-4">
         <FormInput<ProductCategoryPayload>
           name="name"
-          label={NAME_FIELD.label}
-          placeholder={NAME_FIELD.placeholder}
+          label={PRODUCT_CATEGORY_NAME_FIELD.label}
+          placeholder={PRODUCT_CATEGORY_NAME_FIELD.placeholder}
           type="text"
           mode="text"
           autoFocus

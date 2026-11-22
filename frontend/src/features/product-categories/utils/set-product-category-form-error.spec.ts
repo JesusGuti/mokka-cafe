@@ -1,23 +1,12 @@
-import { AxiosError, type AxiosResponse } from "axios";
 import type { UseFormReturn } from "react-hook-form";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { buildApiError } from "@/shared/testing/api-error";
 import type { ProductCategoryPayload } from "../schemas/product-categories.schema";
 import { setProductCategoryFormError } from "./set-product-category-form-error";
 
 const { showToastMock } = vi.hoisted(() => ({ showToastMock: vi.fn() }));
 
 vi.mock("@/shared/lib/toast", () => ({ showToast: showToastMock }));
-
-const apiError = (status?: number, message?: string) =>
-  new AxiosError(
-    "fail",
-    "ERR",
-    undefined,
-    undefined,
-    status === undefined
-      ? undefined
-      : ({ status, data: { message } } as AxiosResponse),
-  );
 
 const buildForm = () => {
   const setError = vi.fn();
@@ -35,7 +24,7 @@ describe("setProductCategoryFormError", () => {
 
     setProductCategoryFormError(
       form,
-      apiError(409, "Ya existe una categoría con ese nombre"),
+      buildApiError(409, "Ya existe una categoría con ese nombre"),
       "fallback",
     );
 
@@ -48,7 +37,7 @@ describe("setProductCategoryFormError", () => {
   it("cualquier otro error va al error general y abre un toast", () => {
     const { form, setError } = buildForm();
 
-    setProductCategoryFormError(form, apiError(500, "Boom"), "fallback");
+    setProductCategoryFormError(form, buildApiError(500, "Boom"), "fallback");
 
     expect(setError).toHaveBeenCalledWith("root", { message: "Boom" });
     expect(showToastMock).toHaveBeenCalledWith("Boom", "error");
@@ -57,7 +46,7 @@ describe("setProductCategoryFormError", () => {
   it("sin respuesta (sin conexión) usa el mensaje de respaldo", () => {
     const { form, setError } = buildForm();
 
-    setProductCategoryFormError(form, apiError(), "No hay conexión");
+    setProductCategoryFormError(form, buildApiError(), "No hay conexión");
 
     expect(setError).toHaveBeenCalledWith("root", {
       message: "No hay conexión",

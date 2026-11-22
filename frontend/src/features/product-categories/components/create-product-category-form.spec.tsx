@@ -1,6 +1,6 @@
-import { AxiosError, type AxiosResponse } from "axios";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { buildApiError } from "@/shared/testing/api-error";
 import { CreateProductCategoryForm } from "./create-product-category-form";
 import { PRODUCT_CATEGORY_SCHEMA_ERROR_MESSAGES } from "../schemas/product-categories.schema";
 
@@ -13,12 +13,6 @@ vi.mock("../hooks/use-create-product-category", () => ({
   useCreateProductCategory: () => ({ mutateAsync: mutateAsyncMock }),
 }));
 vi.mock("@/shared/lib/toast", () => ({ showToast: showToastMock }));
-
-const apiError = (status: number, message: string) =>
-  new AxiosError("fail", "ERR", undefined, undefined, {
-    status,
-    data: { message },
-  } as AxiosResponse);
 
 const openDialog = () => {
   render(<CreateProductCategoryForm />);
@@ -120,7 +114,7 @@ describe("CreateProductCategoryForm", () => {
 
   it("un nombre duplicado (409) se muestra junto al campo, sin toast (AC-1.6)", async () => {
     mutateAsyncMock.mockRejectedValue(
-      apiError(409, "Ya existe una categoría con ese nombre"),
+      buildApiError(409, "Ya existe una categoría con ese nombre"),
     );
     openDialog();
     typeName("Calientes");
@@ -136,7 +130,7 @@ describe("CreateProductCategoryForm", () => {
   });
 
   it("un error inesperado se muestra en el formulario y en un toast, y conserva lo escrito", async () => {
-    mutateAsyncMock.mockRejectedValue(apiError(500, "Fallo interno"));
+    mutateAsyncMock.mockRejectedValue(buildApiError(500, "Fallo interno"));
     openDialog();
     typeName("Calientes");
 

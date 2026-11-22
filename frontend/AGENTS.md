@@ -50,12 +50,15 @@ src/
     helpers/                  # funciones puras sin framework ni efectos, un archivo por concepto (currency, date, input-utils)
     hooks/                    # hooks reutilizables entre features
     types/                    # tipos compartidos (ej. contratos con el backend)
+    testing/                  # helpers de test compartidos (ej. buildApiError); solo se importan desde *.spec
   features/
     <feature>/                # ej. menu, orders, admin, inventory
       components/
       hooks/
       api/                    # llamadas axios + queries específicas de la feature
       types/
+      constants/              # textos que comparten varios componentes de la feature (no los de un solo componente)
+      testing/                # fixtures de test de la feature (buildX); solo se importan desde *.spec
 ```
 
 Regla: si un componente/hook/tipo lo usa una sola feature, vive dentro de `features/<feature>/`; si lo usan dos o más, sube a `shared/`. No crear una carpeta `features/` para algo usado una sola vez.

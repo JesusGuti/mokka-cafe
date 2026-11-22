@@ -1,7 +1,8 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
-import { AxiosError, type AxiosResponse } from "axios";
+import { buildApiError } from "@/shared/testing/api-error";
 import { DeleteProductCategoryForm } from "./delete-product-category-form";
+import { buildProductCategory } from "../testing/product-category.fixtures";
 import type { ProductCategoryWithCountResponse } from "../types/product-category.types";
 
 const { mutateAsyncMock, showToastMock } = vi.hoisted(() => ({
@@ -13,24 +14,6 @@ vi.mock("../hooks/use-delete-product-category", () => ({
   useDeleteProductCategory: () => ({ mutateAsync: mutateAsyncMock }),
 }));
 vi.mock("@/shared/lib/toast", () => ({ showToast: showToastMock }));
-
-const buildCategory = (
-  overrides: Partial<ProductCategoryWithCountResponse> = {},
-): ProductCategoryWithCountResponse => ({
-  id: "cat-1",
-  name: "Calientes",
-  sortOrder: 0,
-  productCount: 0,
-  createdAt: "2026-01-01T00:00:00.000Z",
-  updatedAt: "2026-01-01T00:00:00.000Z",
-  ...overrides,
-});
-
-const apiError = (status: number, message: string) =>
-  new AxiosError("fail", "ERR", undefined, undefined, {
-    status,
-    data: { message },
-  } as AxiosResponse);
 
 const renderDialog = (category: ProductCategoryWithCountResponse | null) => {
   const onClose = vi.fn();
@@ -53,7 +36,7 @@ describe("DeleteProductCategoryForm", () => {
   });
 
   it("pide confirmación nombrando la categoría", () => {
-    renderDialog(buildCategory());
+    renderDialog(buildProductCategory());
 
     expect(screen.getByRole("dialog")).toBeVisible();
     expect(
@@ -68,7 +51,7 @@ describe("DeleteProductCategoryForm", () => {
 
   it("al confirmar elimina por id, avisa con un toast y cierra", async () => {
     mutateAsyncMock.mockResolvedValue(undefined);
-    const { onClose } = renderDialog(buildCategory());
+    const { onClose } = renderDialog(buildProductCategory());
 
     confirm();
 
@@ -87,7 +70,7 @@ describe("DeleteProductCategoryForm", () => {
   });
 
   it("si tiene productos avisa cuántos y no deja confirmar (AC-1.7)", () => {
-    renderDialog(buildCategory({ productCount: 4 }));
+    renderDialog(buildProductCategory({ productCount: 4 }));
 
     expect(
       screen.getByText(
@@ -100,7 +83,7 @@ describe("DeleteProductCategoryForm", () => {
   });
 
   it("usa el singular cuando tiene un solo producto", () => {
-    renderDialog(buildCategory({ productCount: 1 }));
+    renderDialog(buildProductCategory({ productCount: 1 }));
 
     expect(
       screen.getByText(
@@ -110,7 +93,7 @@ describe("DeleteProductCategoryForm", () => {
   });
 
   it("cancelar cierra sin eliminar", () => {
-    const { onClose } = renderDialog(buildCategory());
+    const { onClose } = renderDialog(buildProductCategory());
 
     fireEvent.click(screen.getByRole("button", { name: "Cancelar" }));
 
@@ -124,8 +107,8 @@ describe("DeleteProductCategoryForm", () => {
   ])(
     "ante un %i muestra el mensaje del backend y cierra",
     async (status, message) => {
-      mutateAsyncMock.mockRejectedValue(apiError(status, message));
-      const { onClose } = renderDialog(buildCategory());
+      mutateAsyncMock.mockRejectedValue(buildApiError(status, message));
+      const { onClose } = renderDialog(buildProductCategory());
 
       confirm();
 
@@ -139,8 +122,8 @@ describe("DeleteProductCategoryForm", () => {
   );
 
   it("ante un error de servidor muestra un mensaje genérico y queda abierto para reintentar", async () => {
-    mutateAsyncMock.mockRejectedValue(apiError(500, ""));
-    const { onClose } = renderDialog(buildCategory());
+    mutateAsyncMock.mockRejectedValue(buildApiError(500, ""));
+    const { onClose } = renderDialog(buildProductCategory());
 
     confirm();
 
@@ -155,7 +138,7 @@ describe("DeleteProductCategoryForm", () => {
   });
 
   it("el botón de confirmar usa el estilo destructivo", () => {
-    renderDialog(buildCategory());
+    renderDialog(buildProductCategory());
 
     expect(
       screen.getByRole("button", { name: "Eliminar categoría" }),

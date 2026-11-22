@@ -10,6 +10,10 @@ import { Button } from "@/shared/components/ui/button";
 import { FieldError } from "@/shared/components/ui/field";
 import { showToast } from "@/shared/lib/toast";
 import type { ApiErrorResponse } from "@/shared/types/api-error";
+import {
+  PRODUCT_CATEGORY_NAME_FIELD,
+  PRODUCT_CATEGORY_SAVE_ERROR_MESSAGE,
+} from "../constants/product-category-form.constants";
 import { useCreateProductCategory } from "../hooks/use-create-product-category";
 import {
   productCategorySchema,
@@ -28,11 +32,6 @@ const CREATE_PRODUCT_CATEGORY_FORM = {
   title: "Nueva categoría",
   triggerLabel: "Nueva categoría",
 };
-
-const NAME_FIELD = { label: "Nombre", placeholder: "Ej. Bebidas calientes" };
-
-const GENERIC_ERROR_MESSAGE =
-  "Algo salió mal. Tus datos siguen aquí, intenta guardar de nuevo.";
 
 export const CreateProductCategoryForm = () => {
   const { mutateAsync } = useCreateProductCategory();
@@ -57,7 +56,7 @@ export const CreateProductCategoryForm = () => {
       setProductCategoryFormError(
         form,
         error as AxiosError<ApiErrorResponse>,
-        GENERIC_ERROR_MESSAGE,
+        PRODUCT_CATEGORY_SAVE_ERROR_MESSAGE,
       );
       throw error;
     }
@@ -84,8 +83,8 @@ export const CreateProductCategoryForm = () => {
       <div className="flex flex-col gap-4">
         <FormInput<ProductCategoryPayload>
           name="name"
-          label={NAME_FIELD.label}
-          placeholder={NAME_FIELD.placeholder}
+          label={PRODUCT_CATEGORY_NAME_FIELD.label}
+          placeholder={PRODUCT_CATEGORY_NAME_FIELD.placeholder}
           type="text"
           mode="text"
           autoFocus
