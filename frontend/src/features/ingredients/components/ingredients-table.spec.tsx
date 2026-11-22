@@ -25,14 +25,14 @@ const categories: IngredientCategoryResponse[] = [
   {
     id: "cat-lacteos",
     name: "Lácteos",
-    createdAt: "2026-01-01T00:00:00.000Z" as unknown as Date,
-    updatedAt: "2026-01-01T00:00:00.000Z" as unknown as Date,
+    createdAt: "2026-01-01T00:00:00.000Z",
+    updatedAt: "2026-01-01T00:00:00.000Z",
   },
   {
     id: "cat-cafe",
     name: "Café",
-    createdAt: "2026-01-01T00:00:00.000Z" as unknown as Date,
-    updatedAt: "2026-01-01T00:00:00.000Z" as unknown as Date,
+    createdAt: "2026-01-01T00:00:00.000Z",
+    updatedAt: "2026-01-01T00:00:00.000Z",
   },
 ];
 
@@ -44,8 +44,8 @@ const ingredients: IngredientResponse[] = [
     categoryId: "cat-lacteos",
     currentStockQty: 10,
     minStockThreshold: 2,
-    createdAt: "2026-01-01T00:00:00.000Z" as unknown as Date,
-    updatedAt: "2026-01-01T00:00:00.000Z" as unknown as Date,
+    createdAt: "2026-01-01T00:00:00.000Z",
+    updatedAt: "2026-01-01T00:00:00.000Z",
   },
   {
     id: "2",
@@ -54,8 +54,8 @@ const ingredients: IngredientResponse[] = [
     categoryId: "cat-cafe",
     currentStockQty: 500,
     minStockThreshold: null,
-    createdAt: "2026-01-02T00:00:00.000Z" as unknown as Date,
-    updatedAt: "2026-01-02T00:00:00.000Z" as unknown as Date,
+    createdAt: "2026-01-02T00:00:00.000Z",
+    updatedAt: "2026-01-02T00:00:00.000Z",
   },
 ];
 
