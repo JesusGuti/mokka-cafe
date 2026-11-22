@@ -53,7 +53,9 @@ describe("DataTableFacetedFilter", () => {
     render(<Harness />);
 
     fireEvent.click(screen.getByRole("button", { name: "Rol" }));
-    fireEvent.click(screen.getByRole("menuitemcheckbox", { name: "Administrador" }));
+    fireEvent.click(
+      screen.getByRole("menuitemcheckbox", { name: "Administrador" }),
+    );
 
     expect(screen.getByRole("button", { name: "Rol1" })).toBeInTheDocument();
   });
@@ -62,7 +64,9 @@ describe("DataTableFacetedFilter", () => {
     render(<Harness />);
 
     fireEvent.click(screen.getByRole("button", { name: "Rol" }));
-    const adminOption = screen.getByRole("menuitemcheckbox", { name: "Administrador" });
+    const adminOption = screen.getByRole("menuitemcheckbox", {
+      name: "Administrador",
+    });
 
     fireEvent.click(adminOption);
     expect(screen.getByRole("button", { name: "Rol1" })).toBeInTheDocument();
@@ -75,7 +79,9 @@ describe("DataTableFacetedFilter", () => {
     render(<Harness />);
 
     fireEvent.click(screen.getByRole("button", { name: "Rol" }));
-    fireEvent.click(screen.getByRole("menuitemcheckbox", { name: "Administrador" }));
+    fireEvent.click(
+      screen.getByRole("menuitemcheckbox", { name: "Administrador" }),
+    );
     fireEvent.click(screen.getByRole("menuitemcheckbox", { name: "Cajero" }));
 
     expect(screen.getByRole("button", { name: "Rol2" })).toBeInTheDocument();
@@ -85,8 +91,12 @@ describe("DataTableFacetedFilter", () => {
     render(<Harness />);
 
     fireEvent.click(screen.getByRole("button", { name: "Rol" }));
-    fireEvent.click(screen.getByRole("menuitemcheckbox", { name: "Administrador" }));
-    fireEvent.click(screen.getByRole("menuitemcheckbox", { name: "Limpiar filtro" }));
+    fireEvent.click(
+      screen.getByRole("menuitemcheckbox", { name: "Administrador" }),
+    );
+    fireEvent.click(
+      screen.getByRole("menuitemcheckbox", { name: "Limpiar filtro" }),
+    );
 
     expect(screen.getByRole("button", { name: "Rol" })).toBeInTheDocument();
   });

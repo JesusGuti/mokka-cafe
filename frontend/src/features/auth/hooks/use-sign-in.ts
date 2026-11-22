@@ -8,7 +8,11 @@ import type { ApiErrorResponse } from "@/shared/types/api-error";
 export function useSignIn() {
   const setSession = useAuthStore((state) => state.setSession);
 
-  return useMutation<SignInResponse, AxiosError<ApiErrorResponse>, SignInPayload>({
+  return useMutation<
+    SignInResponse,
+    AxiosError<ApiErrorResponse>,
+    SignInPayload
+  >({
     mutationFn: signIn,
     retry: false,
     onSuccess: (data) => {

@@ -97,8 +97,12 @@ describe("FormSelect", () => {
     openSelect();
 
     const listbox = await screen.findByRole("listbox");
-    expect(within(listbox).getByRole("option", { name: "Mesero" })).toBeVisible();
-    expect(within(listbox).getByRole("option", { name: "Cajero" })).toBeVisible();
+    expect(
+      within(listbox).getByRole("option", { name: "Mesero" }),
+    ).toBeVisible();
+    expect(
+      within(listbox).getByRole("option", { name: "Cajero" }),
+    ).toBeVisible();
   });
 
   it("muestra emptyMessage y el item queda deshabilitado cuando options está vacío", async () => {
@@ -153,9 +157,10 @@ describe("FormSelect", () => {
     renderFormSelect();
 
     expect(screen.queryByRole("alert")).not.toBeInTheDocument();
-    expect(
-      screen.getByRole("combobox", { name: "Rol" }),
-    ).toHaveAttribute("aria-invalid", "false");
+    expect(screen.getByRole("combobox", { name: "Rol" })).toHaveAttribute(
+      "aria-invalid",
+      "false",
+    );
   });
 
   it("incluye description y error juntos en aria-describedby", () => {

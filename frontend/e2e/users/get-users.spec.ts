@@ -200,9 +200,7 @@ test("el filtro de Rol muestra solo usuarios con el rol seleccionado", async ({
   ).not.toBeVisible();
 });
 
-test("se pueden combinar el filtro de Rol y el de Estado", async ({
-  page,
-}) => {
+test("se pueden combinar el filtro de Rol y el de Estado", async ({ page }) => {
   const reachable = await isBackendReachable();
   // NOSONAR: skip condicional, no un test abandonado — red de seguridad
   // por si el backend de test (BACKEND_URL) no llegó a levantar en este
@@ -227,19 +225,21 @@ test("se pueden combinar el filtro de Rol y el de Estado", async ({
   await facetedFilterButton(page, "Estado").click();
   // exact: true — "Activo" es substring de "Inactivo", así que sin esto
   // matchea ambos items.
-  await page.getByRole("menuitemcheckbox", { name: "Activo", exact: true }).click();
+  await page
+    .getByRole("menuitemcheckbox", { name: "Activo", exact: true })
+    .click();
   await page.keyboard.press("Escape");
 
   // Todo usuario nuevo se crea activo, así que Rol=Cajero + Estado=Activo
   // debe seguir mostrándolo.
-  await expect(
-    page.getByRole("row", { name: new RegExp(name) }),
-  ).toBeVisible();
+  await expect(page.getByRole("row", { name: new RegExp(name) })).toBeVisible();
 
   await facetedFilterButton(page, "Estado").click();
   // exact: true — "Activo" es substring de "Inactivo", así que sin esto
   // matchea ambos items.
-  await page.getByRole("menuitemcheckbox", { name: "Activo", exact: true }).click();
+  await page
+    .getByRole("menuitemcheckbox", { name: "Activo", exact: true })
+    .click();
   await page.getByRole("menuitemcheckbox", { name: "Inactivo" }).click();
   await page.keyboard.press("Escape");
 
@@ -282,12 +282,12 @@ test("el filtro de Estado muestra solo usuarios activos o inactivos según lo se
   await page.getByRole("menuitemcheckbox", { name: "Inactivo" }).click();
   // exact: true — "Activo" es substring de "Inactivo", así que sin esto
   // matchea ambos items.
-  await page.getByRole("menuitemcheckbox", { name: "Activo", exact: true }).click();
+  await page
+    .getByRole("menuitemcheckbox", { name: "Activo", exact: true })
+    .click();
   await page.keyboard.press("Escape");
 
-  await expect(
-    page.getByRole("row", { name: new RegExp(name) }),
-  ).toBeVisible();
+  await expect(page.getByRole("row", { name: new RegExp(name) })).toBeVisible();
 });
 
 test('el botón "Limpiar" solo aparece cuando hay filtros aplicados', async ({
@@ -295,9 +295,7 @@ test('el botón "Limpiar" solo aparece cuando hay filtros aplicados', async ({
 }) => {
   await page.goto("/usuarios");
 
-  await expect(
-    page.getByRole("button", { name: "Limpiar" }),
-  ).not.toBeVisible();
+  await expect(page.getByRole("button", { name: "Limpiar" })).not.toBeVisible();
 
   const searchBox = page.getByRole("textbox", { name: "Buscar" });
   await fillStable(searchBox, "cualquier-texto");
@@ -306,9 +304,7 @@ test('el botón "Limpiar" solo aparece cuando hay filtros aplicados', async ({
 
   await fillStable(searchBox, "");
 
-  await expect(
-    page.getByRole("button", { name: "Limpiar" }),
-  ).not.toBeVisible();
+  await expect(page.getByRole("button", { name: "Limpiar" })).not.toBeVisible();
 });
 
 test('el botón "Limpiar" resetea la búsqueda y los filtros de Rol/Estado', async ({
@@ -326,19 +322,19 @@ test('el botón "Limpiar" resetea la búsqueda y los filtros de Rol/Estado', asy
   await facetedFilterButton(page, "Estado").click();
   // exact: true — "Activo" es substring de "Inactivo", así que sin esto
   // matchea ambos items.
-  await page.getByRole("menuitemcheckbox", { name: "Activo", exact: true }).click();
+  await page
+    .getByRole("menuitemcheckbox", { name: "Activo", exact: true })
+    .click();
   await page.keyboard.press("Escape");
 
   await page.getByRole("button", { name: "Limpiar" }).click();
 
   await expect(searchBox).toHaveValue("");
-  await expect(
-    page.getByRole("button", { name: "Limpiar" }),
-  ).not.toBeVisible();
+  await expect(page.getByRole("button", { name: "Limpiar" })).not.toBeVisible();
   await expect(facetedFilterButton(page, "Rol").getByText("1")).toHaveCount(0);
-  await expect(
-    facetedFilterButton(page, "Estado").getByText("1"),
-  ).toHaveCount(0);
+  await expect(facetedFilterButton(page, "Estado").getByText("1")).toHaveCount(
+    0,
+  );
 });
 
 test('hacer clic en el encabezado "Nombre" ordena la tabla alfabéticamente', async ({
@@ -382,10 +378,12 @@ test('hacer clic en el encabezado "Nombre" ordena la tabla alfabéticamente', as
 
   // ...y uno de los dos debe ser el alfabético ascendente real (A, B, C).
   const isAlphabetical = (order: string[]) =>
-    order[0].includes(nameA) && order[1].includes(nameB) && order[2].includes(nameC);
-  expect(isAlphabetical(firstClickOrder) || isAlphabetical(secondClickOrder)).toBe(
-    true,
-  );
+    order[0].includes(nameA) &&
+    order[1].includes(nameB) &&
+    order[2].includes(nameC);
+  expect(
+    isAlphabetical(firstClickOrder) || isAlphabetical(secondClickOrder),
+  ).toBe(true);
 });
 
 test('hacer clic en el encabezado "Creado" ordena por fecha de creación', async ({
@@ -427,7 +425,9 @@ test('hacer clic en el encabezado "Creado" ordena por fecha de creación', async
 
   // Uno de los dos debe respetar el orden real de creación (1, 2, 3).
   const isCreationOrder = (order: string[]) =>
-    order[0].includes(first) && order[1].includes(second) && order[2].includes(third);
+    order[0].includes(first) &&
+    order[1].includes(second) &&
+    order[2].includes(third);
   expect(
     isCreationOrder(firstClickOrder) || isCreationOrder(secondClickOrder),
   ).toBe(true);

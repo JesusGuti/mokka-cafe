@@ -17,7 +17,9 @@ export const useCreateIngredientCategory = () => {
     mutationFn: createIngredientCategory,
     retry: false,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ingredientCategoriesKeys.lists() });
+      queryClient.invalidateQueries({
+        queryKey: ingredientCategoriesKeys.lists(),
+      });
     },
   });
 };

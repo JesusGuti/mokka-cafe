@@ -139,12 +139,10 @@ export const UserForm = () => {
           name="role"
           label={USER_FORM_FIELDS.role.label}
           placeholder={USER_FORM_FIELDS.role.placeholder}
-          options={USER_ROLES.map(
-            (role): SelectOption => ({
-              label: USER_ROLE_LABELS[role],
-              value: role,
-            }),
-          )}
+          options={USER_ROLES.map((role): SelectOption => ({
+            label: USER_ROLE_LABELS[role],
+            value: role,
+          }))}
         />
 
         {form.formState.errors.root?.message && (

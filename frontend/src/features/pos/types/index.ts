@@ -1,17 +1,17 @@
-export type ProductCategory = "calientes" | "frios" | "panaderia" | "frappes"
+export type ProductCategory = "calientes" | "frios" | "panaderia" | "frappes";
 
 export interface Product {
-  id: string
-  name: string
-  description: string
-  priceCents: number
-  category: ProductCategory
+  id: string;
+  name: string;
+  description: string;
+  priceCents: number;
+  category: ProductCategory;
 }
 
 export interface OrderLineItem {
-  id: string
-  product: Product
-  quantity: number
+  id: string;
+  product: Product;
+  quantity: number;
 }
 
-export type PaymentMethod = "efectivo" | "tarjeta" | "qr"
+export type PaymentMethod = "efectivo" | "tarjeta" | "qr";

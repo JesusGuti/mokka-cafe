@@ -183,9 +183,9 @@ describe("FormCombobox", () => {
     );
     // En este harness `options` es estático y nunca incluye la opción creada
     // (en la app real llega tras el refetch): el trigger debe mostrarla igual.
-    expect(
-      screen.getByRole("button", { name: "Categoría" }),
-    ).toHaveTextContent("Infusiones");
+    expect(screen.getByRole("button", { name: "Categoría" })).toHaveTextContent(
+      "Infusiones",
+    );
   });
 
   it("si onCreateOption devuelve null (el caller ya mostró el error), no cambia la selección ni cierra el popup", async () => {

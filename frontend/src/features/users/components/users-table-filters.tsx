@@ -1,7 +1,11 @@
 import { DataTableFacetedFilter } from "@/shared/components/table/data-table-faceted-filter";
 import { DataTableToolbar } from "@/shared/components/table/data-table-toolbar";
 import type { DataTableInstance } from "@/shared/components/table/data-table";
-import { USER_ROLES, USER_ROLE_LABELS, UserResponse } from "../types/users.types";
+import {
+  USER_ROLES,
+  USER_ROLE_LABELS,
+  UserResponse,
+} from "../types/users.types";
 
 const ROLE_OPTIONS = USER_ROLES.map((role) => ({
   label: USER_ROLE_LABELS[role],

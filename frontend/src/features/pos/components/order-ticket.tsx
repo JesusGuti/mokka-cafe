@@ -96,7 +96,9 @@ export function OrderTicket({
         <div className="border-t border-dashed border-border p-4">
           <div className="mb-1 flex justify-between text-sm text-muted-foreground">
             <span>Subtotal</span>
-            <span className="tabular-nums">{formatCurrency(subtotalCents)}</span>
+            <span className="tabular-nums">
+              {formatCurrency(subtotalCents)}
+            </span>
           </div>
           <div className="mb-3 flex justify-between text-sm text-muted-foreground">
             <span>Impuesto (10%)</span>

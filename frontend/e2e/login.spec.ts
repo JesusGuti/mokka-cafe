@@ -20,9 +20,7 @@ test("la pantalla de login renderiza correctamente en un browser real", async ({
     page.getByRole("heading", { name: "Inicia sesión" }),
   ).toBeVisible();
   await expect(page.getByRole("textbox", { name: "Correo" })).toBeVisible();
-  await expect(
-    page.getByRole("textbox", { name: "Contraseña" }),
-  ).toBeVisible();
+  await expect(page.getByRole("textbox", { name: "Contraseña" })).toBeVisible();
   await expect(page.getByRole("button", { name: "Ingresar" })).toBeVisible();
 });
 
