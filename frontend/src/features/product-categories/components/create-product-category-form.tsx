@@ -50,7 +50,9 @@ export const CreateProductCategoryForm = () => {
       showToast(`«${created.name}» creada`, "success");
 
       // AC-1.13: el campo queda vacío y listo para la siguiente categoría.
-      form.reset();
+      // keepFieldsRef: sin esto reset() descarta la ref del input y setFocus no
+      // encuentra a quién enfocar.
+      form.reset(undefined, { keepFieldsRef: true });
       form.setFocus("name");
     } catch (error) {
       setProductCategoryFormError(
