@@ -142,6 +142,6 @@ describe("DeleteProductCategoryForm", () => {
 
     expect(
       screen.getByRole("button", { name: "Eliminar categoría" }),
-    ).toHaveClass("text-destructive");
+    ).toHaveClass("bg-destructive");
   });
 });

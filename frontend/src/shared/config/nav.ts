@@ -1,4 +1,5 @@
 import {
+  BookOpen,
   ChartColumn,
   ChefHat,
   Package,
@@ -17,6 +18,12 @@ export interface NavItem {
 export const NAV_ITEMS: readonly NavItem[] = [
   { href: "/pos", label: "POS", icon: ShoppingCart },
   { href: "/cocina", label: "Cocina", icon: ChefHat },
+  {
+    href: "/catalogo",
+    label: "Catálogo",
+    icon: BookOpen,
+    items: [{ href: "/catalogo/categorias", label: "Categorías" }],
+  },
   {
     href: "/inventario",
     label: "Inventario",
