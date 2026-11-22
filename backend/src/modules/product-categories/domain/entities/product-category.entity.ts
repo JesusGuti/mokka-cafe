@@ -44,13 +44,13 @@ export class ProductCategory {
 
     if (!name) {
       throw new InvalidProductCategoryError(
-        'El nombre de la categoría es obligatorio.',
+        'El nombre de la categoría es obligatorio',
       );
     }
 
     if (name.length > PRODUCT_CATEGORY_NAME_MAX_LENGTH) {
       throw new InvalidProductCategoryError(
-        `El nombre de la categoría no puede superar ${PRODUCT_CATEGORY_NAME_MAX_LENGTH} caracteres.`,
+        `El nombre de la categoría no puede superar ${PRODUCT_CATEGORY_NAME_MAX_LENGTH} caracteres`,
       );
     }
 
