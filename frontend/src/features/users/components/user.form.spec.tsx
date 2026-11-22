@@ -173,12 +173,11 @@ describe("UserForm", () => {
     submit();
 
     expect(
-      await screen.findByText(
-        "No se pudo crear el usuario. Intenta de nuevo.",
-      ),
+      await screen.findByText("No se pudo crear el usuario. Intenta de nuevo."),
     ).toBeInTheDocument();
-    expect(
-      screen.getByRole("textbox", { name: "Correo" }),
-    ).toHaveAttribute("aria-invalid", "false");
+    expect(screen.getByRole("textbox", { name: "Correo" })).toHaveAttribute(
+      "aria-invalid",
+      "false",
+    );
   });
 });

@@ -69,7 +69,9 @@ describe("UsersTable", () => {
 
     render(<UsersTable />);
 
-    expect(screen.getByText("No hay usuarios registrados.")).toBeInTheDocument();
+    expect(
+      screen.getByText("No hay usuarios registrados."),
+    ).toBeInTheDocument();
   });
 
   it("filtra por rol usando el filtro de la toolbar", () => {
@@ -82,7 +84,9 @@ describe("UsersTable", () => {
       .find((button) => button.getAttribute("aria-haspopup") === "menu")!;
 
     fireEvent.click(roleFilterTrigger);
-    fireEvent.click(screen.getByRole("menuitemcheckbox", { name: "Administrador" }));
+    fireEvent.click(
+      screen.getByRole("menuitemcheckbox", { name: "Administrador" }),
+    );
 
     expect(screen.getByText("Ana Admin")).toBeInTheDocument();
     expect(screen.queryByText("Carlos Cajero")).not.toBeInTheDocument();

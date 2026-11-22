@@ -88,7 +88,11 @@ export function DataTable<TData extends RowData>({
   // reales que las identifiquen, así que no pueden usar el índice como key
   // (React reconciliaría mal si `pageSize` cambia mientras isLoading es true).
   const skeletonRowIds = React.useMemo(
-    () => Array.from({ length: pageSize }, () => `skeleton-row-${skeletonIdCounter++}`),
+    () =>
+      Array.from(
+        { length: pageSize },
+        () => `skeleton-row-${skeletonIdCounter++}`,
+      ),
     [pageSize],
   );
 

@@ -1,5 +1,8 @@
 import { apiClient } from "@/shared/lib/api/client";
-import { IngredientPayload, IngredientResponse } from "../types/ingredients.types";
+import {
+  IngredientPayload,
+  IngredientResponse,
+} from "../types/ingredients.types";
 
 export async function createIngredient(
   payload: IngredientPayload,

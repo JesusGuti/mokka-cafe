@@ -4,7 +4,10 @@ import type { ApiErrorResponse } from "@/shared/types/api-error";
 import { getQueryClient } from "@/shared/lib/query-client";
 import { createIngredient } from "../api/create-ingredient";
 import { ingredientsKeys } from "../api/ingredients.keys";
-import { IngredientPayload, IngredientResponse } from "../types/ingredients.types";
+import {
+  IngredientPayload,
+  IngredientResponse,
+} from "../types/ingredients.types";
 
 export const useCreateIngredient = () => {
   const queryClient = getQueryClient();

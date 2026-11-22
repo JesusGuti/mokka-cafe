@@ -15,12 +15,18 @@ export const IngredientsTable = () => {
 
   const categoryNameById = useMemo(
     () =>
-      Object.fromEntries(categories.map((category) => [category.id, category.name])),
+      Object.fromEntries(
+        categories.map((category) => [category.id, category.name]),
+      ),
     [categories],
   );
 
   const categoryOptions = useMemo(
-    () => categories.map((category) => ({ label: category.name, value: category.name })),
+    () =>
+      categories.map((category) => ({
+        label: category.name,
+        value: category.name,
+      })),
     [categories],
   );
 
@@ -37,7 +43,10 @@ export const IngredientsTable = () => {
       getRowId={(ingredient) => ingredient.id}
       emptyMessage="No hay ingredientes registrados."
       toolbar={(table) => (
-        <IngredientsTableFilters table={table} categoryOptions={categoryOptions} />
+        <IngredientsTableFilters
+          table={table}
+          categoryOptions={categoryOptions}
+        />
       )}
     />
   );

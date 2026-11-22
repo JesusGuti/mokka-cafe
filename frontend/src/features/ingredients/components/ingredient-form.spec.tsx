@@ -319,9 +319,9 @@ describe("IngredientForm", () => {
 
     // La categoría nueva aún no está en `options` (el refetch está mockeado),
     // pero el trigger igual debe mostrarla seleccionada.
-    expect(
-      screen.getByRole("button", { name: "Categoría" }),
-    ).toHaveTextContent("Infusiones");
+    expect(screen.getByRole("button", { name: "Categoría" })).toHaveTextContent(
+      "Infusiones",
+    );
 
     submit();
 

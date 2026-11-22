@@ -19,7 +19,9 @@ const rows: TestRow[] = [
 const columns: ColumnDef<DataTableFeatures, TestRow>[] = [
   {
     accessorKey: "name",
-    header: ({ column }) => <DataTableColumnHeader column={column} title="Nombre" />,
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Nombre" />
+    ),
   },
 ];
 
@@ -32,14 +34,18 @@ function getBodyCellTexts() {
 
 describe("DataTable", () => {
   it("renderiza el header y las filas recibidas", () => {
-    render(<DataTable columns={columns} data={rows} getRowId={(row) => row.id} />);
+    render(
+      <DataTable columns={columns} data={rows} getRowId={(row) => row.id} />,
+    );
 
     expect(screen.getByRole("button", { name: "Nombre" })).toBeInTheDocument();
     expect(getBodyCellTexts()).toEqual(["Beta", "Alfa", "Gamma"]);
   });
 
   it("muestra el mensaje vacío cuando no hay datos", () => {
-    render(<DataTable columns={columns} data={[]} emptyMessage="No hay nada." />);
+    render(
+      <DataTable columns={columns} data={[]} emptyMessage="No hay nada." />,
+    );
 
     expect(screen.getByText("No hay nada.")).toBeInTheDocument();
   });
@@ -52,7 +58,9 @@ describe("DataTable", () => {
   });
 
   it("ordena las filas al clickear el header de una columna ordenable", () => {
-    render(<DataTable columns={columns} data={rows} getRowId={(row) => row.id} />);
+    render(
+      <DataTable columns={columns} data={rows} getRowId={(row) => row.id} />,
+    );
 
     const header = screen.getByRole("button", { name: "Nombre" });
 
@@ -91,7 +99,9 @@ describe("DataTable", () => {
 
     expect(screen.queryByText("Detalle de Beta")).not.toBeInTheDocument();
 
-    const [expandFirstRow] = screen.getAllByRole("button", { name: "Expandir fila" });
+    const [expandFirstRow] = screen.getAllByRole("button", {
+      name: "Expandir fila",
+    });
     fireEvent.click(expandFirstRow);
 
     expect(screen.getByText("Detalle de Beta")).toBeInTheDocument();

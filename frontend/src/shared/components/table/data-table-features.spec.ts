@@ -2,19 +2,21 @@ import { describe, expect, it } from "vitest";
 import { filterFn_faceted } from "./data-table-features";
 
 const fakeRow = (value: unknown) =>
-  ({ getValue: () => value }) as unknown as Parameters<typeof filterFn_faceted>[0];
+  ({ getValue: () => value }) as unknown as Parameters<
+    typeof filterFn_faceted
+  >[0];
 
 describe("filterFn_faceted", () => {
   it("devuelve true cuando filterValue incluye el valor de la fila", () => {
-    expect(filterFn_faceted(fakeRow("ADMIN"), "role", ["ADMIN", "CAJERO"])).toBe(
-      true,
-    );
+    expect(
+      filterFn_faceted(fakeRow("ADMIN"), "role", ["ADMIN", "CAJERO"]),
+    ).toBe(true);
   });
 
   it("devuelve false cuando filterValue no incluye el valor de la fila", () => {
-    expect(filterFn_faceted(fakeRow("PRUEBA"), "role", ["ADMIN", "CAJERO"])).toBe(
-      false,
-    );
+    expect(
+      filterFn_faceted(fakeRow("PRUEBA"), "role", ["ADMIN", "CAJERO"]),
+    ).toBe(false);
   });
 
   it("devuelve true cuando no hay filtro definido (filterValue undefined)", () => {

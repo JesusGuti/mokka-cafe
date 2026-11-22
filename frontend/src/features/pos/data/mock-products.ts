@@ -1,4 +1,4 @@
-import type { Product } from "@/features/pos/types"
+import type { Product } from "@/features/pos/types";
 
 /**
  * Catálogo de muestra mientras no existe el endpoint de productos en el
@@ -62,4 +62,4 @@ export const MOCK_PRODUCTS: Product[] = [
     priceCents: 590,
     category: "frappes",
   },
-]
+];
