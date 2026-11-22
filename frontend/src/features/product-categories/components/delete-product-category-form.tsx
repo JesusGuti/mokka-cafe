@@ -1,14 +1,14 @@
 "use client";
 
-import { useState } from "react";
 import { HttpStatusCode, type AxiosError } from "axios";
 import { useForm } from "react-hook-form";
 import { FormDialog } from "@/shared/components/form/form-dialog";
+import { getApiErrorMessage } from "@/shared/helpers/api-error";
+import { useRetainedValue } from "@/shared/hooks/use-retained-value";
 import { showToast } from "@/shared/lib/toast";
 import type { ApiErrorResponse } from "@/shared/types/api-error";
 import { useDeleteProductCategory } from "../hooks/use-delete-product-category";
 import type { ProductCategoryWithCountResponse } from "../types/product-category.types";
-import { getApiErrorMessage } from "@/shared/helpers/api-error";
 
 const DELETE_PRODUCT_CATEGORY_FORM = {
   cancelLabel: "Cancelar",
@@ -58,11 +58,7 @@ export const DeleteProductCategoryForm = ({
 
   // Al cerrar, `category` pasa a null mientras el diálogo todavía está en su
   // animación de salida: se recuerda la última para que el texto no se vacíe.
-  const [lastCategory, setLastCategory] = useState(category);
-  if (category && category !== lastCategory) {
-    setLastCategory(category);
-  }
-  const shown = category ?? lastCategory;
+  const shown = useRetainedValue(category);
 
   const isBlocked = (shown?.productCount ?? 0) > 0;
 
