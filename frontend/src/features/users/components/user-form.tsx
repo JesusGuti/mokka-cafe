@@ -8,6 +8,7 @@ import { FormInput } from "@/shared/components/form/form-input";
 import { FormPasswordInput } from "@/shared/components/form/form-password-input";
 import { FormSelect } from "@/shared/components/form/form-select";
 import type { ApiErrorResponse } from "@/shared/types/api-error";
+import { getApiErrorMessage } from "@/shared/helpers/api-error";
 import { showToast } from "@/shared/lib/toast";
 import { SelectOption } from "@/shared/types/select";
 import { useCreateUser } from "../hooks/use-create-user";
@@ -44,9 +45,7 @@ const getErrorMessage = (error: AxiosError<ApiErrorResponse>) => {
     return NO_AUTHORIZED;
   }
 
-  const message = error.response?.data.message;
-  if (!message) return GENERIC_ERROR_MESSAGE;
-  return Array.isArray(message) ? message[0] : message;
+  return getApiErrorMessage(error, GENERIC_ERROR_MESSAGE);
 };
 
 /**

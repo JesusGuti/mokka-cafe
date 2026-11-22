@@ -15,6 +15,7 @@ import {
   signInSchema,
   type SignInPayload,
 } from "@/features/auth/schemas/sign-in.schema";
+import { getApiErrorMessage } from "@/shared/helpers/api-error";
 import type { ApiErrorResponse } from "@/shared/types/api-error";
 
 const INVALID_CREDENTIALS_MESSAGE =
@@ -26,9 +27,7 @@ const getErrorMessage = (error: AxiosError<ApiErrorResponse>) => {
     return INVALID_CREDENTIALS_MESSAGE;
   }
 
-  const message = error.response?.data.message;
-  if (!message) return GENERIC_ERROR_MESSAGE;
-  return Array.isArray(message) ? message[0] : message;
+  return getApiErrorMessage(error, GENERIC_ERROR_MESSAGE);
 };
 
 export const LoginForm = () => {

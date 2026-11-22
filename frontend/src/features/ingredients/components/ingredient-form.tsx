@@ -9,6 +9,7 @@ import { FormDialog } from "@/shared/components/form/form-dialog";
 import { FormInput } from "@/shared/components/form/form-input";
 import { FormCombobox } from "@/shared/components/form/form-combobox";
 import type { ApiErrorResponse } from "@/shared/types/api-error";
+import { getApiErrorMessage } from "@/shared/helpers/api-error";
 import { showToast } from "@/shared/lib/toast";
 import type { SelectOption } from "@/shared/types/select";
 import { useCreateIngredient } from "../hooks/use-create-ingredient";
@@ -53,21 +54,13 @@ const GENERIC_CATEGORY_ERROR_MESSAGE =
   "No se pudo crear la categoría. Intenta de nuevo.";
 const CATEGORY_NOT_FOUND_MESSAGE = "La categoría seleccionada no existe.";
 
-const getBackendMessage = (error: AxiosError<ApiErrorResponse>) => {
-  const message = error.response?.data?.message;
-  return Array.isArray(message) ? message[0] : message;
-};
-
 // Al crear un ingrediente, un 404 solo puede significar categoría inexistente.
 const getIngredientErrorMessage = (error: AxiosError<ApiErrorResponse>) => {
   if (error.response?.status === HttpStatusCode.NotFound) {
     return CATEGORY_NOT_FOUND_MESSAGE;
   }
-  return getBackendMessage(error) ?? GENERIC_ERROR_MESSAGE;
+  return getApiErrorMessage(error, GENERIC_ERROR_MESSAGE);
 };
-
-const getCategoryErrorMessage = (error: AxiosError<ApiErrorResponse>) =>
-  getBackendMessage(error) ?? GENERIC_CATEGORY_ERROR_MESSAGE;
 
 const isDuplicatedNameError = (error: AxiosError<ApiErrorResponse>) =>
   error.response?.status === HttpStatusCode.Conflict;
@@ -100,8 +93,9 @@ export const IngredientForm = () => {
       showToast(CATEGORY_CREATED_MESSAGE, "success");
       return { label: category.name, value: category.id };
     } catch (error) {
-      const message = getCategoryErrorMessage(
+      const message = getApiErrorMessage(
         error as AxiosError<ApiErrorResponse>,
+        GENERIC_CATEGORY_ERROR_MESSAGE,
       );
       showToast(message, "error");
       return null;
