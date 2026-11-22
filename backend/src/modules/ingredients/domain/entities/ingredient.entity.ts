@@ -39,7 +39,7 @@ export class Ingredient {
       typeof props.minStockThreshold === 'number' &&
       props.minStockThreshold < 0
     ) {
-      throw new InvalidMinStockThresholdError('El stock minimo es inválido');
+      throw new InvalidMinStockThresholdError('El stock mínimo es inválido');
     }
 
     const now = new Date();
