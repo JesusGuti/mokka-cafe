@@ -3,7 +3,10 @@ import { PrismaService } from '@shared/infrastructure/prisma/prisma.service';
 import { IngredientCategoryRepository } from '../../domain/ports/ingredient-category.repository';
 import { IngredientCategory } from '../../domain/entities/ingredient-category.entity';
 import { IngredientCategoryMapper } from './ingredient-category.mapper';
-import { Prisma } from '@generated/prisma/client';
+import {
+  hasPrismaCode,
+  PRISMA_UNIQUE_VIOLATION,
+} from '@shared/infrastructure/prisma/prisma-error';
 import { DuplicatedIngredientCategoryNameError } from '../../domain/errors/duplicated-ingredient-category-name.error';
 
 @Injectable()
@@ -18,10 +21,7 @@ export class PrismaIngredientCategoryRepository implements IngredientCategoryRep
         data,
       });
     } catch (error) {
-      if (
-        error instanceof Prisma.PrismaClientKnownRequestError &&
-        error.code === 'P2002'
-      ) {
+      if (hasPrismaCode(error, PRISMA_UNIQUE_VIOLATION)) {
         throw new DuplicatedIngredientCategoryNameError();
       }
       throw error;

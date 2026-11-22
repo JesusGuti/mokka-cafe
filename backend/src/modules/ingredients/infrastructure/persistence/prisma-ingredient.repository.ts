@@ -4,7 +4,10 @@ import { IngredientRepository } from '../../domain/ports/ingredient.repository';
 import { Ingredient } from '../../domain/entities/ingredient.entity';
 import { IngredientMapper } from './ingredient.mapper';
 import { DuplicatedIngredientNameError } from '../../domain/errors/duplicated-ingredient.error';
-import { Prisma } from '@generated/prisma/client';
+import {
+  hasPrismaCode,
+  PRISMA_UNIQUE_VIOLATION,
+} from '@shared/infrastructure/prisma/prisma-error';
 
 @Injectable()
 export class PrismaIngredientRepository implements IngredientRepository {
@@ -18,10 +21,7 @@ export class PrismaIngredientRepository implements IngredientRepository {
         data,
       });
     } catch (error) {
-      if (
-        error instanceof Prisma.PrismaClientKnownRequestError &&
-        error.code === 'P2002'
-      ) {
+      if (hasPrismaCode(error, PRISMA_UNIQUE_VIOLATION)) {
         throw new DuplicatedIngredientNameError();
       }
       throw error;

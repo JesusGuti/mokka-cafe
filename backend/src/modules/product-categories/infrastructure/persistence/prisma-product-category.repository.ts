@@ -1,5 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import { Prisma } from '@generated/prisma/client';
+import {
+  hasPrismaCode,
+  PRISMA_FOREIGN_KEY_VIOLATION,
+  PRISMA_RECORD_NOT_FOUND,
+  PRISMA_UNIQUE_VIOLATION,
+} from '@shared/infrastructure/prisma/prisma-error';
 import { PrismaService } from '@shared/infrastructure/prisma/prisma.service';
 import {
   ProductCategoryRepository,
@@ -11,13 +16,6 @@ import { ProductCategoryMapper } from './product-category.mapper';
 import { ProductCategoryNotFoundError } from '../../domain/errors/product-category-not-found.error';
 import { ProductCategoryHasProductsError } from '../../domain/errors/product-category-has-products.error';
 
-const UNIQUE_VIOLATION = 'P2002';
-const RECORD_NOT_FOUND = 'P2025';
-const FOREIGN_KEY_VIOLATION = 'P2003';
-
-const hasCode = (error: unknown, code: string): boolean =>
-  error instanceof Prisma.PrismaClientKnownRequestError && error.code === code;
-
 @Injectable()
 export class PrismaProductCategoryRepository implements ProductCategoryRepository {
   constructor(private readonly prisma: PrismaService) {}
@@ -28,7 +26,7 @@ export class PrismaProductCategoryRepository implements ProductCategoryRepositor
     try {
       await this.prisma.productCategory.create({ data });
     } catch (error) {
-      if (hasCode(error, UNIQUE_VIOLATION)) {
+      if (hasPrismaCode(error, PRISMA_UNIQUE_VIOLATION)) {
         throw new DuplicatedProductCategoryNameError();
       }
       throw error;
@@ -45,10 +43,10 @@ export class PrismaProductCategoryRepository implements ProductCategoryRepositor
         data: { name, sortOrder, updatedAt },
       });
     } catch (error) {
-      if (hasCode(error, RECORD_NOT_FOUND)) {
+      if (hasPrismaCode(error, PRISMA_RECORD_NOT_FOUND)) {
         throw new ProductCategoryNotFoundError(productCategory.id);
       }
-      if (hasCode(error, UNIQUE_VIOLATION)) {
+      if (hasPrismaCode(error, PRISMA_UNIQUE_VIOLATION)) {
         throw new DuplicatedProductCategoryNameError();
       }
       throw error;
@@ -59,10 +57,10 @@ export class PrismaProductCategoryRepository implements ProductCategoryRepositor
     try {
       await this.prisma.productCategory.delete({ where: { id } });
     } catch (error) {
-      if (hasCode(error, RECORD_NOT_FOUND)) {
+      if (hasPrismaCode(error, PRISMA_RECORD_NOT_FOUND)) {
         throw new ProductCategoryNotFoundError(id);
       }
-      if (hasCode(error, FOREIGN_KEY_VIOLATION)) {
+      if (hasPrismaCode(error, PRISMA_FOREIGN_KEY_VIOLATION)) {
         throw new ProductCategoryHasProductsError(await this.countProducts(id));
       }
       throw error;
