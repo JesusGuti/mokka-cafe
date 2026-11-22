@@ -445,3 +445,147 @@ describe("FormDialog controlado", () => {
     );
   });
 });
+
+describe("FormDialog con opciones de cierre", () => {
+  interface OptionsHarnessProps {
+    keepOpenOnConfirm?: boolean;
+    onConfirm?: () => void | Promise<void>;
+    warnOnDiscard?: boolean;
+  }
+
+  const renderWithOptions = ({
+    keepOpenOnConfirm,
+    onConfirm = () => undefined,
+    warnOnDiscard,
+  }: OptionsHarnessProps = {}) => {
+    const Harness = () => {
+      const form = useForm<TestFormValues>({ defaultValues: { field: "" } });
+
+      return (
+        <FormDialog
+          form={form}
+          keepOpenOnConfirm={keepOpenOnConfirm}
+          warnOnDiscard={warnOnDiscard}
+          onConfirm={onConfirm}
+          title={FORM_DIALOG_CONSTANTS.title}
+          description={FORM_DIALOG_CONSTANTS.description}
+          cancelLabel={FORM_DIALOG_CONSTANTS.cancelLabel}
+          confirmLabel={FORM_DIALOG_CONSTANTS.confirmLabel}
+          trigger={<Button>Abrir</Button>}
+        >
+          <FormInput<TestFormValues>
+            name="field"
+            label="Campo"
+            type="text"
+            mode="text"
+            required={false}
+          />
+        </FormDialog>
+      );
+    };
+
+    render(<Harness />);
+    fireEvent.click(screen.getByRole("button", { name: "Abrir" }));
+  };
+
+  const type = (value: string) =>
+    fireEvent.change(screen.getByRole("textbox", { name: "Campo" }), {
+      target: { value },
+    });
+
+  const cancel = () =>
+    fireEvent.click(
+      screen.getByRole("button", { name: FORM_DIALOG_CONSTANTS.cancelLabel }),
+    );
+
+  describe("keepOpenOnConfirm", () => {
+    it("sigue abierto después de confirmar con éxito", async () => {
+      const onConfirm = vi.fn().mockResolvedValue(undefined);
+      renderWithOptions({ keepOpenOnConfirm: true, onConfirm });
+
+      fireEvent.click(
+        screen.getByRole("button", {
+          name: FORM_DIALOG_CONSTANTS.confirmLabel,
+        }),
+      );
+
+      await waitFor(() => {
+        expect(onConfirm).toHaveBeenCalledTimes(1);
+      });
+      expect(screen.getByRole("dialog")).toBeVisible();
+    });
+
+    it("por defecto se cierra después de confirmar con éxito", async () => {
+      const onConfirm = vi.fn().mockResolvedValue(undefined);
+      renderWithOptions({ onConfirm });
+
+      fireEvent.click(
+        screen.getByRole("button", {
+          name: FORM_DIALOG_CONSTANTS.confirmLabel,
+        }),
+      );
+
+      await waitFor(() => {
+        expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+      });
+    });
+  });
+
+  describe("warnOnDiscard", () => {
+    it("sin cambios cierra directo, sin aviso", () => {
+      renderWithOptions({ warnOnDiscard: true });
+
+      cancel();
+
+      expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+    });
+
+    it("con cambios pide confirmación y no cierra", () => {
+      renderWithOptions({ warnOnDiscard: true });
+      type("algo");
+
+      cancel();
+
+      expect(screen.getByRole("dialog")).toBeVisible();
+      expect(screen.getByRole("alert")).toHaveTextContent(
+        "Tienes cambios sin guardar",
+      );
+    });
+
+    it("«Seguir editando» oculta el aviso y conserva lo escrito", () => {
+      renderWithOptions({ warnOnDiscard: true });
+      type("algo");
+      cancel();
+
+      fireEvent.click(screen.getByRole("button", { name: "Seguir editando" }));
+
+      expect(screen.queryByRole("alert")).not.toBeInTheDocument();
+      expect(screen.getByRole("textbox", { name: "Campo" })).toHaveValue(
+        "algo",
+      );
+    });
+
+    it("«Descartar cambios» cierra y al reabrir el campo está vacío", () => {
+      renderWithOptions({ warnOnDiscard: true });
+      type("algo");
+      cancel();
+
+      fireEvent.click(
+        screen.getByRole("button", { name: "Descartar cambios" }),
+      );
+      expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+
+      fireEvent.click(screen.getByRole("button", { name: "Abrir" }));
+      expect(screen.getByRole("textbox", { name: "Campo" })).toHaveValue("");
+    });
+
+    it("sin la opción, cerrar con cambios no pide confirmación", () => {
+      renderWithOptions();
+      type("algo");
+
+      cancel();
+
+      expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+    });
+  });
+});
