@@ -14,6 +14,7 @@ import { ProductsModule } from './modules/products/products.module';
 import { UsersModule } from './modules/users/users.module';
 import { PrismaModule } from './shared/infrastructure/prisma/prisma.module';
 import { SecurityModule } from './shared/infrastructure/security/security.module';
+import { ProductCategoriesModule } from './modules/product-categories/product-categories.module';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { SecurityModule } from './shared/infrastructure/security/security.module
     IngredientsModule,
     IngredientCategoriesModule,
     PrismaModule,
+    ProductCategoriesModule,
     ProductsModule,
     SecurityModule,
     UsersModule,
